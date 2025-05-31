@@ -1,0 +1,39 @@
+package com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands;
+
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationStatus;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;
+
+/**
+ * @summary
+ * A command object representing the data required to create a new organization source.
+ *
+ * This command encapsulates the necessary fields for creating an organization source, including:
+ * - legalName: The legal name of the organization. Must not be null or empty.
+ * - commercialName: The commercial name of the organization, which can be null.
+ * - ruc: The RUC of the organization.
+ *        Must be a valid RUC as per the defined validation rules.
+ * - createdBy: The identifier of the entity or user who created the organization. Must not be null or empty.
+ * - status: The operational status of the organization. Must not be null.
+ *
+ * Validation is applied to ensure all required fields are properly set and meet the necessary constraints:
+ * - legalName must not be null or blank.
+ * - RUC must meet the predefined formatting and validation rules.
+ * - createdBy must not be null or blank.
+ * - status must not be null.
+ *
+ * @param legalName The legal name of the organization.
+ * @param commercialName The commercial name of the organization.
+ * @param ruc The RUC of the organization.
+ * @param createdBy The creator of the organization entity.
+ * @param status The operational status of the organization.
+ *
+ * @throws IllegalArgumentException if any of the validation constraints on the parameters are violated.
+ */
+public record CreateOrganizationSourceCommand(String legalName, String commercialName, Ruc ruc, String createdBy, OrganizationStatus status) {
+    public CreateOrganizationSourceCommand {
+        if (legalName == null || legalName.isBlank()) throw new IllegalArgumentException("legalName cannot be null or empty");
+        if (ruc.toString() == null || ruc.toString().isBlank()) throw new IllegalArgumentException("RUC cannot be null or empty");
+        if (createdBy == null || createdBy.isBlank()) throw new IllegalArgumentException("createdBy cannot be null or empty");
+        if (status == null) throw new IllegalArgumentException("status cannot be null");
+    }
+}
