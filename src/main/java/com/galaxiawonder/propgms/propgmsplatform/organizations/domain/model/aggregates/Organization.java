@@ -1,6 +1,6 @@
 package com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates;
 
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.CreateOrganizationSourceCommand;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.CreateOrganizationCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationStatus;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;
 import jakarta.persistence.*;
@@ -13,15 +13,15 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.util.Date;
 
 /**
- * OrganizationSource Aggregate Root
+ * Organization Aggregate Root
  *
  * @summary
- * The OrganizationSource class is an aggregate root that represents an organization source.
- * It is responsible for handling the CreateOrganizationSourceCommand command.
+ * The Organization class is an aggregate root that represents an organization source.
+ * It is responsible for handling the CreateOrganizationCommand command.
  * */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class OrganizationSource extends AbstractAggregateRoot<OrganizationSource> {
+public class Organization extends AbstractAggregateRoot<Organization> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter
@@ -58,12 +58,12 @@ public class OrganizationSource extends AbstractAggregateRoot<OrganizationSource
     * Members and invitations will be implemented later.
     * */
 
-    protected OrganizationSource() {}
+    protected Organization() {}
 
     /**
-     * Constructs a new OrganizationSource instance by initializing its fields using the provided CreateOrganizationSourceCommand.
+     * Constructs a new Organization instance by initializing its fields using the provided CreateOrganizationCommand.
      *
-     * @param command the command containing the required information to create an OrganizationSource,
+     * @param command the command containing the required information to create an Organization,
      *                including legalName, commercialName, RUC, createdBy, and status.
      *                - legalName must not be null or empty.
      *                - RUC must be valid (exactly 11 digits, starting with '10' or '20').
@@ -71,7 +71,7 @@ public class OrganizationSource extends AbstractAggregateRoot<OrganizationSource
      *                - status must not be null.
      */
 
-    public OrganizationSource(CreateOrganizationSourceCommand command) {
+    public Organization(CreateOrganizationCommand command) {
         this.legalName = command.legalName();
         this.commercialName = command.commercialName();
         this.ruc = command.ruc();

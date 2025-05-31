@@ -29,8 +29,8 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valu
  *
  * @throws IllegalArgumentException if any of the validation constraints on the parameters are violated.
  */
-public record CreateOrganizationSourceCommand(String legalName, String commercialName, Ruc ruc, String createdBy, OrganizationStatus status) {
-    public CreateOrganizationSourceCommand {
+public record CreateOrganizationCommand(String legalName, String commercialName, Ruc ruc, String createdBy, OrganizationStatus status) {
+    public CreateOrganizationCommand {
         if (legalName == null || legalName.isBlank()) throw new IllegalArgumentException("legalName cannot be null or empty");
         if (ruc.toString() == null || ruc.toString().isBlank()) throw new IllegalArgumentException("RUC cannot be null or empty");
         if (createdBy == null || createdBy.isBlank()) throw new IllegalArgumentException("createdBy cannot be null or empty");
