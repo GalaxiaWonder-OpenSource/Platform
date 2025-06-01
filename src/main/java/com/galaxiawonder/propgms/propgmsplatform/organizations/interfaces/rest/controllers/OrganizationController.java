@@ -58,6 +58,7 @@ public class OrganizationController {
             @ApiResponse(responseCode = "201", description = "Organization created"),
             @ApiResponse(responseCode = "400", description = "Bad request")
     })
+    @PostMapping
     public ResponseEntity<OrganizationResource>
     createOrganization(@RequestBody CreateOrganizationResource resource){
         Optional<Organization> organization = organizationCommandService
