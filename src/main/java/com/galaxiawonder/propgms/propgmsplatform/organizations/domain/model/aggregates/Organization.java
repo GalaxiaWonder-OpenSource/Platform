@@ -52,7 +52,6 @@ public class Organization extends AbstractAggregateRoot<Organization> {
     @LastModifiedDate
     private Date updatedAt;
 
-    @Column(nullable = false)
     @Getter
     private OrganizationStatus status;
 
@@ -78,6 +77,6 @@ public class Organization extends AbstractAggregateRoot<Organization> {
         this.commercialName = command.commercialName();
         this.ruc = command.ruc();
         this.createdBy = command.createdBy();
-        this.status = command.status();
+        this.status = OrganizationStatus.ACTIVE;
     }
 }

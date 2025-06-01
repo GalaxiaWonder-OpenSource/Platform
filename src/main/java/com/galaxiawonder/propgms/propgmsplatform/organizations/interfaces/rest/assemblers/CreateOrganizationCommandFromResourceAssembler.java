@@ -13,6 +13,6 @@ public class CreateOrganizationCommandFromResourceAssembler {
      * @return CreateOrganizationCommand created from the resource
      */
     public static CreateOrganizationCommand toCommandFromResource(CreateOrganizationResource resource) {
-        return new CreateOrganizationCommand(resource.legalName(), resource.commercialName(), resource.ruc(), resource.createdBy(), resource.status());
+        return new CreateOrganizationCommand(resource.legalName(), resource.commercialName(), resource.ruc(), resource.createdBy());
     }
 }
