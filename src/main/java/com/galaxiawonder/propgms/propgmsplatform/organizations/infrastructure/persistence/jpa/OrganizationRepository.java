@@ -1,4 +1,4 @@
-package com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.jpa;
+package com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa;
 
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;

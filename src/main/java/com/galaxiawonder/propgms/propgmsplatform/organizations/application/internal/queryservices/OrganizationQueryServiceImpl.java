@@ -3,7 +3,7 @@ package com.galaxiawonder.propgms.propgmsplatform.organizations.application.inte
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetOrganizationByIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationQueryService;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.jpa.OrganizationRepository;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.OrganizationRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
