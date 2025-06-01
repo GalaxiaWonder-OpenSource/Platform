@@ -41,6 +41,7 @@ public class Organization extends AbstractAggregateRoot<Organization> {
     private Ruc ruc;
 
     @Column(nullable = false, updatable = false)
+    @Getter
     private String createdBy;
 
     @Column(nullable = false, updatable = false)
@@ -52,6 +53,7 @@ public class Organization extends AbstractAggregateRoot<Organization> {
     private Date updatedAt;
 
     @Column(nullable = false)
+    @Getter
     private OrganizationStatus status;
 
     /*

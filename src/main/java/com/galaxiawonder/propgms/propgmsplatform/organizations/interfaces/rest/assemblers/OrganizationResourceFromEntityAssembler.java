@@ -1,5 +1,6 @@
 package com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.assemblers;
 
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.resources.OrganizationResource;
 
 /**
@@ -11,7 +12,7 @@ public class OrganizationResourceFromEntityAssembler {
      * @param entity Organization entity to convert
      * @return OrganizationResource created from the entity
      */
-    public static OrganizationResource toResourceFromEntity(OrganizationResource entity) {
-        return new OrganizationResource(entity.id(), entity.legalName(), entity.commercialName(), entity.ruc(), entity.createdBy(), entity.status());
+    public static OrganizationResource toResourceFromEntity(Organization entity) {
+        return new OrganizationResource(entity.getId(), entity.getLegalName(), entity.getCommercialName(), entity.getRuc().toString(), entity.getCreatedBy(), entity.getStatus().toString());
     }
 }
