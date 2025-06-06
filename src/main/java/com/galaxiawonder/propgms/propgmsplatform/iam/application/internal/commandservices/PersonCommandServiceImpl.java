@@ -2,7 +2,7 @@ package com.galaxiawonder.propgms.propgmsplatform.iam.application.internal.comma
 
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities.Person;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.commands.CreatePersonCommand;
-import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.Email;
+import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.EmailAddress;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.PhoneNumber;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.services.PersonCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persitence.jpa.repositories.PersonRepository;
@@ -43,21 +43,21 @@ public class PersonCommandServiceImpl implements PersonCommandService {
      * @throws IllegalArgumentException if email or phone number already exists
      */
     public Optional<Person> handle(CreatePersonCommand command) {
-        Email email = new Email(command.email());
+        EmailAddress email = new EmailAddress(command.email());
         validateUniqueEmail(email);
 
         PhoneNumber phone = buildPhoneIfPresent(command.phone());
-        if (phone != null) validateUniquePhone(phone);
 
-        var person = new Person(command.firstname(), command.lastname(), email);
+        var person = new Person(command);
 
         if (phone != null) {
+            validateUniquePhone(phone);
             person.assignPhoneNumber(phone);
         }
 
         personRepository.save(person);
 
-        return personRepository.findByFirstname(command.firstname());
+        return personRepository.findByEmail(email);
     }
 
     /**
@@ -66,7 +66,7 @@ public class PersonCommandServiceImpl implements PersonCommandService {
      * @param email the email to validate
      * @throws IllegalArgumentException if the email already exists
      */
-    private void validateUniqueEmail(Email email) {
+    private void validateUniqueEmail(EmailAddress email) {
         if (personRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("Person with the same email already exists");
         }

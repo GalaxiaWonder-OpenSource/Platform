@@ -27,9 +27,9 @@ public class PersonResourceFromEntityAssembler {
     public static PersonResource toResourceFromEntity(Person person) {
         return new PersonResource(
                 person.getId(),
-                person.getFirstname(),
-                person.getLastname(),
-                person.getEmail().toString(),
+                person.getFirstName(),
+                person.getLastName(),
+                person.getEmail(),
                 person.getPhone() != null ? person.getPhone().toString() : null,
                 person.getProfessionalId() != null ? person.getProfessionalId().toString() : null
         );

@@ -1,5 +1,6 @@
 package com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities;
 
+import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.commands.CreatePersonCommand;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.EmailAddress;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.PersonName;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.PhoneNumber;
@@ -32,7 +33,7 @@ public class Person extends AuditableModel {
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "address", column = @Column(name = "email"))})
-    private EmailAddress emailAddress;
+    private EmailAddress email;
 
     /** Optional phone number of the person, represented as a value object */
     @Embedded
@@ -57,10 +58,50 @@ public class Person extends AuditableModel {
      * @param lastname the last name of the person
      * @param email the email of the person, wrapped in a value object
      */
-    public Person(String firstname, String lastname, Email email) {
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.email = email;
+    public Person(String firstname, String lastname, String email) {
+        this.name = new PersonName(firstname, lastname);
+        this.email = new EmailAddress(email);
+    }
+
+    /**
+     * Constructor from CreatePersonCommand
+     * @param command command The {@link CreatePersonCommand} instance
+     */
+    public Person(CreatePersonCommand command) {
+        this.name = new PersonName(command.firstName(), command.lastName());
+        this.email = new EmailAddress(command.email());
+    }
+
+    /**
+     * First name getter
+     * @return First name
+     */
+    public String getFirstName() {
+        return name.firstName();
+    }
+
+    /**
+     * Second name getter
+     * @return First name
+     */
+    public String getLastName() {
+        return name.lastName();
+    }
+
+    /**
+     * Full name getter
+     * @return Full name
+     */
+    public String getFullName() {
+        return name.getFullName();
+    }
+
+    /**
+     * Email address getter
+     * @return Email address
+     */
+    public String getEmail() {
+        return email.address();
     }
 
     /**

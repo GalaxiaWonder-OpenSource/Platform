@@ -1,7 +1,7 @@
 package com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persitence.jpa.repositories;
 
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities.Person;
-import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.Email;
+import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.EmailAddress;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.PhoneNumber;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -22,22 +22,22 @@ import java.util.Optional;
  */
 @Repository
 public interface PersonRepository extends JpaRepository<Person, Long> {
-
-    /**
-     * Retrieves a person by their first name.
-     *
-     * @param name the first name of the person
-     * @return an Optional containing the matching Person, or empty if not found
-     */
-    Optional<Person> findByFirstname(String name);
-
     /**
      * Checks if a person with the given email already exists.
      *
      * @param email the email to check for existence
      * @return true if a person with the specified email exists, false otherwise
      */
-    boolean existsByEmail(Email email);
+    boolean existsByEmail(EmailAddress email);
+
+    /**
+     * Finds a person by the given email address.
+     *
+     * @param email the email address to search for
+     * @return an {@code Optional} containing the {@code Person} if found,
+     *         or an empty {@code Optional} if no match is found
+     */
+    Optional<Person> findByEmail(EmailAddress email);
 
     /**
      * Checks if a person with the given phone number already exists.
