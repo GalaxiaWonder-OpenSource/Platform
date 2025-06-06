@@ -1,6 +1,6 @@
 package com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities;
 
-import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.Email;
+import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.EmailAddress;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.PersonName;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.PhoneNumber;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.ProfessionalId;
@@ -30,8 +30,9 @@ public class Person extends AuditableModel {
 
     /** Unique email of the person, represented as a value object */
     @Embedded
-    @Getter
-    private Email email;
+    @AttributeOverrides({
+            @AttributeOverride(name = "address", column = @Column(name = "email"))})
+    private EmailAddress emailAddress;
 
     /** Optional phone number of the person, represented as a value object */
     @Embedded
