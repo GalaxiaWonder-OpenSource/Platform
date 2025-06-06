@@ -58,11 +58,31 @@ public class ProfessionalId {
     public ProfessionalId(String value) {
         Objects.requireNonNull(value, "Professional ID cannot be null");
 
-        if (!CIP_PATTERN.matcher(value).matches() && !CAP_PATTERN.matcher(value).matches()) {
+        if (!isValidCip(value) && !isValidCap(value)) {
             throw new IllegalArgumentException("Professional ID must match 'CIP######' or 'CAP######' format");
         }
 
         this.value = value;
+    }
+
+    /**
+     * Checks whether the given value matches the CIP (Colegio de Ingenieros del Perú) pattern.
+     *
+     * @param value the string to validate as a CIP code
+     * @return true if the value matches the CIP pattern; false otherwise
+     */
+    boolean isValidCip(String value) {
+        return CIP_PATTERN.matcher(value).matches();
+    }
+
+    /**
+     * Checks whether the given value matches the CAP (Colegio de Arquitectos del Perú) pattern.
+     *
+     * @param value the string to validate as a CAP code
+     * @return true if the value matches the CAP pattern; false otherwise
+     */
+    boolean isValidCap(String value) {
+        return CAP_PATTERN.matcher(value).matches();
     }
 
     /**

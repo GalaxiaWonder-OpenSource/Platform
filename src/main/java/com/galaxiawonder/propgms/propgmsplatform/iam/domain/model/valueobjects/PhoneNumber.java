@@ -48,10 +48,20 @@ public class PhoneNumber {
      */
     public PhoneNumber(String value) {
         Objects.requireNonNull(value, "Phone number cannot be null");
-        if (!E164_PATTERN.matcher(value).matches()) {
+        if (!isValid(value)) {
             throw new IllegalArgumentException("Phone number must be in international E.164 format (e.g., +51987654321)");
         }
         this.value = value;
+    }
+
+    /**
+     * Validates whether the provided value complies with the E.164 international phone number format.
+     *
+     * @param value the phone number string to validate
+     * @return true if the value matches the E.164 format; false otherwise
+     */
+    boolean isValid(String value) {
+        return E164_PATTERN.matcher(value).matches();
     }
 
     /**
