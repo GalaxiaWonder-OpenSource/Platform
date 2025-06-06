@@ -1,12 +1,11 @@
 package com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities;
 
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.Email;
+import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.PersonName;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.PhoneNumber;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.ProfessionalId;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.entities.AuditableModel;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 import java.util.Objects;
@@ -26,17 +25,8 @@ import java.util.Objects;
 @Entity
 @Table(name = "persons")
 public class Person extends AuditableModel {
-    /** First name of the person (max 50 characters, not blank) */
-    @NotBlank
-    @Getter
-    @Size(max = 50)
-    private String firstname;
-
-    /** Last name of the person (max 50 characters, not blank) */
-    @NotBlank
-    @Getter
-    @Size(max = 50)
-    private String lastname;
+    @Embedded
+    private PersonName name;
 
     /** Unique email of the person, represented as a value object */
     @Embedded
