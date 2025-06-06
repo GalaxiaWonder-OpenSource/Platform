@@ -1,6 +1,6 @@
 package com.galaxiawonder.propgms.propgmsplatform.iam.domain.services;
 
-import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates.Person;
+import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities.Person;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.queries.GetAllPersonsQuery;
 
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.galaxiawonder.propgms.propgmsplatform.iam.application.internal.queryservices;
 
-import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates.Person;
+import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities.Person;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities.UserType;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.queries.GetAllPersonsQuery;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.services.PersonQueryService;
@@ -8,7 +8,6 @@ import com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persitence.j
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PersonQueryServiceImpl implements PersonQueryService {

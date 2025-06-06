@@ -1,6 +1,6 @@
 package com.galaxiawonder.propgms.propgmsplatform.iam.interfaces.rest.assemblers;
 
-import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates.Person;
+import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities.Person;
 import com.galaxiawonder.propgms.propgmsplatform.iam.interfaces.rest.resources.PersonResource;
 
 /**

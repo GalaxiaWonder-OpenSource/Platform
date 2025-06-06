@@ -1,12 +1,13 @@
 package com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.commands;
 
+import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities.Person;
 import jakarta.annotation.Nullable;
 
 /**
  * CreatePersonCommand
  *
  * @summary
- * Command object used to request the creation of a new {@link com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates.Person}.
+ * Command object used to request the creation of a new {@link Person}.
  * It encapsulates the personal information required to register a person, including optional fields
  * that may be provided later in the system.
  *

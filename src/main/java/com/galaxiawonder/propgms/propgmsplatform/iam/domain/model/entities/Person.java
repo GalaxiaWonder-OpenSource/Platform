@@ -1,17 +1,14 @@
-package com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates;
+package com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities;
 
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.Email;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.PhoneNumber;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.ProfessionalId;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.entities.AuditableModel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -27,26 +24,8 @@ import java.util.Objects;
  * @since 1.0
  */
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Table(name = "persons")
-public class Person {
-
-    /** Unique identifier for the person, auto-generated */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter
-    private Long id;
-
-    /** Timestamp when the entity was created, managed by Spring Data JPA */
-    @Column(nullable = false, updatable = false)
-    @CreatedDate
-    private Date createdAt;
-
-    /** Timestamp when the entity was last updated, managed by Spring Data JPA */
-    @Column(nullable = false)
-    @LastModifiedDate
-    private Date updatedAt;
-
+public class Person extends AuditableModel {
     /** First name of the person (max 50 characters, not blank) */
     @NotBlank
     @Getter

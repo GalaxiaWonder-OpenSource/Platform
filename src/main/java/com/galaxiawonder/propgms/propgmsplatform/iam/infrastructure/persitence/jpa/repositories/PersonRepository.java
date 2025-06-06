@@ -1,6 +1,6 @@
 package com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persitence.jpa.repositories;
 
-import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates.Person;
+import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities.Person;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.Email;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.PhoneNumber;
 import org.springframework.data.jpa.repository.JpaRepository;
