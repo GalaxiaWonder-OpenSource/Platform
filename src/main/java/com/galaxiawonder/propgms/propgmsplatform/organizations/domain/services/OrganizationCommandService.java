@@ -2,6 +2,7 @@ package com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services;
 
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.CreateOrganizationCommand;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.DeleteOrganizationCommand;
 
 import java.util.Optional;
 
@@ -20,4 +21,10 @@ public interface OrganizationCommandService {
      * @see CreateOrganizationCommand
      */
     Optional<Organization> handle(CreateOrganizationCommand command);
+    /**
+     * Handles a delete course command.
+     * @param command The delete organization command containing the ruc
+     * @see DeleteOrganizationCommand
+     */
+    void handle(DeleteOrganizationCommand command);
 }
