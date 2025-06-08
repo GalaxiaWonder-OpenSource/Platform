@@ -1,7 +1,6 @@
 package com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands;
 
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationStatus;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;
+import jakarta.annotation.Nullable;
 
 /**
  * @summary
@@ -9,7 +8,7 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valu
  *
  * This command encapsulates the necessary fields for creating an organization source, including:
  * - legalName: The legal name of the organization. Must not be null or empty.
- * - commercialName: The commercial name of the organization, which can be null.
+ * - CommercialName: The commercial name of the organization, which can be null.
  * - ruc: The RUC of the organization.
  *        Must be a valid RUC as per the defined validation rules.
  * - createdBy: The identifier of the entity or user who created the organization. Must not be null or empty.
@@ -28,10 +27,10 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valu
  *
  * @throws IllegalArgumentException if any of the validation constraints on the parameters are violated.
  */
-public record CreateOrganizationCommand(String legalName, String commercialName, Ruc ruc, String createdBy) {
+public record CreateOrganizationCommand(String legalName, @Nullable String commercialName, String ruc, Long createdBy) {
     public CreateOrganizationCommand {
         if (legalName == null || legalName.isBlank()) throw new IllegalArgumentException("legalName cannot be null or empty");
-        if (ruc.toString() == null || ruc.toString().isBlank()) throw new IllegalArgumentException("RUC cannot be null or empty");
-        if (createdBy == null || createdBy.isBlank()) throw new IllegalArgumentException("createdBy cannot be null or empty");
+        if (ruc== null || ruc.isBlank()) throw new IllegalArgumentException("RUC cannot be null or empty");
+        if (createdBy == null) throw new IllegalArgumentException("createdBy cannot be null or empty");
     }
 }
