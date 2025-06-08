@@ -1,7 +1,9 @@
 package com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.controllers;
 
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.DeleteOrganizationCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetOrganizationByIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationQueryService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.assemblers.CreateOrganizationCommandFromResourceAssembler;
@@ -9,6 +11,7 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.a
 import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.resources.CreateOrganizationResource;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.resources.OrganizationResource;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -88,5 +91,21 @@ public class OrganizationController {
         return organization.map( source ->
                 ResponseEntity.ok(OrganizationResourceFromEntityAssembler.toResourceFromEntity(source)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @Operation(
+            summary = "Delete an Organization by ruc",
+            description = "Delete an Organization by the provided ruc")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Organization deleted"),
+            @ApiResponse(responseCode = "404", description = "Organization not found")
+    })
+    @DeleteMapping("{ruc}")
+    public ResponseEntity<?> deleteOrganization(
+            @Parameter(description = "RUC")
+            @PathVariable String ruc) {
+        var deleteOrganizationCommand = new DeleteOrganizationCommand(ruc);
+        organizationCommandService.handle(deleteOrganizationCommand);
+        return ResponseEntity.ok("Organization with given RUC successfully deleted");
     }
 }
