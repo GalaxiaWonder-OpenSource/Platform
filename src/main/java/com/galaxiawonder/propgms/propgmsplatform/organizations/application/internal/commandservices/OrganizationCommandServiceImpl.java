@@ -2,9 +2,11 @@ package com.galaxiawonder.propgms.propgmsplatform.organizations.application.inte
 
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.CreateOrganizationCommand;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.DeleteOrganizationCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.OrganizationRepository;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -22,7 +24,6 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
     public OrganizationCommandServiceImpl(OrganizationRepository organizationRepository) {
         this.organizationRepository = organizationRepository;
     }
-
     /**
      * {@inheritDoc}
      */
@@ -33,5 +34,17 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
         var organization = new Organization(command);
         var createdOrganization = organizationRepository.save(organization);
         return Optional.of(createdOrganization);
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void handle(DeleteOrganizationCommand command) {
+        Ruc ruc = new Ruc(command.ruc());
+        if (!organizationRepository.existsByRuc(ruc)) {
+            throw new IllegalArgumentException("Organization doesn't exist");
+        }
+        Organization organization = organizationRepository.findByRuc(ruc);
+        organizationRepository.delete(organization);
     }
 }

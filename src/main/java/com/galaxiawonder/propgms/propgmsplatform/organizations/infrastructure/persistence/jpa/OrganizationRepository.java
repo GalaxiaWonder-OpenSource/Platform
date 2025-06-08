@@ -15,4 +15,10 @@ public interface OrganizationRepository extends JpaRepository<Organization, Long
      * @return True if exists, false otherwise
      */
     boolean existsByRuc(Ruc ruc);
+    /**
+     * Find an organization by ruc
+     * @param ruc RUC
+     * @return an Organization
+     */
+    Organization findByRuc(Ruc ruc);
 }
