@@ -1,8 +1,12 @@
 package com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates;
 
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.CreateOrganizationCommand;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.CommercialName;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.LegalName;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationStatus;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
@@ -20,20 +24,18 @@ import java.util.Date;
  * It is responsible for handling the CreateOrganizationCommand command.
  * */
 @Entity
+@Table(name = "organizations")
 @EntityListeners(AuditingEntityListener.class)
-public class Organization extends AbstractAggregateRoot<Organization> {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter
-    private Long id;
-
+public class Organization extends AuditableAbstractAggregateRoot<Organization> {
     @Column(nullable = false)
     @Getter
-    private String legalName;
+    @Embedded
+    private LegalName legalName;
 
     @Column()
     @Getter
-    private String commercialName;
+    @Embedded
+    private CommercialName commercialName;
 
     @Column(nullable = false, updatable = false)
     @Getter
@@ -42,17 +44,12 @@ public class Organization extends AbstractAggregateRoot<Organization> {
 
     @Column(nullable = false, updatable = false)
     @Getter
-    private String createdBy;
-
-    @Column(nullable = false, updatable = false)
-    @CreatedDate
-    private Date createdAt;
-
-    @Column(nullable = false)
-    @LastModifiedDate
-    private Date updatedAt;
+    @AttributeOverride(name = "value", column = @Column(name = "created_by"))
+    @Embedded
+    private PersonId createdBy;
 
     @Getter
+    @Column(nullable = false)
     private OrganizationStatus status;
 
     /*
@@ -65,7 +62,7 @@ public class Organization extends AbstractAggregateRoot<Organization> {
      * Constructs a new Organization instance by initializing its fields using the provided CreateOrganizationCommand.
      *
      * @param command the command containing the required information to create an Organization,
-     *                including legalName, commercialName, RUC, createdBy, and status.
+     *                including legalName, CommercialName, RUC, createdBy, and status.
      *                - legalName must not be null or empty.
      *                - RUC must be valid (exactly 11 digits, starting with '10' or '20').
      *                - createdBy must not be null or empty.
@@ -73,10 +70,9 @@ public class Organization extends AbstractAggregateRoot<Organization> {
      */
 
     public Organization(CreateOrganizationCommand command) {
-        this.legalName = command.legalName();
-        this.commercialName = command.commercialName();
-        this.ruc = command.ruc();
-        this.createdBy = command.createdBy();
+        this.legalName = new LegalName(command.legalName());
+        this.commercialName = command.commercialName() != null ? new CommercialName(command.commercialName()) : new CommercialName(""); this.ruc = new Ruc(command.ruc());
+        this.createdBy = new PersonId(command.createdBy());
         this.status = OrganizationStatus.ACTIVE;
     }
 }
