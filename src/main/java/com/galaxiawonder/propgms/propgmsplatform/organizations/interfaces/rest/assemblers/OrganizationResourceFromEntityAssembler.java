@@ -13,6 +13,6 @@ public class OrganizationResourceFromEntityAssembler {
      * @return OrganizationResource created from the entity
      */
     public static OrganizationResource toResourceFromEntity(Organization entity) {
-        return new OrganizationResource(entity.getId(), entity.getLegalName(), entity.getCommercialName(), entity.getRuc().toString(), entity.getCreatedBy(), entity.getStatus().toString());
+        return new OrganizationResource(entity.getId(), entity.getLegalName().toString(), entity.getCommercialName().toString(), entity.getRuc().toString(), entity.getCreatedBy().toString(), entity.getStatus().toString());
     }
 }

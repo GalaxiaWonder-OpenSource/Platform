@@ -2,6 +2,7 @@ package com.galaxiawonder.propgms.propgmsplatform.organizations.application.inte
 
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.CreateOrganizationCommand;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.OrganizationRepository;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
      */
     @Override
     public Optional<Organization> handle(CreateOrganizationCommand command){
-        if(organizationRepository.existsByRuc(command.ruc()))
+        if(organizationRepository.existsByRuc(new Ruc(command.ruc())))
             throw new IllegalArgumentException("Organization with same RUC already exists for this API key");
         var organization = new Organization(command);
         var createdOrganization = organizationRepository.save(organization);
