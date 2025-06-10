@@ -2,6 +2,7 @@ package com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.
 
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.DeleteOrganizationCommand;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.UpdateOrganizationCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetOrganizationByIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationCommandService;
@@ -10,6 +11,7 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.a
 import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.assemblers.OrganizationResourceFromEntityAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.resources.CreateOrganizationResource;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.resources.OrganizationResource;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.resources.UpdateOrganizationResource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -107,5 +109,14 @@ public class OrganizationController {
         var deleteOrganizationCommand = new DeleteOrganizationCommand(ruc);
         organizationCommandService.handle(deleteOrganizationCommand);
         return ResponseEntity.ok("Organization with given RUC successfully deleted");
+    }
+    @PatchMapping("{id}")
+    public ResponseEntity<?> updateOrganization(
+            @PathVariable Long id,
+            @RequestBody UpdateOrganizationResource resource) {
+
+        var command = new UpdateOrganizationCommand(id, resource.commercialName());
+        organizationCommandService.handle(command);
+        return ResponseEntity.ok("Organization with given ID successfully updated");
     }
 }

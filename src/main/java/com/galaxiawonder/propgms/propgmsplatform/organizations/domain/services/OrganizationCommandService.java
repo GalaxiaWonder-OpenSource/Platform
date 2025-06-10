@@ -3,6 +3,7 @@ package com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.CreateOrganizationCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.DeleteOrganizationCommand;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.UpdateOrganizationCommand;
 
 import java.util.Optional;
 
@@ -27,4 +28,12 @@ public interface OrganizationCommandService {
      * @see DeleteOrganizationCommand
      */
     void handle(DeleteOrganizationCommand command);
+
+    /**
+     * Handle an update organization command
+     * @param command The update organization command containing the course data
+     * @return The updated course
+     * @see UpdateOrganizationCommand
+     */
+    Optional<Organization> handle(UpdateOrganizationCommand command);
 }
