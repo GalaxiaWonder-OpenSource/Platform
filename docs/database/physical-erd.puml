@@ -1,0 +1,12 @@
+@startuml "Prop GMS Physical ERD"
+!define table(x) class x << (E,#ADD1B2) >>
+
+' Define table UserType
+package "IAM" {
+    table(user_types) {
+      * id : BIGINT <<PK>>
+      --
+      * name : VARCHAR(20) <<Enum>>
+    }
+}
+@enduml
