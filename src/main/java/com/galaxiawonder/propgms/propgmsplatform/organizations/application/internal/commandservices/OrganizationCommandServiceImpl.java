@@ -3,6 +3,7 @@ package com.galaxiawonder.propgms.propgmsplatform.organizations.application.inte
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.CreateOrganizationCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.DeleteOrganizationCommand;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.UpdateOrganizationCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.OrganizationRepository;
@@ -46,5 +47,23 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
         }
         Organization organization = organizationRepository.findByRuc(ruc);
         organizationRepository.delete(organization);
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<Organization> handle(UpdateOrganizationCommand command) {
+        if (organizationRepository.existsById(command.organizationId()))
+            throw new IllegalArgumentException("Organization with same ID already exists for this API key");
+        var result = organizationRepository.findById(command.organizationId());
+        if (result.isEmpty())
+            throw new IllegalArgumentException("Organization doesn't exist");
+        var organizationToUpdate = result.get();
+        try{
+            var updatedOrganization = organizationRepository.save(organizationToUpdate.updateInformation(command.commercialName()));
+            return Optional.of(updatedOrganization);
+        } catch (Exception e){
+            throw new IllegalArgumentException("Error while updating organization: %s".formatted(e.getMessage()));
+        }
     }
 }

@@ -75,4 +75,13 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
         this.createdBy = new PersonId(command.createdBy());
         this.status = OrganizationStatus.ACTIVE;
     }
+
+    /**
+     * Create a new Organization with the given title and description
+     * @param commercialName The commercial name of the organization
+     */
+    public Organization updateInformation(String commercialName){
+        this.commercialName = new CommercialName(commercialName);
+        return this;
+    }
 }
