@@ -108,4 +108,14 @@ public class OrganizationController {
         organizationCommandService.handle(deleteOrganizationCommand);
         return ResponseEntity.ok("Organization with given RUC successfully deleted");
     }
+    @PatchMapping("{id}")
+    public ResponseEntity<?> updateOrganization(
+            @Parameter(description = "Organization ID")
+            @PathVariable Long id,
+            @Parameter(description = "Commercial Name")
+            @RequestParam String commercialName){
+        var updateOrganizationCommand = new com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.UpdateOrganizationCommand(id, commercialName);
+        organizationCommandService.handle(updateOrganizationCommand);
+        return ResponseEntity.ok("Organization with given ID successfully updated");
+    }
 }
