@@ -53,8 +53,6 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
      */
     @Override
     public Optional<Organization> handle(UpdateOrganizationCommand command) {
-        if (organizationRepository.existsById(command.organizationId()))
-            throw new IllegalArgumentException("Organization with same ID already exists for this API key");
         var result = organizationRepository.findById(command.organizationId());
         if (result.isEmpty())
             throw new IllegalArgumentException("Organization doesn't exist");
