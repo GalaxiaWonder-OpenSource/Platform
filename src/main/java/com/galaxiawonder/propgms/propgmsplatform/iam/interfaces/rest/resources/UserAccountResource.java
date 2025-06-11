@@ -16,7 +16,8 @@ import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates.Use
  */
 public record UserAccountResource(
         String userName,
-        String userType
+        String userType,
+        Long personId
 ) {
 }
 

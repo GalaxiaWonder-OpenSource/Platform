@@ -1,8 +1,10 @@
 package com.galaxiawonder.propgms.propgmsplatform.iam.application.internal.commandservices;
 
 import com.galaxiawonder.propgms.propgmsplatform.iam.application.internal.outboundservices.hashing.HashingService;
+import com.galaxiawonder.propgms.propgmsplatform.iam.application.internal.outboundservices.tokens.TokenService;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates.Person;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates.UserAccount;
+import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.commands.SignInCommand;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.commands.SignUpCommand;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities.UserType;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.*;
@@ -12,6 +14,7 @@ import com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persitence.j
 import com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persitence.jpa.repositories.UserTypeRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.util.Optional;
 
@@ -52,6 +55,11 @@ public class UserAccountCommandServiceImpl implements UserAccountCommandService 
     private final HashingService hashingService;
 
     /**
+     * Token generation service for issuing authentication tokens.
+     */
+    private final TokenService tokenService;
+
+    /**
      * Constructs the service with all necessary dependencies.
      *
      * @param userAccountRepository repository for {@link UserAccount} persistence
@@ -63,11 +71,13 @@ public class UserAccountCommandServiceImpl implements UserAccountCommandService 
             UserAccountRepository userAccountRepository,
             PersonRepository personRepository,
             UserTypeRepository userTypeRepository,
-            HashingService hashingService) {
+            HashingService hashingService,
+            TokenService tokenService) {
         this.userAccountRepository = userAccountRepository;
         this.personRepository = personRepository;
         this.userTypeRepository = userTypeRepository;
         this.hashingService = hashingService;
+        this.tokenService = tokenService;
     }
 
     /**
@@ -100,8 +110,42 @@ public class UserAccountCommandServiceImpl implements UserAccountCommandService 
         userAccount.assignPersonId(person.getId());
         userAccountRepository.save(userAccount);
 
-        return userAccountRepository.findByUserName(new UserName(command.username()));
+        return getUserAccountFromDatabase(command.username());
     }
+
+
+    /**
+     * Handles the sign-in process for an existing {@link UserAccount}.
+     * <p>
+     * This method verifies that the user exists and that the provided password matches
+     * the stored hash. If both validations succeed, a token is generated and returned.
+     * </p>
+     *
+     * @param command the {@link SignInCommand} containing the user's credentials
+     * @return an {@link Optional} containing a pair with the authenticated {@link UserAccount}
+     *         and the generated token; empty if authentication fails
+     *
+     * @throws RuntimeException if the user is not found or the password is incorrect
+     *
+     * @since 1.0
+     */
+    @Override
+    public Optional<ImmutablePair<UserAccount, String>> handle(SignInCommand command) {
+        var userAccount = getUserAccountFromDatabase(command.username());
+
+        if (userAccount.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+
+        UserAccount existingUser = userAccount.get();
+        if(!signInPasswordMatchesHash(command, existingUser)) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        var token = tokenService.generateToken(existingUser);
+        return Optional.of(ImmutablePair.of(existingUser, token));
+    }
+
 
     /**
      * Retrieves the user type from the database using the enum name provided in the command.
@@ -172,4 +216,26 @@ public class UserAccountCommandServiceImpl implements UserAccountCommandService 
     private boolean isPhoneNumberTaken(PhoneNumber phone) {
         return personRepository.existsByPhone(phone);
     }
+
+    /**
+     * Verifies if the provided raw password matches the stored hashed password for the user.
+     *
+     * @param command       the {@link SignInCommand} containing the plain password
+     * @param existingUser  the {@link UserAccount} retrieved from the database
+     * @return true if the password matches; false otherwise
+     */
+    private boolean signInPasswordMatchesHash(SignInCommand command, UserAccount existingUser) {
+        return hashingService.matches(command.password(), existingUser.getHashedPassword().hashedPassword());
+    }
+
+    /**
+     * Retrieves a {@link UserAccount} from the database using the provided username.
+     *
+     * @param command the raw username string
+     * @return an {@link Optional} containing the user account if found; empty otherwise
+     */
+    private Optional<UserAccount> getUserAccountFromDatabase(String command) {
+        return userAccountRepository.findByUserName(new UserName(command));
+    }
+
 }

@@ -29,7 +29,8 @@ public class UserAccountResourceFromEntityAssembler {
     public static UserAccountResource toResourceFromEntity(UserAccount entity) {
         return new UserAccountResource(
                 entity.getUserName().username(),
-                entity.getUserType().getStringName()
+                entity.getUserType().getStringName(),
+                entity.getPersonId().personId()
         );
     }
 }
