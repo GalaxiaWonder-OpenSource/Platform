@@ -9,12 +9,13 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
- * ProfessionalId Value Object
+ * ProfessionalId
  *
  * @summary
- * Represents a validated professional registration code for engineers or architects in Peru.
- * This value object supports codes from the Colegio de Ingenieros del Perú (CIP) and
- * the Colegio de Arquitectos del Perú (CAP).
+ * Value object that encapsulates a validated professional ID for registered engineers or architects in Peru.
+ * Valid formats are {@code CIP######} or {@code CAP######}, for Colegio de Ingenieros and Colegio de Arquitectos respectively.
+ *
+ * Internally wraps a {@code String} value stored as CHAR(9) in the database.
  *
  * @since 1.0
  */
@@ -32,28 +33,18 @@ public class ProfessionalId {
      * Default constructor for JPA.
      *
      * @summary
-     * Required by JPA and other serialization frameworks. Initializes the value to an empty string.
-     * Should not be used directly in business logic.
-     *
-     * @since 1.0
+     * Initializes the value to an empty string. Not recommended for direct usage.
      */
     protected ProfessionalId() {
         this.value = "";
     }
 
     /**
-     * Creates a new {@link ProfessionalId} with format validation.
+     * Constructs a new {@link ProfessionalId} with format validation.
      *
-     * @param value the professional ID string, which must match either:
-     *              <ul>
-     *                  <li><code>CIP######</code> — for the Colegio de Ingenieros del Perú</li>
-     *                  <li><code>CAP######</code> — for the Colegio de Arquitectos del Perú</li>
-     *              </ul>
-     *
-     * @throws NullPointerException if the value is null
-     * @throws IllegalArgumentException if the value does not match the expected format
-     *
-     * @since 1.0
+     * @param value the professional ID string, must match either {@code CIP######} or {@code CAP######}
+     * @throws NullPointerException     if {@code value} is null
+     * @throws IllegalArgumentException if {@code value} does not match the expected format
      */
     public ProfessionalId(String value) {
         Objects.requireNonNull(value, "Professional ID cannot be null");
@@ -66,20 +57,20 @@ public class ProfessionalId {
     }
 
     /**
-     * Checks whether the given value matches the CIP (Colegio de Ingenieros del Perú) pattern.
+     * Checks if a string matches the CIP pattern.
      *
-     * @param value the string to validate as a CIP code
-     * @return true if the value matches the CIP pattern; false otherwise
+     * @param value the value to check
+     * @return true if it matches CIP format; false otherwise
      */
     boolean isValidCip(String value) {
         return CIP_PATTERN.matcher(value).matches();
     }
 
     /**
-     * Checks whether the given value matches the CAP (Colegio de Arquitectos del Perú) pattern.
+     * Checks if a string matches the CAP pattern.
      *
-     * @param value the string to validate as a CAP code
-     * @return true if the value matches the CAP pattern; false otherwise
+     * @param value the value to check
+     * @return true if it matches CAP format; false otherwise
      */
     boolean isValidCap(String value) {
         return CAP_PATTERN.matcher(value).matches();
@@ -88,7 +79,7 @@ public class ProfessionalId {
     /**
      * Returns the professional ID as a string.
      *
-     * @return the validated professional ID
+     * @return the professional ID
      */
     @Override
     public String toString() {
@@ -96,11 +87,10 @@ public class ProfessionalId {
     }
 
     /**
-     * Compares this professional ID with another object for equality.
+     * Checks for value-based equality.
      *
      * @param o the object to compare
-     * @return true if the other object is a {@link ProfessionalId} with the same value
-     * @since 1.0
+     * @return true if values match
      */
     @Override
     public boolean equals(Object o) {
@@ -110,10 +100,9 @@ public class ProfessionalId {
     }
 
     /**
-     * Computes the hash code for the professional ID.
+     * Computes the hash code.
      *
-     * @return the hash code based on the professional ID value
-     * @since 1.0
+     * @return hash code based on value
      */
     @Override
     public int hashCode() {

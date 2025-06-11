@@ -2,94 +2,90 @@ package com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities;
 
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.UserTypes;
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 /**
- * Entity that represents a type of user in the system.
- * <p>
- * It is associated with the {@link UserTypes} enum and defines
- * the structure of the corresponding table in the database.
- * </p>
+ * UserType
  *
- * <p>Examples: {@code TYPE_CLIENT}, {@code TYPE_WORKER}.</p>
+ * @summary
+ * Entity that represents a **type of user** in the system, such as client or worker.
+ * This class is backed by the {@link UserTypes} enum and defines a fixed classification
+ * for users according to their functional identity within the platform.
+ *
+ * <p>Examples: {@code TYPE_CLIENT}, {@code TYPE_WORKER}</p>
+ *
+ * @author
+ * Galaxia Wonder Development Team
+ * @since 1.0
  */
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserType {
 
-    /**
-     * Unique identifier for the user type.
-     * Automatically generated when persisted to the database.
-     */
-    @Getter
-    @Id
+    /** Database identifier for the user type */
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Long id;
 
-    /**
-     * Name of the user type, based on the {@link UserTypes} enum.
-     * Stored as a unique and non-null string.
-     */
-    @Getter
+    /** Enum name representing the user type classification */
     @Enumerated(EnumType.STRING)
-    @Column(length = 20, unique = true, nullable = false)
+    @Column(length = 20)
     private UserTypes name;
 
     /**
-     * Default constructor required by JPA.
-     */
-    public UserType() {}
-
-    /**
-     * Creates a new {@code UserType} with the specified name.
+     * Constructs a UserType with a specified {@link UserTypes} value.
      *
-     * @param name the user type
+     * @param name the predefined user type classification
      */
     public UserType(UserTypes name) {
         this.name = name;
     }
 
     /**
-     * Returns the user type name as a string.
+     * Returns the default user type to be assigned when no explicit type is provided.
      *
-     * @return the enum name as a string
+     * @return a {@code UserType} instance with {@code TYPE_CLIENT} as default
      */
-    public String getStringName() {
-        return name.name();
-    }
-
-    /**
-     * Returns the default user type ({@code TYPE_CLIENT}).
-     *
-     * @return an instance with the {@code TYPE_CLIENT} role
-     */
-    public static UserType getDefaultRole() {
+    public static UserType getDefaultUserType() {
         return new UserType(UserTypes.TYPE_CLIENT);
     }
 
     /**
-     * Creates a {@code UserType} from the given enum name as a string.
+     * Converts a string representation of the user type name to a {@link UserType} instance.
      *
-     * @param name the name of the user type (e.g., "TYPE_CLIENT")
-     * @return a new {@code UserType} instance
-     * @throws IllegalArgumentException if the name does not match a valid enum constant
+     * @param name the string value of the enum constant
+     * @return a new {@code UserType} instance with the corresponding enum value
+     * @throws IllegalArgumentException if the name does not match any enum constant
      */
-    public static UserType toRoleFromName(String name) {
+    public static UserType toUserTypeFromName(String name) {
         return new UserType(UserTypes.valueOf(name));
     }
 
     /**
-     * Validates a list of user types.
-     * If the list is null or empty, returns a list containing the default user type.
+     * Validates a set of user types. If the input list is null or empty,
+     * a list containing only the default user type is returned.
      *
-     * @param userTypes the list of user types
-     * @return a validated list with at least one user type
+     * @param types the list of user types to validate
+     * @return the original list or a singleton list with the default user type
      */
-    public static List<UserType> validateRoleSet(List<UserType> userTypes) {
-        if (userTypes == null || userTypes.isEmpty()) {
-            return List.of(getDefaultRole());
-        }
-        return userTypes;
+    public static List<UserType> validateUserTypeSet(List<UserType> types) {
+        return types == null || types.isEmpty()
+                ? List.of(getDefaultUserType())
+                : types;
+    }
+
+    /**
+     * Returns the string representation of the enum-based user type.
+     *
+     * @return the name of the user type as a string
+     */
+    public String getStringName() {
+        return name.name();
     }
 }
