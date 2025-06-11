@@ -1,11 +1,11 @@
-package com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities;
+package com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates;
 
-import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.commands.CreatePersonCommand;
+import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.commands.SignUpCommand;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.EmailAddress;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.PersonName;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.PhoneNumber;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.ProfessionalId;
-import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.entities.AuditableModel;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -25,7 +25,8 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "persons")
-public class Person extends AuditableModel {
+public class Person extends AuditableAbstractAggregateRoot<Person> {
+    /** Full name of the person, encapsulated in a value object */
     @Embedded
     private PersonName name;
 
@@ -64,41 +65,54 @@ public class Person extends AuditableModel {
     }
 
     /**
-     * Constructor from CreatePersonCommand
-     * @param command command The {@link CreatePersonCommand} instance
+     * Constructs a Person instance from a {@link SignUpCommand}.
+     * Maps the input values into appropriate value objects.
+     *
+     * @param command the command object containing signup data
      */
-    public Person(CreatePersonCommand command) {
-        this.name = new PersonName(command.firstName(), command.lastName());
+    public Person(SignUpCommand command) {
+        this.name = new PersonName(
+                command.firstName(),
+                command.lastName()
+        );
         this.email = new EmailAddress(command.email());
+
+        if (command.phone() != null) {
+            this.phone = new PhoneNumber(command.phone());
+        }
     }
 
     /**
-     * First name getter
-     * @return First name
+     * Retrieves the person's first name.
+     *
+     * @return the first name
      */
     public String getFirstName() {
         return name.firstName();
     }
 
     /**
-     * Second name getter
-     * @return First name
+     * Retrieves the person's last name.
+     *
+     * @return the last name
      */
     public String getLastName() {
         return name.lastName();
     }
 
     /**
-     * Full name getter
-     * @return Full name
+     * Retrieves the person's full name as a single formatted string.
+     *
+     * @return the full name
      */
     public String getFullName() {
         return name.getFullName();
     }
 
     /**
-     * Email address getter
-     * @return Email address
+     * Retrieves the person's email address as a plain string.
+     *
+     * @return the email address
      */
     public String getEmail() {
         return email.address();
@@ -115,7 +129,7 @@ public class Person extends AuditableModel {
     }
 
     /**
-     * Assigns a professional ID to this person.
+     * Assigns a professional ID (e.g., registration number) to this person.
      *
      * @param professionalId the professional ID value object
      * @throws NullPointerException if professionalId is null
@@ -124,4 +138,3 @@ public class Person extends AuditableModel {
         this.professionalId = Objects.requireNonNull(professionalId, "Professional ID is required");
     }
 }
-

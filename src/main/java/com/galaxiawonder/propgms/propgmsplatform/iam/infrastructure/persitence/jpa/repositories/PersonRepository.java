@@ -1,6 +1,6 @@
 package com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persitence.jpa.repositories;
 
-import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities.Person;
+import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates.Person;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.EmailAddress;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.PhoneNumber;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,15 +29,6 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
      * @return true if a person with the specified email exists, false otherwise
      */
     boolean existsByEmail(EmailAddress email);
-
-    /**
-     * Finds a person by the given email address.
-     *
-     * @param email the email address to search for
-     * @return an {@code Optional} containing the {@code Person} if found,
-     *         or an empty {@code Optional} if no match is found
-     */
-    Optional<Person> findByEmail(EmailAddress email);
 
     /**
      * Checks if a person with the given phone number already exists.

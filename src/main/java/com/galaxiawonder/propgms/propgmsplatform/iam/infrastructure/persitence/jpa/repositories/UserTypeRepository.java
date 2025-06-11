@@ -37,4 +37,3 @@ public interface UserTypeRepository extends JpaRepository<UserType, Long> {
      */
     boolean existsByName(UserTypes name);
 }
-
