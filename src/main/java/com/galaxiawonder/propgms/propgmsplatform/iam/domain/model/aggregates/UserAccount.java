@@ -2,9 +2,8 @@ package com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates;
 
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities.UserType;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.Password;
-import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.PersonId;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.UserName;
-import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.UserTypes;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.*;
 import lombok.Getter;

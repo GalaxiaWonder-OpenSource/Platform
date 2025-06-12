@@ -47,18 +47,5 @@ public class UserTypeCommandServiceImpl implements UserTypeCommandService {
             }
         });
     }
-
-    /**
-     * Initializes the default user types after application startup.
-     *
-     * @summary
-     * Automatically triggers the seeding of user types when the Spring context is initialized.
-     *
-     * @since 1.0
-     */
-    @PostConstruct
-    public void init() {
-        this.handle(new SeedUserTypeCommand());
-    }
 }
 

@@ -1,60 +1,33 @@
 package com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects;
 
-import lombok.Getter;
-
-import java.util.Objects;
+import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates.Person;
+import jakarta.persistence.Embeddable;
 
 /**
- * Value Object representing the ID of a Person.
+ * PersonId
  *
- * <p>This class ensures that the ID is never null or invalid within the domain.
- * It provides a default constructor required for serialization frameworks like Jackson or JPA.</p>
+ * @summary
+ * Value object that encapsulates the identifier of a {@link Person}.
+ * Improves domain expressiveness and ensures type safety when referencing persons across the system.
+ * Internally wraps a {@code Long} value which is still used as the primary key at the persistence layer.
+ *
+ * @param personId the numeric identifier of the person, must be positive and non-null
  *
  * @since 1.0
  */
-@Getter
-public class PersonId {
-
-    private Long value;
+@Embeddable
+public record PersonId(Long personId) {
 
     /**
-     * Default constructor required by some serialization frameworks.
-     * Do not use this in domain logic directly.
-     */
-    public PersonId() {
-        // intentionally empty
-    }
-
-    /**
-     * Constructs a valid PersonId.
+     * Validates the {@code personId} value.
      *
-     * @param value the ID value, must be positive
+     * @throws IllegalArgumentException if {@code personId} is null or less than 1
      */
-    public PersonId(Long value) {
-        if (value == null || value <= 0) {
-            throw new IllegalArgumentException("PersonId must be a positive number");
+    public PersonId {
+        if (personId == null || personId < 1) {
+            throw new IllegalArgumentException("Profile id cannot be null or less than 1");
         }
-        this.value = value;
-    }
-
-    public Long getValue() {
-        return value;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PersonId that)) return false;
-        return Objects.equals(value, that.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(value);
-    }
-
-    @Override
-    public String toString() {
-        return value != null ? value.toString() : "null";
     }
 }
+
+
