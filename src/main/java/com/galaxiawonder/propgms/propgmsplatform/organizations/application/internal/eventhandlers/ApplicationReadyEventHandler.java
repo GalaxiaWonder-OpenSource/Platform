@@ -1,7 +1,9 @@
 package com.galaxiawonder.propgms.propgmsplatform.organizations.application.internal.eventhandlers;
 
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.SeedOrganizationInvitationStatusCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.SeedOrganizationMemberTypeCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.SeedOrganizationStatusCommand;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationInvitationStatusCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationMemberTypeCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationStatusCommandService;
 import org.slf4j.Logger;
@@ -16,8 +18,17 @@ import java.sql.Timestamp;
  * ApplicationReadyEventHandler
  *
  * @summary
- * Event handler responsible for seeding default organization statuses
+ * Event handler responsible for seeding default data related to organizations
  * once the Spring application context is fully initialized.
+ *
+ * <p>This includes:</p>
+ * <ul>
+ *   <li>Seeding default organization statuses (e.g., {@code ACTIVE}, {@code INACTIVE})</li>
+ *   <li>Seeding default organization member types (e.g., {@code CONTRACTOR}, {@code WORKER})</li>
+ *   <li>Seeding default organization invitation statuses (e.g., {@code PENDING}, {@code ACCEPTED}, {@code REJECTED})</li>
+ * </ul>
+ *
+ * <p>The seeding process is idempotent and will only persist missing values.</p>
  *
  * @author
  * Galaxia Wonder Development Team
@@ -28,15 +39,18 @@ public class ApplicationReadyEventHandler {
 
     private final OrganizationStatusCommandService organizationStatusCommandService;
     private final OrganizationMemberTypeCommandService organizationMemberTypeCommandService;
+    private final OrganizationInvitationStatusCommandService organizationInvitationStatusCommandService;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationReadyEventHandler.class);
 
-    public ApplicationReadyEventHandler(OrganizationStatusCommandService organizationStatusCommandService, OrganizationMemberTypeCommandService organizationMemberTypeCommandService) {
+    public ApplicationReadyEventHandler(OrganizationStatusCommandService organizationStatusCommandService, OrganizationMemberTypeCommandService organizationMemberTypeCommandService, OrganizationInvitationStatusCommandService organizationInvitationStatusCommandService) {
         this.organizationStatusCommandService = organizationStatusCommandService;
         this.organizationMemberTypeCommandService = organizationMemberTypeCommandService;
+        this.organizationInvitationStatusCommandService = organizationInvitationStatusCommandService;
     }
 
     /**
-     * Handles the {@link ApplicationReadyEvent} by triggering the seeding of default organization statuses.
+     * Handles the {@link ApplicationReadyEvent} by triggering the seeding of default organization, organization members and organization invitation statuses.
      *
      * @param event the Spring application ready event
      */
@@ -48,6 +62,8 @@ public class ApplicationReadyEventHandler {
         organizationStatusCommandService.handle(new SeedOrganizationStatusCommand());
 
         organizationMemberTypeCommandService.handle(new SeedOrganizationMemberTypeCommand());
+
+        organizationInvitationStatusCommandService.handle(new SeedOrganizationInvitationStatusCommand());
 
         LOGGER.info("✅ Organization statuses seeding completed for {} at {}", applicationName, currentTimestamp());
     }
