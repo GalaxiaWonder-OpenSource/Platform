@@ -1,8 +1,5 @@
 package com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.resources;
 
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationStatus;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;
-
 /**
  *
  * @param legalName The legal name of the organization.

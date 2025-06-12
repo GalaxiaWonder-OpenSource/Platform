@@ -6,8 +6,7 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.comm
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.UpdateOrganizationCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationCommandService;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.OrganizationRepository;
-import org.aspectj.weaver.ast.Or;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.repositories.OrganizationRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
