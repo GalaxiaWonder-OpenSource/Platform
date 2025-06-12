@@ -5,7 +5,7 @@ package com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.val
  * - CONTRACTOR: Organization's owner, with all the permissions.
  * - WORKER: Organization's worker, with some permissions.
  */
-public enum OrganizationMemberType {
+public enum OrganizationMemberTypes {
     CONTRACTOR,
     WORKER
 }

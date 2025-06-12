@@ -45,9 +45,9 @@ public class WebSecurityConfiguration {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(WHITE_LIST).permitAll()
+                        .anyRequest().permitAll()
                 )
-                .httpBasic(Customizer.withDefaults());
+                .httpBasic(AbstractHttpConfigurer::disable);
 
         return http.build();
     }

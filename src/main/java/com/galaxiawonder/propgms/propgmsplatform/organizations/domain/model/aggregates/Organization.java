@@ -1,9 +1,11 @@
 package com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates;
 
+import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities.UserType;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.CreateOrganizationCommand;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMember;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.CommercialName;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.LegalName;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationStatus;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationStatus;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
@@ -14,7 +16,9 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Organization Aggregate Root
@@ -49,7 +53,8 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
     private PersonId createdBy;
 
     @Getter
-    @Column(nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "user_type_id", nullable = false, unique = false)
     private OrganizationStatus status;
 
     /*
@@ -69,11 +74,11 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
      *                - status must not be null.
      */
 
-    public Organization(CreateOrganizationCommand command) {
+    public Organization(CreateOrganizationCommand command, OrganizationStatus status) {
         this.legalName = new LegalName(command.legalName());
         this.commercialName = command.commercialName() != null ? new CommercialName(command.commercialName()) : new CommercialName(""); this.ruc = new Ruc(command.ruc());
         this.createdBy = new PersonId(command.createdBy());
-        this.status = OrganizationStatus.ACTIVE;
+        this.status = status;
     }
 
     /**

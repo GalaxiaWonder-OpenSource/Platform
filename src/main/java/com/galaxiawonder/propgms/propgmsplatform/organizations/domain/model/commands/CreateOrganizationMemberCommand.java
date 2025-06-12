@@ -1,6 +1,6 @@
 package com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands;
 
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationMemberType;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationMemberTypes;
 
 /**
  * @summary
@@ -10,7 +10,7 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valu
  * @param organizationId the organization id linked to the member
  * @param memberType the member's type in the organization
  */
-public record CreateOrganizationMemberCommand(Long personId, Long organizationId, OrganizationMemberType memberType) {
+public record CreateOrganizationMemberCommand(Long personId, Long organizationId, OrganizationMemberTypes memberType) {
     public CreateOrganizationMemberCommand {
         /**
          * @throws IllegalArgumentException if personId is null or zero

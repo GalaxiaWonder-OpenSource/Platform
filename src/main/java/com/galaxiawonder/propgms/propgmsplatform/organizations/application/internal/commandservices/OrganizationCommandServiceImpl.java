@@ -4,9 +4,11 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggr
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.CreateOrganizationCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.DeleteOrganizationCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.UpdateOrganizationCommand;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationStatuses;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.repositories.OrganizationRepository;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.repositories.OrganizationStatusRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -21,8 +23,11 @@ import java.util.Optional;
 @Service
 public class OrganizationCommandServiceImpl implements OrganizationCommandService {
     private final OrganizationRepository organizationRepository;
-    public OrganizationCommandServiceImpl(OrganizationRepository organizationRepository) {
+    private final OrganizationStatusRepository organizationStatusRepository;
+
+    public OrganizationCommandServiceImpl(OrganizationRepository organizationRepository, OrganizationStatusRepository organizationStatusRepository) {
         this.organizationRepository = organizationRepository;
+        this.organizationStatusRepository = organizationStatusRepository;
     }
     /**
      * {@inheritDoc}
@@ -31,7 +36,11 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
     public Optional<Organization> handle(CreateOrganizationCommand command){
         if(organizationRepository.existsByRuc(new Ruc(command.ruc())))
             throw new IllegalArgumentException("Organization with same RUC already exists for this API key");
-        var organization = new Organization(command);
+
+        var status = organizationStatusRepository.findByName(OrganizationStatuses.ACTIVE)
+                .orElseThrow(() -> new IllegalStateException("Default status 'ACTIVE' not found"));
+
+        var organization = new Organization(command, status);
         var createdOrganization = organizationRepository.save(organization);
         return Optional.of(createdOrganization);
     }

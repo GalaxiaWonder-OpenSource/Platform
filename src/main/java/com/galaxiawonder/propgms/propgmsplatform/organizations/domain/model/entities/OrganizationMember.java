@@ -1,9 +1,8 @@
 package com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities;
 
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.CreateOrganizationMemberCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationId;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationMemberType;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationMemberTypes;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.entities.AuditableModel;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
 import jakarta.persistence.*;
@@ -34,7 +33,7 @@ public class OrganizationMember extends AuditableModel {
 
     @Getter
     @Column(nullable = false)
-    private OrganizationMemberType memberType;
+    private OrganizationMemberTypes memberType;
 
     protected OrganizationMember() {}
 

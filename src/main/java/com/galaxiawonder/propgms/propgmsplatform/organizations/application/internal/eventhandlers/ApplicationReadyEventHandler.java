@@ -21,7 +21,7 @@ import java.sql.Timestamp;
  * Galaxia Wonder Development Team
  * @since 1.0
  */
-@Service
+@Service("OrganizationApplicationReadyEventHandler")
 public class ApplicationReadyEventHandler {
 
     private final OrganizationStatusCommandService organizationStatusCommandService;

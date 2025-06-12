@@ -21,7 +21,7 @@ import java.sql.Timestamp;
  * Galaxia Wonder Development Team
  * @since 1.0
  */
-@Service
+@Service("IdentityAndAccessManagementApplicationReadyEventHandler")
 public class ApplicationReadyEventHandler {
 
     private final UserTypeCommandService userTypeCommandService;
