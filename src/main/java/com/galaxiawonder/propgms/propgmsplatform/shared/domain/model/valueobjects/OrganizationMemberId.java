@@ -1,56 +1,31 @@
 package com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects;
 
-import lombok.Getter;
-
-import java.util.Objects;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMember;
+import jakarta.persistence.Embeddable;
 
 /**
- * Value Object representing the ID of an Organization Member.
+ * OrganizationMemberId
  *
- * <p>This class ensures that the ID is never null or invalid within the domain.
- * It provides a default constructor required for serialization frameworks like Jackson or JPA.</p>
+ * @summary
+ * Value object that encapsulates the identifier of an {@link OrganizationMember}.
+ * Improves domain expressiveness and ensures type safety when referencing organization members across the system.
+ * Internally wraps a {@code Long} value which is still used as the primary key at the persistence layer.
+ *
+ * @param organizationMemberId the numeric identifier of the organization member, must be positive and non-null
  *
  * @since 1.0
  */
-@Getter
-public class OrganizationMemberId {
-    private Long value;
+@Embeddable
+public record OrganizationMemberId(Long organizationMemberId) {
+
     /**
-     * Default constructor required by some serialization frameworks.
-     * Do not use this in domain logic directly.
-     */
-    public OrganizationMemberId() {
-        // intentionally empty
-    }
-    /**
-     * Constructs a valid OrganizationMemberId.
+     * Validates the {@code organizationMemberId} value.
      *
-     * @param value the ID value, must be positive
+     * @throws IllegalArgumentException if {@code organizationMemberId} is null or less than 1
      */
-    public OrganizationMemberId(Long value) {
-        if (value == null || value <= 0) {
-            throw new IllegalArgumentException("OrganizationMemberId must be a positive number");
+    public OrganizationMemberId {
+        if (organizationMemberId == null || organizationMemberId < 1) {
+            throw new IllegalArgumentException("Organization member id cannot be null or less than 1");
         }
-        this.value = value;
-    }
-    public Long getValue() {
-        return value;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof OrganizationMemberId that)) return false;
-        return Objects.equals(value, that.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(value);
-    }
-
-    @Override
-    public String toString() {
-        return value != null ? value.toString() : "null";
     }
 }
