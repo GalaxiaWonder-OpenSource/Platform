@@ -1,6 +1,8 @@
 package com.galaxiawonder.propgms.propgmsplatform.organizations.application.internal.eventhandlers;
 
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.SeedOrganizationMemberTypeCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.SeedOrganizationStatusCommand;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationMemberTypeCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationStatusCommandService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +27,12 @@ import java.sql.Timestamp;
 public class ApplicationReadyEventHandler {
 
     private final OrganizationStatusCommandService organizationStatusCommandService;
+    private final OrganizationMemberTypeCommandService organizationMemberTypeCommandService;
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationReadyEventHandler.class);
 
-    public ApplicationReadyEventHandler(OrganizationStatusCommandService organizationStatusCommandService) {
+    public ApplicationReadyEventHandler(OrganizationStatusCommandService organizationStatusCommandService, OrganizationMemberTypeCommandService organizationMemberTypeCommandService) {
         this.organizationStatusCommandService = organizationStatusCommandService;
+        this.organizationMemberTypeCommandService = organizationMemberTypeCommandService;
     }
 
     /**
@@ -41,8 +45,9 @@ public class ApplicationReadyEventHandler {
         var applicationName = event.getApplicationContext().getId();
         LOGGER.info("🔄 Verifying if organization statuses need seeding for {} at {}", applicationName, currentTimestamp());
 
-        var command = new SeedOrganizationStatusCommand();
-        organizationStatusCommandService.handle(command);
+        organizationStatusCommandService.handle(new SeedOrganizationStatusCommand());
+
+        organizationMemberTypeCommandService.handle(new SeedOrganizationMemberTypeCommand());
 
         LOGGER.info("✅ Organization statuses seeding completed for {} at {}", applicationName, currentTimestamp());
     }
