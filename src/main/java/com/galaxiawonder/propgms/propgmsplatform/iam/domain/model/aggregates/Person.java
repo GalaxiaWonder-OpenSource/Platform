@@ -6,6 +6,7 @@ import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.P
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.PhoneNumber;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.ProfessionalId;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -136,5 +137,13 @@ public class Person extends AuditableAbstractAggregateRoot<Person> {
      */
     public void assignProfessionalId(ProfessionalId professionalId) {
         this.professionalId = Objects.requireNonNull(professionalId, "Professional ID is required");
+    }
+
+    public PersonId getIdAsValueObject() {
+        return new PersonId(this.getId());
+    }
+
+    public boolean hasThisPersonId(PersonId personId) {
+        return Objects.equals(personId.personId(), this.getId());
     }
 }
