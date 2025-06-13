@@ -1,4 +1,4 @@
-package com.galaxiawonder.propgms.propgmsplatform.iam.interfaces.rest.acl;
+package com.galaxiawonder.propgms.propgmsplatform.iam.interfaces.acl;
 
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
 
@@ -39,5 +39,18 @@ public interface IAMContextFacade {
      * @return a {@link ProfileDetails} object containing name and email
      */
     ProfileDetails getProfileDetailsByEmail(String email);
+
+    /**
+     * Retrieves the unique identifier of a person based on their email address.
+     *
+     * <p>This method is typically used when resolving relationships or
+     * linking a person to another domain entity (e.g., invitations, memberships).</p>
+     *
+     * @param email the email address used to look up the person
+     * @return the unique identifier of the person as a {@link Long}
+     *
+     * @since 1.0
+     */
+    Long getPersonIdFromEmail(String email);
 }
 
