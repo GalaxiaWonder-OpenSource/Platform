@@ -124,7 +124,16 @@ public class OrganizationController {
         return ResponseEntity.ok("Organization with given ID successfully updated");
     }
 
-    @PostMapping("/invitations")
+    @Operation(
+            summary = "Invite a person to an organization by email",
+            description = "Creates a new invitation for a person to join an existing organization, validating business rules and setting the initial status to PENDING."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Invitation successfully created"),
+            @ApiResponse(responseCode = "400", description = "Invalid request or person already invited/member"),
+            @ApiResponse(responseCode = "404", description = "Organization not found or person profile unavailable")
+    })
+    @PostMapping("-invitations")
     public ResponseEntity<OrganizationInvitationResource> invitePersonToOrganization(
             @RequestBody InvitePersonToOrganizationResource resource) {
 
@@ -140,5 +149,4 @@ public class OrganizationController {
                     return new ResponseEntity<>(resourceResponse, HttpStatus.CREATED);
                 })
                 .orElseGet(() -> ResponseEntity.badRequest().build());
-    }
-}
+    }}
