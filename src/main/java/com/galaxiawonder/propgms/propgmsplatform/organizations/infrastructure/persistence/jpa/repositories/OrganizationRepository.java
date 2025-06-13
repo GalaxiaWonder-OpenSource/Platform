@@ -5,6 +5,8 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valu
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface OrganizationRepository extends JpaRepository<Organization, Long> {
     /**
@@ -19,4 +21,10 @@ public interface OrganizationRepository extends JpaRepository<Organization, Long
      * @return an Organization
      */
     Organization findByRuc(Ruc ruc);
+    /**
+     * Find an organization by its ID
+     * @param id organization's ID
+     * @return an Organization
+     */
+    Optional<Organization> findById(Long id);
 }

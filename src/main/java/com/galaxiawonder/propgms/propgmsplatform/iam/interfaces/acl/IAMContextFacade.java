@@ -41,6 +41,20 @@ public interface IAMContextFacade {
     ProfileDetails getProfileDetailsByEmail(String email);
 
     /**
+     * Retrieves detailed profile information of a person given their internal system ID.
+     *
+     * <p>This method is commonly used to fetch personal data associated with a person,
+     * such as name, email, or role, typically for display or reference in other modules
+     * (e.g., invitations, dashboards, reports).</p>
+     *
+     * @param id the internal ID of the person
+     * @return an object containing the person's profile details
+     *
+     * @since 1.0
+     */
+    ProfileDetails getProfileDetailsById(Long id);
+
+    /**
      * Retrieves the unique identifier of a person based on their email address.
      *
      * <p>This method is typically used when resolving relationships or

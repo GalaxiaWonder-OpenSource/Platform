@@ -68,6 +68,30 @@ public class IAMContextFacadeImpl implements IAMContextFacade {
     }
 
     /**
+     * Retrieves basic profile information of a person using their internal system ID.
+     *
+     * <p>This method delegates the query to {@link PersonQueryService} and maps the resulting
+     * {@link Person} entity to a {@link ProfileDetails} read model.</p>
+     *
+     * @param id the internal ID of the person to retrieve
+     * @return a {@link ProfileDetails} object containing the person's first name, last name and email
+     * @throws EntityNotFoundException if no person exists with the given ID
+     *
+     * @since 1.0
+     */
+    @Override
+    public ProfileDetails getProfileDetailsById(Long id) {
+        var person = this.personQueryService.handle(new GetPersonByIdQuery(id))
+                .orElseThrow(() -> new EntityNotFoundException("Person not found with id: " + id));
+
+        return new ProfileDetails(
+                person.getFirstName(),
+                person.getLastName(),
+                person.getEmail()
+        );
+    }
+
+    /**
      * Retrieves the unique identifier of a person based on their email address.
      *
      * <p>This method delegates the query to the {@link PersonQueryService} and returns

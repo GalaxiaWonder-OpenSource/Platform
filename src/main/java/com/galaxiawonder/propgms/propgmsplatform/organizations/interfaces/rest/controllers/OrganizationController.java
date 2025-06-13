@@ -3,20 +3,24 @@ package com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.DeleteOrganizationCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.UpdateOrganizationCommand;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitation;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetOrganizationByIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationQueryService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.assemblers.CreateOrganizationCommandFromResourceAssembler;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.assemblers.InvitePersonToOrganizationCommandFromResource;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.assemblers.OrganizationInvitationResourceFromEntityAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.assemblers.OrganizationResourceFromEntityAssembler;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.resources.CreateOrganizationResource;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.resources.OrganizationResource;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.resources.UpdateOrganizationResource;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.resources.*;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -118,5 +122,23 @@ public class OrganizationController {
         var command = new UpdateOrganizationCommand(id, resource.commercialName());
         organizationCommandService.handle(command);
         return ResponseEntity.ok("Organization with given ID successfully updated");
+    }
+
+    @PostMapping("/invitations")
+    public ResponseEntity<OrganizationInvitationResource> invitePersonToOrganization(
+            @RequestBody InvitePersonToOrganizationResource resource) {
+
+        Optional<ImmutablePair<Organization, ProfileDetails>> invitation = organizationCommandService
+                .handle(InvitePersonToOrganizationCommandFromResource.toCommandFromResource(resource));
+
+        return invitation
+                .map(pair -> {
+                    Organization organization = pair.getLeft();
+                    ProfileDetails profileDetails = pair.getRight();
+                    OrganizationInvitationResource resourceResponse =
+                            OrganizationInvitationResourceFromEntityAssembler.toResourceFromEntity(organization, profileDetails);
+                    return new ResponseEntity<>(resourceResponse, HttpStatus.CREATED);
+                })
+                .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 }

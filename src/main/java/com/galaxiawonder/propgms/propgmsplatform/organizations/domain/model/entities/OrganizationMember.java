@@ -1,5 +1,6 @@
 package com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities;
 
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.CreateOrganizationMemberCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationMemberTypes;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.entities.AuditableModel;
@@ -36,10 +37,9 @@ public class OrganizationMember extends AuditableModel {
     private PersonId personId;
 
     /** Unique identifier of the organization this member belongs to. */
-    @Column(nullable = false, updatable = false)
-    @AttributeOverride(name = "value", column = @Column(name = "organization_id"))
-    @Embedded
-    private OrganizationId organizationId;
+    @ManyToOne
+    @JoinColumn(name = "organization_id", nullable = false)
+    private Organization organization;
 
     /** The role or type of the member within the organization (e.g., CONTRACTOR, WORKER). */
     @Column(nullable = false)
@@ -47,29 +47,4 @@ public class OrganizationMember extends AuditableModel {
 
     /** Protected default constructor for JPA. */
     protected OrganizationMember() {}
-
-    /**
-     * Constructs a new {@link OrganizationMember} based on the provided command.
-     *
-     * @param command the {@link CreateOrganizationMemberCommand} containing all required values
-     *
-     * @throws IllegalArgumentException if any of the following is true:
-     *         <ul>
-     *           <li>{@code command.personId()} is null or blank</li>
-     *           <li>{@code command.organizationId()} is null or blank</li>
-     *           <li>{@code command.memberType()} is null</li>
-     *         </ul>
-     */
-    public OrganizationMember(CreateOrganizationMemberCommand command) {
-        if (command.personId() == null)
-            throw new IllegalArgumentException("personId must not be null or blank");
-        if (command.organizationId() == null)
-            throw new IllegalArgumentException("organizationId must not be null or blank");
-        if (command.memberType() == null)
-            throw new IllegalArgumentException("memberType must not be null");
-
-        this.personId = new PersonId(command.personId());
-        this.organizationId = new OrganizationId(command.organizationId());
-        this.memberType = command.memberType();
-    }
 }
