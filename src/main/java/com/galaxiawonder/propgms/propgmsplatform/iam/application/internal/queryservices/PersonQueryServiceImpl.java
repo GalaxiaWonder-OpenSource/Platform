@@ -1,4 +1,4 @@
-package com.galaxiawonder.propgms.propgmsplatform.iam.application.internal.commandservices;
+package com.galaxiawonder.propgms.propgmsplatform.iam.application.internal.queryservices;
 
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates.Person;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.queries.GetPersonByEmailQuery;
