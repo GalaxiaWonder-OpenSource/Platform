@@ -1,24 +1,17 @@
 package com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates;
 
-import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities.UserType;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.CreateOrganizationCommand;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.InvitePersonToOrganizationByEmailCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.*;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.CommercialName;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.LegalName;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
-import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.OrganizationId;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
 import jakarta.persistence.*;
 import lombok.Getter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -118,7 +111,7 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
      *
      * @since 1.0
      */
-    public void addInvitation(PersonId personId, OrganizationInvitationStatus status) {
+    public OrganizationInvitation addInvitation(PersonId personId, OrganizationInvitationStatus status) {
         if (isAlreadyMember(personId)) {
             throw new IllegalArgumentException("This person is already a member of the organization.");
         }
@@ -129,6 +122,8 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
 
         var invitation = new OrganizationInvitation(this, personId, status);
         invitations.add(invitation);
+
+        return invitation;
     }
 
     /**
@@ -144,7 +139,7 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
      *
      * @since 1.0
      */
-    public void acceptInvitation(Long invitationId, OrganizationInvitationStatus acceptedStatus, OrganizationMemberType memberType) {
+    public OrganizationInvitation acceptInvitation(Long invitationId, OrganizationInvitationStatus acceptedStatus, OrganizationMemberType memberType) {
         OrganizationInvitation invitation = selectInvitationFromId(invitationId);
 
         if (!invitation.isPending()) {
@@ -154,6 +149,20 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
         invitation.accept(acceptedStatus);
 
         addMember(invitation, memberType);
+
+        return invitation;
+    }
+
+    public OrganizationInvitation rejectInvitation(Long invitationId, OrganizationInvitationStatus rejectedStatus) {
+        OrganizationInvitation invitation = selectInvitationFromId(invitationId);
+
+        if (!invitation.isPending()) {
+            throw new IllegalStateException("Only pending invitations can be accepted");
+        }
+
+        invitation.reject(rejectedStatus);
+
+        return invitation;
     }
 
     /**

@@ -65,8 +65,8 @@ public class OrganizationInvitation extends AuditableModel {
     /**
      * Marks this invitation as rejected.
      */
-    public void reject() {
-        this.status = new OrganizationInvitationStatus(OrganizationInvitationStatuses.REJECTED);
+    public void reject(OrganizationInvitationStatus rejectedStatus) {
+        this.status = rejectedStatus;
     }
 
     /**

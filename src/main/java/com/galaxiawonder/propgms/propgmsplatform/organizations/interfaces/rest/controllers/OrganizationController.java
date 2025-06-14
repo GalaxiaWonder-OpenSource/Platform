@@ -3,10 +3,10 @@ package com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.AcceptInvitationCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.DeleteOrganizationCommand;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.RejectInvitationCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.UpdateOrganizationCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitation;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetOrganizationByIdQuery;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationQueryService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.assemblers.CreateOrganizationCommandFromResourceAssembler;
@@ -20,7 +20,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.commons.lang3.tuple.ImmutablePair;
+
+import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -134,12 +135,11 @@ public class OrganizationController {
             @ApiResponse(responseCode = "400", description = "Invalid request or person already invited/member"),
             @ApiResponse(responseCode = "404", description = "Organization not found or person profile unavailable")
     })
-
     @PostMapping("/invitations")
     public ResponseEntity<OrganizationInvitationResource> invitePersonToOrganization(
             @RequestBody InvitePersonToOrganizationResource resource) {
 
-        Optional<ImmutablePair<Organization, ProfileDetails>> invitation = organizationCommandService
+        Optional<Triple<Organization, OrganizationInvitation, ProfileDetails>> invitation = organizationCommandService
                 .handle(InvitePersonToOrganizationCommandFromResource.toCommandFromResource(resource));
 
         return buildOrganizationInvitationResource(invitation);
@@ -159,19 +159,39 @@ public class OrganizationController {
             @Parameter(description = "ID of the invitation to accept", required = true)
             @PathVariable Long id) {
 
-        Optional<ImmutablePair<Organization, ProfileDetails>> updatedInvitation = organizationCommandService
+        Optional<Triple<Organization, OrganizationInvitation, ProfileDetails>> updatedInvitation = organizationCommandService
                 .handle(new AcceptInvitationCommand(id));
 
         return buildOrganizationInvitationResource(updatedInvitation);
     }
 
-    private static ResponseEntity<OrganizationInvitationResource> buildOrganizationInvitationResource(Optional<ImmutablePair<Organization, ProfileDetails>> updatedInvitation) {
-        return updatedInvitation
-                .map(pair -> {
-                    Organization organization = pair.getLeft();
-                    ProfileDetails profileDetails = pair.getRight();
+    @Operation(
+            summary = "Reject an invitation by ID",
+            description = "Rejects a pending organization invitation using its unique identifier"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Invitation rejected successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid state or business rule violation"),
+            @ApiResponse(responseCode = "404", description = "Invitation or associated organization not found")
+    })
+    @PatchMapping("/invitations/{id}/reject")
+    public ResponseEntity<OrganizationInvitationResource> rejectInvitation(
+            @Parameter(description = "ID of the invitation to reject", required = true)
+            @PathVariable Long id) {
+
+        Optional<Triple<Organization, OrganizationInvitation, ProfileDetails>> updatedInvitation = organizationCommandService
+                .handle(new RejectInvitationCommand(id));
+
+        return buildOrganizationInvitationResource(updatedInvitation);
+    }
+
+    private static ResponseEntity<OrganizationInvitationResource> buildOrganizationInvitationResource(
+            Optional<Triple<Organization, OrganizationInvitation, ProfileDetails>> invitationTriple) {
+
+        return invitationTriple
+                .map(triple -> {
                     OrganizationInvitationResource resourceResponse =
-                            OrganizationInvitationResourceFromEntityAssembler.toResourceFromEntity(organization, profileDetails);
+                            OrganizationInvitationResourceFromEntityAssembler.toResourceFromEntity(triple);
                     return new ResponseEntity<>(resourceResponse, HttpStatus.CREATED);
                 })
                 .orElseGet(() -> ResponseEntity.badRequest().build());

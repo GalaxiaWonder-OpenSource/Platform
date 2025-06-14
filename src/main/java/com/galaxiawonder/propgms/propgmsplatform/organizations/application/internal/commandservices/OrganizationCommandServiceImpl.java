@@ -19,7 +19,7 @@ import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobject
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -111,13 +111,12 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
      *
      * @param command the {@link InvitePersonToOrganizationByEmailCommand} containing the email and organization ID
      * @return an {@link Optional} containing a pair with the updated {@link Organization} and the inviter's {@link ProfileDetails}
-     * @throws EntityNotFoundException if the organization does not exist or the profile cannot be found
+     * @throws EntityNotFoundException  if the organization does not exist or the profile cannot be found
      * @throws IllegalArgumentException if the person is already a member or already has a pending invitation
-     *
      * @since 1.0
      */
     @Transactional
-    public Optional<ImmutablePair<Organization, ProfileDetails>> handle(InvitePersonToOrganizationByEmailCommand command) {
+    public Optional<Triple<Organization, OrganizationInvitation, ProfileDetails>> handle(InvitePersonToOrganizationByEmailCommand command) {
         var personId = new PersonId(this.iamContextFacade.getPersonIdFromEmail(command.email()));
 
         Organization organization = this.organizationRepository.findById(command.organizationId())
@@ -125,11 +124,11 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
 
         OrganizationInvitationStatus pendingStatus = getOrganizationInvitationStatus(OrganizationInvitationStatuses.PENDING);
 
-        organization.addInvitation(personId, pendingStatus);
+        OrganizationInvitation invitation = organization.addInvitation(personId, pendingStatus);
 
         organizationRepository.save(organization);
 
-        return returnOrganizationProfilePair(organization);
+        return returnInvitationTripleResult(organization, invitation);
     }
 
     /**
@@ -152,18 +151,51 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
      * @since 1.0
      */
     @Override
-    public Optional<ImmutablePair<Organization, ProfileDetails>> handle(AcceptInvitationCommand command) {
+    public Optional<Triple<Organization, OrganizationInvitation, ProfileDetails>> handle(AcceptInvitationCommand command) {
         Organization organization = this.organizationRepository.findOrganizationByInvitationId(command.invitationId())
                 .orElseThrow(()-> new EntityNotFoundException("No organization found for the given invitation id: " + command.invitationId()));
 
         OrganizationInvitationStatus acceptedStatus = getOrganizationInvitationStatus(OrganizationInvitationStatuses.ACCEPTED);
         OrganizationMemberType workerType = getOrganizationMemberType(OrganizationMemberTypes.WORKER);
 
-        organization.acceptInvitation(command.invitationId(), acceptedStatus, workerType);
+        OrganizationInvitation invitation = organization.acceptInvitation(command.invitationId(), acceptedStatus, workerType);
 
         organizationRepository.save(organization);
 
-        return returnOrganizationProfilePair(organization);
+        return returnInvitationTripleResult(organization, invitation);
+    }
+
+    /**
+     * Handles the command to reject an organization invitation by its ID.
+     *
+     * <p>This method:
+     * <ul>
+     *   <li>Fetches the {@link Organization} that owns the invitation using the invitation ID.</li>
+     *   <li>Retrieves the {@link OrganizationInvitationStatus} corresponding to {@code REJECTED}.</li>
+     *   <li>Delegates to the aggregate root to apply the domain logic and reject the invitation.</li>
+     *   <li>Persists the updated {@link Organization}, including the rejected invitation.</li>
+     *   <li>Returns a pair containing the updated organization and the inviter's {@link ProfileDetails}.</li>
+     * </ul>
+     *
+     * @param rejectInvitationCommand the {@link RejectInvitationCommand} containing the ID of the invitation to reject
+     * @return an {@link Optional} containing a pair of {@link Organization} and {@link ProfileDetails}
+     * @throws EntityNotFoundException if the organization or invitation is not found
+     * @throws IllegalStateException if the invitation cannot be rejected (e.g., already accepted or rejected)
+     *
+     * @since 1.0
+     */
+    @Override
+    public Optional<Triple<Organization, OrganizationInvitation, ProfileDetails>> handle(RejectInvitationCommand rejectInvitationCommand) {
+        Organization organization = this.organizationRepository.findOrganizationByInvitationId(rejectInvitationCommand.invitationId())
+                .orElseThrow(() -> new EntityNotFoundException("No organization found for the given invitation id: " + rejectInvitationCommand.invitationId()));
+
+        OrganizationInvitationStatus rejectedStatus = getOrganizationInvitationStatus(OrganizationInvitationStatuses.REJECTED);
+
+        OrganizationInvitation invitation = organization.rejectInvitation(rejectInvitationCommand.invitationId(), rejectedStatus);
+
+        organizationRepository.save(organization);
+
+        return returnInvitationTripleResult(organization, invitation);
     }
 
     private OrganizationInvitationStatus getOrganizationInvitationStatus(OrganizationInvitationStatuses status) {
@@ -176,9 +208,16 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
                 .orElseThrow(() -> new IllegalStateException("Organization member type not found"));
     }
 
-    private Optional<ImmutablePair<Organization, ProfileDetails>> returnOrganizationProfilePair(Organization organization) {
-        ProfileDetails profileDetails = iamContextFacade.getProfileDetailsById(organization.getCreatedBy().personId());
+    private Optional<Triple<Organization, OrganizationInvitation, ProfileDetails>> returnInvitationTripleResult(
+            Organization organization, OrganizationInvitation invitation) {
 
-        return Optional.of(ImmutablePair.of(organization, profileDetails));
+        ProfileDetails profileDetails = getContactorProfileDetails(organization);
+
+        return Optional.of(Triple.of(organization, invitation, profileDetails));
+    }
+
+
+    private ProfileDetails getContactorProfileDetails(Organization organization) {
+        return iamContextFacade.getProfileDetailsById(organization.getCreatedBy().personId());
     }
 }
