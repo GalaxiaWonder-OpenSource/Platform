@@ -24,18 +24,20 @@ import java.util.Arrays;
  */
 @Service
 public class OrganizationMemberTypeCommandServiceImpl implements OrganizationMemberTypeCommandService {
-
+    /** Repository for managing {@link OrganizationMemberType} entities. */
     private final OrganizationMemberTypeRepository organizationMemberTypeRepository;
 
+    /**
+     * Constructs a new {@code OrganizationMemberTypeCommandServiceImpl} with the specified repository.
+     *
+     * @param organizationMemberTypeRepository the repository used to persist organization member types
+     */
     public OrganizationMemberTypeCommandServiceImpl(OrganizationMemberTypeRepository organizationMemberTypeRepository) {
         this.organizationMemberTypeRepository = organizationMemberTypeRepository;
     }
 
     /**
-     * Handles the seeding of organization member types.
-     *
-     * @param command the command that triggers the seeding process
-     * @since 1.0
+     * {@inheritDoc}
      */
     @Override
     public void handle(SeedOrganizationMemberTypeCommand command) {

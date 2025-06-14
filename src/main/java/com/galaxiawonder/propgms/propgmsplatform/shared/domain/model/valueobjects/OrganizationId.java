@@ -19,9 +19,9 @@ import jakarta.persistence.Embeddable;
 public record OrganizationId(Long organizationId) {
 
     /**
-     * Validates the {@code organizationId} value.
+     * Validates the {@code personId} value.
      *
-     * @throws IllegalArgumentException if {@code organizationId} is null or less than 1
+     * @throws IllegalArgumentException if {@code personId} is null or less than 1
      */
     public OrganizationId {
         if (organizationId == null || organizationId < 1) {

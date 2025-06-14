@@ -20,16 +20,7 @@ public class IAMContextFacadeImpl implements IAMContextFacade {
     }
 
     /**
-     * Retrieves basic profile information of a person using their unique identifier.
-     *
-     * <p>This method delegates the query to {@link PersonQueryService} and maps the resulting
-     * {@link Person} entity to a {@link ProfileDetails} read model.</p>
-     *
-     * @param personId the ID of the person to retrieve
-     * @return a {@link ProfileDetails} object containing the person's first name, last name and email
-     * @throws EntityNotFoundException if no person exists with the given ID
-     *
-     * @since 1.0
+     * {@inheritDoc}
      */
     @Override
     public ProfileDetails getProfileDetailsByPersonId(Long personId) {
@@ -44,16 +35,7 @@ public class IAMContextFacadeImpl implements IAMContextFacade {
     }
 
     /**
-     * Retrieves basic profile information of a person using their email address.
-     *
-     * <p>This method delegates the query to {@link PersonQueryService} and maps the resulting
-     * {@link Person} entity to a {@link ProfileDetails} read model.</p>
-     *
-     * @param email the email address of the person to retrieve
-     * @return a {@link ProfileDetails} object containing the person's first name, last name and email
-     * @throws EntityNotFoundException if no person exists with the given email
-     *
-     * @since 1.0
+     * {@inheritDoc}
      */
     @Override
     public ProfileDetails getProfileDetailsByEmail(String email) {
@@ -68,16 +50,7 @@ public class IAMContextFacadeImpl implements IAMContextFacade {
     }
 
     /**
-     * Retrieves basic profile information of a person using their internal system ID.
-     *
-     * <p>This method delegates the query to {@link PersonQueryService} and maps the resulting
-     * {@link Person} entity to a {@link ProfileDetails} read model.</p>
-     *
-     * @param id the internal ID of the person to retrieve
-     * @return a {@link ProfileDetails} object containing the person's first name, last name and email
-     * @throws EntityNotFoundException if no person exists with the given ID
-     *
-     * @since 1.0
+     * {@inheritDoc}
      */
     @Override
     public ProfileDetails getProfileDetailsById(Long id) {
@@ -92,17 +65,9 @@ public class IAMContextFacadeImpl implements IAMContextFacade {
     }
 
     /**
-     * Retrieves the unique identifier of a person based on their email address.
-     *
-     * <p>This method delegates the query to the {@link PersonQueryService} and returns
-     * the corresponding person ID if the email exists in the system.</p>
-     *
-     * @param email the email address of the person to be resolved
-     * @return the person's unique identifier as a {@link Long}
-     * @throws EntityNotFoundException if no person exists with the given email
-     *
-     * @since 1.0
+     * {@inheritDoc}
      */
+    @Override
     public Long getPersonIdFromEmail(String email) {
         return this.personQueryService.handle(new GetPersonIdByEmailQuery(email));
     }

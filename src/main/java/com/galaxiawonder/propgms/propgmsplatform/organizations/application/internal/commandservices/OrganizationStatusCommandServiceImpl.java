@@ -23,18 +23,20 @@ import java.util.Arrays;
  */
 @Service
 public class OrganizationStatusCommandServiceImpl implements OrganizationStatusCommandService {
-
+    /** Repository for managing {@link OrganizationStatus} entities. */
     private final OrganizationStatusRepository organizationStatusRepository;
 
+    /**
+     * Constructs a new {@code OrganizationStatusCommandServiceImpl} with the specified repository.
+     *
+     * @param organizationStatusRepository the repository used to persist organization status values
+     */
     public OrganizationStatusCommandServiceImpl(OrganizationStatusRepository organizationStatusRepository) {
         this.organizationStatusRepository = organizationStatusRepository;
     }
 
     /**
-     * Handles the seeding of organization statuses.
-     *
-     * @param command the command that triggers the seeding process
-     * @since 1.0
+     * {@inheritDoc}
      */
     @Override
     public void handle(SeedOrganizationStatusCommand command) {

@@ -3,6 +3,9 @@ package com.galaxiawonder.propgms.propgmsplatform.organizations.application.inte
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.SeedOrganizationInvitationStatusCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.SeedOrganizationMemberTypeCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.SeedOrganizationStatusCommand;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitationStatus;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMemberType;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationStatus;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationInvitationStatusCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationMemberTypeCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationStatusCommandService;
@@ -36,13 +39,25 @@ import java.sql.Timestamp;
  */
 @Service("OrganizationApplicationReadyEventHandler")
 public class ApplicationReadyEventHandler {
-
+    /** Service for seeding {@link OrganizationStatus} entities. */
     private final OrganizationStatusCommandService organizationStatusCommandService;
+
+    /** Service for seeding {@link OrganizationMemberType} entities. */
     private final OrganizationMemberTypeCommandService organizationMemberTypeCommandService;
+
+    /** Service for seeding {@link OrganizationInvitationStatus} entities. */
     private final OrganizationInvitationStatusCommandService organizationInvitationStatusCommandService;
 
+    /** Logger for application lifecycle events. */
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationReadyEventHandler.class);
 
+    /**
+     * Constructs a new {@code ApplicationReadyEventHandler} with the required command services.
+     *
+     * @param organizationStatusCommandService service to initialize organization statuses
+     * @param organizationMemberTypeCommandService service to initialize member types
+     * @param organizationInvitationStatusCommandService service to initialize invitation statuses
+     */
     public ApplicationReadyEventHandler(OrganizationStatusCommandService organizationStatusCommandService, OrganizationMemberTypeCommandService organizationMemberTypeCommandService, OrganizationInvitationStatusCommandService organizationInvitationStatusCommandService) {
         this.organizationStatusCommandService = organizationStatusCommandService;
         this.organizationMemberTypeCommandService = organizationMemberTypeCommandService;

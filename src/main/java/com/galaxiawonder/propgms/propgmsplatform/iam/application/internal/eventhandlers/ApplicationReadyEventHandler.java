@@ -1,6 +1,7 @@
 package com.galaxiawonder.propgms.propgmsplatform.iam.application.internal.eventhandlers;
 
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.commands.SeedUserTypeCommand;
+import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities.UserType;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.services.UserTypeCommandService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +25,17 @@ import java.sql.Timestamp;
 @Service("IdentityAndAccessManagementApplicationReadyEventHandler")
 public class ApplicationReadyEventHandler {
 
+    /** Service for executing commands related to {@link UserType}. */
     private final UserTypeCommandService userTypeCommandService;
+
+    /** Logger instance for recording application events. */
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationReadyEventHandler.class);
 
+    /**
+     * Constructs a new {@code ApplicationReadyEventHandler} with the specified command service.
+     *
+     * @param userTypeCommandService the service used for executing user type commands
+     */
     public ApplicationReadyEventHandler(UserTypeCommandService userTypeCommandService) {
         this.userTypeCommandService = userTypeCommandService;
     }

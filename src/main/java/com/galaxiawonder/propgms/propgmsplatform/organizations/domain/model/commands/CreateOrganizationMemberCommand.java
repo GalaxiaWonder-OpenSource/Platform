@@ -13,7 +13,7 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valu
 public record CreateOrganizationMemberCommand(Long personId, Long organizationId, OrganizationMemberTypes memberType) {
     /**
      * @throws IllegalArgumentException if personId is null or zero
-     * @throws IllegalArgumentException if organizationId is null or zero
+     * @throws IllegalArgumentException if personId is null or zero
      * @throws IllegalArgumentException if memberType is null
      */
     public CreateOrganizationMemberCommand {

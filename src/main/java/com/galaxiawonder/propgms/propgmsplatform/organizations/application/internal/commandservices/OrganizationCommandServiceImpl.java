@@ -34,12 +34,30 @@ import java.util.Optional;
  */
 @Service
 public class OrganizationCommandServiceImpl implements OrganizationCommandService {
+    /** Repository for performing write operations on {@link Organization} entities. */
     private final OrganizationRepository organizationRepository;
+
+    /** Repository for retrieving and persisting {@link OrganizationStatus} values. */
     private final OrganizationStatusRepository organizationStatusRepository;
+
+    /** Repository for retrieving {@link OrganizationInvitationStatus} values. */
     private final OrganizationInvitationStatusRepository organizationInvitationStatusRepository;
+
+    /** Repository for retrieving {@link OrganizationMemberType} values. */
     private final OrganizationMemberTypeRepository organizationMemberTypeRepository;
+
+    /** Facade to interact with Identity and Access Management context. */
     private final IAMContextFacade iamContextFacade;
 
+    /**
+     * Constructs a new {@code OrganizationCommandServiceImpl} with required dependencies.
+     *
+     * @param organizationRepository the repository for saving and updating organizations
+     * @param organizationStatusRepository the repository for fetching organization statuses
+     * @param organizationInvitationStatusRepository the repository for invitation statuses
+     * @param organizationMemberTypeRepository the repository for member type values
+     * @param iamContextFacade the IAM facade for resolving user-related information
+     */
     public OrganizationCommandServiceImpl(
             OrganizationRepository organizationRepository,
             OrganizationStatusRepository organizationStatusRepository,
@@ -53,6 +71,7 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
         this.organizationInvitationStatusRepository = organizationInvitationStatusRepository;
         this.organizationMemberTypeRepository = organizationMemberTypeRepository;
     }
+
     /**
      * {@inheritDoc}
      */
@@ -83,6 +102,7 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
         Organization organization = organizationRepository.findByRuc(ruc);
         organizationRepository.delete(organization);
     }
+
     /**
      * {@inheritDoc}
      */
@@ -101,23 +121,7 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
     }
 
     /**
-     * Handles the command to invite a person to an organization using their email address.
-     *
-     * <p>This method:
-     * <ul>
-     *   <li>Looks up the {@link PersonId} associated with the given email.</li>
-     *   <li>Fetches the {@link Organization} by its ID.</li>
-     *   <li>Retrieves the {@link OrganizationInvitationStatus} for {@code PENDING}.</li>
-     *   <li>Adds a new {@link OrganizationInvitation} to the organization, enforcing business rules.</li>
-     *   <li>Persists the organization, triggering a cascade to save the new invitation.</li>
-     *   <li>Retrieves profile details of the inviter for response purposes.</li>
-     * </ul>
-     *
-     * @param command the {@link InvitePersonToOrganizationByEmailCommand} containing the email and organization ID
-     * @return an {@link Optional} containing a pair with the updated {@link Organization} and the inviter's {@link ProfileDetails}
-     * @throws EntityNotFoundException  if the organization does not exist or the profile cannot be found
-     * @throws IllegalArgumentException if the person is already a member or already has a pending invitation
-     * @since 1.0
+     * {@inheritDoc}
      */
     @Transactional
     public Optional<Triple<Organization, OrganizationInvitation, ProfileDetails>> handle(InvitePersonToOrganizationByEmailCommand command) {
@@ -136,23 +140,7 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
     }
 
     /**
-     * Handles the command to accept an organization invitation by its ID.
-     *
-     * <p>This method:
-     * <ul>
-     *   <li>Fetches the {@link Organization} that owns the invitation using the invitation ID.</li>
-     *   <li>Retrieves the {@link OrganizationInvitationStatus} corresponding to {@code ACCEPTED}.</li>
-     *   <li>Delegates to the aggregate root to apply the domain logic and accept the invitation.</li>
-     *   <li>Persists the updated {@link Organization}, including the accepted invitation.</li>
-     *   <li>Returns a pair containing the updated organization and the inviter's {@link ProfileDetails}.</li>
-     * </ul>
-     *
-     * @param command the {@link AcceptInvitationCommand} containing the ID of the invitation to accept
-     * @return an {@link Optional} containing a pair of {@link Organization} and {@link ProfileDetails}
-     * @throws EntityNotFoundException if the organization or invitation is not found
-     * @throws IllegalStateException if the invitation cannot be accepted (e.g., already accepted or rejected)
-     *
-     * @since 1.0
+     * {@inheritDoc}
      */
     @Override
     public Optional<Triple<Organization, OrganizationInvitation, ProfileDetails>> handle(AcceptInvitationCommand command) {
@@ -170,23 +158,7 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
     }
 
     /**
-     * Handles the command to reject an organization invitation by its ID.
-     *
-     * <p>This method:
-     * <ul>
-     *   <li>Fetches the {@link Organization} that owns the invitation using the invitation ID.</li>
-     *   <li>Retrieves the {@link OrganizationInvitationStatus} corresponding to {@code REJECTED}.</li>
-     *   <li>Delegates to the aggregate root to apply the domain logic and reject the invitation.</li>
-     *   <li>Persists the updated {@link Organization}, including the rejected invitation.</li>
-     *   <li>Returns a pair containing the updated organization and the inviter's {@link ProfileDetails}.</li>
-     * </ul>
-     *
-     * @param rejectInvitationCommand the {@link RejectInvitationCommand} containing the ID of the invitation to reject
-     * @return an {@link Optional} containing a pair of {@link Organization} and {@link ProfileDetails}
-     * @throws EntityNotFoundException if the organization or invitation is not found
-     * @throws IllegalStateException if the invitation cannot be rejected (e.g., already accepted or rejected)
-     *
-     * @since 1.0
+     * {@inheritDoc}
      */
     @Override
     public Optional<Triple<Organization, OrganizationInvitation, ProfileDetails>> handle(RejectInvitationCommand rejectInvitationCommand) {
@@ -202,30 +174,63 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
         return returnInvitationTripleResult(organization, invitation);
     }
 
+    /**
+     * Retrieves the {@link OrganizationStatus} entity matching the given enum value.
+     *
+     * @param status the {@link OrganizationStatuses} enum representing the desired status
+     * @return the corresponding {@link OrganizationStatus} entity
+     * @throws IllegalStateException if the status is not found in the repository
+     */
     private OrganizationStatus getOrganizationStatus(OrganizationStatuses status) {
         return organizationStatusRepository.findByName(status)
                 .orElseThrow(() -> new IllegalStateException("Default status 'ACTIVE' not found"));
     }
 
+    /**
+     * Retrieves the {@link OrganizationInvitationStatus} entity matching the given enum value.
+     *
+     * @param status the {@link OrganizationInvitationStatuses} enum representing the invitation status
+     * @return the corresponding {@link OrganizationInvitationStatus} entity
+     * @throws IllegalStateException if the status is not found in the repository
+     */
     private OrganizationInvitationStatus getOrganizationInvitationStatus(OrganizationInvitationStatuses status) {
         return this.organizationInvitationStatusRepository.findByName(status)
                 .orElseThrow(() -> new IllegalStateException("Organization invitation status"));
     }
 
+    /**
+     * Retrieves the {@link OrganizationMemberType} entity matching the given enum value.
+     *
+     * @param status the {@link OrganizationMemberTypes} enum representing the member type
+     * @return the corresponding {@link OrganizationMemberType} entity
+     * @throws IllegalStateException if the type is not found in the repository
+     */
     private OrganizationMemberType getOrganizationMemberType(OrganizationMemberTypes status) {
         return this.organizationMemberTypeRepository.findByName(status)
                 .orElseThrow(() -> new IllegalStateException("Organization member type not found"));
     }
 
+    /**
+     * Wraps the given organization and invitation along with the creator's profile details
+     * into a {@link Triple} and returns it wrapped in an {@link Optional}.
+     *
+     * @param organization the {@link Organization} entity
+     * @param invitation   the {@link OrganizationInvitation} entity
+     * @return an {@link Optional} containing a {@link Triple} of organization, invitation and profile details
+     */
     private Optional<Triple<Organization, OrganizationInvitation, ProfileDetails>> returnInvitationTripleResult(
             Organization organization, OrganizationInvitation invitation) {
 
         ProfileDetails profileDetails = getContactorProfileDetails(organization);
-
         return Optional.of(Triple.of(organization, invitation, profileDetails));
     }
 
-
+    /**
+     * Retrieves the profile details of the given organization's creator..
+     *
+     * @param organization the {@link Organization} entity
+     * @return the {@link ProfileDetails} of the creator
+     */
     private ProfileDetails getContactorProfileDetails(Organization organization) {
         return iamContextFacade.getProfileDetailsById(organization.getCreatedBy().personId());
     }

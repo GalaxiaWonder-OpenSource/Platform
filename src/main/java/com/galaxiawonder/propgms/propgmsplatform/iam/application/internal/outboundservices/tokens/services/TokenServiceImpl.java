@@ -35,10 +35,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     /**
-     * Generates a JWT token for the given user account.
-     *
-     * @param userAccount the user account for which to generate the token
-     * @return a signed JWT token string
+     * {@inheritDoc}
      */
     @Override
     public String generateToken(UserAccount userAccount) {
@@ -49,10 +46,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     /**
-     * Extracts the username from the provided JWT token.
-     *
-     * @param token the JWT token
-     * @return the username encoded in the token
+     * {@inheritDoc}
      */
     @Override
     public String getUsernameFromToken(String token) {
@@ -60,10 +54,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     /**
-     * Extracts the person ID from the provided JWT token.
-     *
-     * @param token the JWT token
-     * @return the person ID encoded in the token
+     * {@inheritDoc}
      */
     @Override
     public String getPersonIdFromToken(String token) {
@@ -71,10 +62,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     /**
-     * Validates whether the provided JWT token is valid and not expired.
-     *
-     * @param token the JWT token to validate
-     * @return true if the token is valid; false otherwise
+     * {@inheritDoc}
      */
     @Override
     public boolean validateToken(String token) {

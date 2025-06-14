@@ -24,18 +24,20 @@ import java.util.Arrays;
  */
 @Service
 public class OrganizationInvitationStatusCommandServiceImpl implements OrganizationInvitationStatusCommandService {
-
+    /** Repository for managing {@link OrganizationInvitationStatus} entities. */
     private final OrganizationInvitationStatusRepository organizationInvitationStatusRepository;
 
+    /**
+     * Constructs a new {@code OrganizationInvitationStatusCommandServiceImpl} with the specified repository.
+     *
+     * @param organizationInvitationStatusRepository the repository used to persist invitation statuses
+     */
     public OrganizationInvitationStatusCommandServiceImpl(OrganizationInvitationStatusRepository organizationInvitationStatusRepository) {
         this.organizationInvitationStatusRepository = organizationInvitationStatusRepository;
     }
 
     /**
-     * Handles the seeding of organization invitation statuses.
-     *
-     * @param command the command that triggers the seeding process
-     * @since 1.0
+     * {@inheritDoc}
      */
     @Override
     public void handle(SeedOrganizationInvitationStatusCommand command) {

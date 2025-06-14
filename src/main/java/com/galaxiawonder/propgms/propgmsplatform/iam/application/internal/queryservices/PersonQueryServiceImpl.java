@@ -41,22 +41,37 @@ import java.util.Optional;
  */
 @Service
 public class PersonQueryServiceImpl implements PersonQueryService {
+    /** Repository for accessing {@link Person} entities from the data store. */
     private final PersonRepository personRepository;
 
-    PersonQueryServiceImpl(PersonRepository personRepository) {
+    /**
+     * Constructs a new {@code PersonQueryServiceImpl} with the specified repository.
+     *
+     * @param personRepository the repository used to fetch {@link Person} data
+     */
+    public PersonQueryServiceImpl(PersonRepository personRepository) {
         this.personRepository = personRepository;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<Person> handle(GetPersonByIdQuery query) {
         return this.personRepository.findById(query.personId());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<Person> handle(GetPersonByEmailQuery query) {
         return this.personRepository.findByEmail(new EmailAddress(query.email()));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Long handle(GetPersonIdByEmailQuery query) {
         return this.personRepository.findByEmail(new EmailAddress(query.email()))
