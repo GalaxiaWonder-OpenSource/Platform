@@ -6,6 +6,7 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.comm
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitation;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitationStatus;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMemberType;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationStatus;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationInvitationStatuses;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationMemberTypes;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationStatuses;
@@ -60,13 +61,16 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
         if(organizationRepository.existsByRuc(new Ruc(command.ruc())))
             throw new IllegalArgumentException("Organization with same RUC already exists for this API key");
 
-        var status = organizationStatusRepository.findByName(OrganizationStatuses.ACTIVE)
-                .orElseThrow(() -> new IllegalStateException("Default status 'ACTIVE' not found"));
+        OrganizationStatus status = getOrganizationStatus(OrganizationStatuses.ACTIVE);
 
-        var organization = new Organization(command, status);
+        OrganizationMemberType contractorType = getOrganizationMemberType(OrganizationMemberTypes.CONTRACTOR);
+
+        var organization = new Organization(command, status, contractorType);
+
         var createdOrganization = organizationRepository.save(organization);
         return Optional.of(createdOrganization);
     }
+
     /**
      * {@inheritDoc}
      */
@@ -196,6 +200,11 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
         organizationRepository.save(organization);
 
         return returnInvitationTripleResult(organization, invitation);
+    }
+
+    private OrganizationStatus getOrganizationStatus(OrganizationStatuses status) {
+        return organizationStatusRepository.findByName(status)
+                .orElseThrow(() -> new IllegalStateException("Default status 'ACTIVE' not found"));
     }
 
     private OrganizationInvitationStatus getOrganizationInvitationStatus(OrganizationInvitationStatuses status) {

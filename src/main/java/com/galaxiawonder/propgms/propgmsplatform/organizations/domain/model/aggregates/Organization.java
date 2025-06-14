@@ -76,11 +76,13 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
      *                - status must not be null.
      */
 
-    public Organization(CreateOrganizationCommand command, OrganizationStatus status) {
+    public Organization(CreateOrganizationCommand command, OrganizationStatus status, OrganizationMemberType contractorType) {
         this.legalName = new LegalName(command.legalName());
         this.commercialName = command.commercialName() != null ? new CommercialName(command.commercialName()) : new CommercialName(""); this.ruc = new Ruc(command.ruc());
         this.createdBy = new PersonId(command.createdBy());
         this.status = status;
+
+        addContractor(command, contractorType);
     }
 
     /**
@@ -163,6 +165,16 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
         invitation.reject(rejectedStatus);
 
         return invitation;
+    }
+
+    private void addContractor(CreateOrganizationCommand command, OrganizationMemberType contractorType) {
+        OrganizationMember member = new OrganizationMember(
+                this,
+                new PersonId(command.createdBy()),
+                contractorType
+        );
+
+        members.add(member);
     }
 
     /**
