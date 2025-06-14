@@ -3,6 +3,8 @@ package com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.p
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -27,4 +29,16 @@ public interface OrganizationRepository extends JpaRepository<Organization, Long
      * @return an Organization
      */
     Optional<Organization> findById(Long id);
+
+    /**
+     * Find an organization by using an invitation's ID
+     * @param invitationId invitation's ID
+     * @return the Organization that contains the invitation with the given ID
+     */
+    @Query("""
+    SELECT i.organization
+    FROM OrganizationInvitation i
+    WHERE i.id = :invitationId
+""")
+    Optional<Organization> findOrganizationByInvitationId(@Param("invitationId") Long invitationId);
 }

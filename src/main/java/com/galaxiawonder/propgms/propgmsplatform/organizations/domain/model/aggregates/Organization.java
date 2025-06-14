@@ -3,12 +3,9 @@ package com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.agg
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities.UserType;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.CreateOrganizationCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.InvitePersonToOrganizationByEmailCommand;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitation;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitationStatus;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMember;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.*;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.CommercialName;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.LegalName;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationStatus;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.OrganizationId;
@@ -135,6 +132,51 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
     }
 
     /**
+     * Accepts an invitation by its unique identifier, if it exists and is pending,
+     * and adds the invited person as a new {@link OrganizationMember}.
+     *
+     * @param invitationId the ID of the invitation to accept
+     * @param acceptedStatus the status to assign
+     * @param memberType the role/type to assign to the new member
+     * @throws EntityNotFoundException if the invitation does not exist in this organization
+     * @throws IllegalStateException if the invitation is not in PENDING status
+     * @throws IllegalArgumentException if the person is already a member
+     *
+     * @since 1.0
+     */
+    public void acceptInvitation(Long invitationId, OrganizationInvitationStatus acceptedStatus, OrganizationMemberType memberType) {
+        OrganizationInvitation invitation = selectInvitationFromId(invitationId);
+
+        if (!invitation.isPending()) {
+            throw new IllegalStateException("Only pending invitations can be accepted");
+        }
+
+        invitation.accept(acceptedStatus);
+
+        addMember(invitation, memberType);
+    }
+
+    /**
+     * Adds a new {@link OrganizationMember} to the organization based on an accepted {@link OrganizationInvitation}.
+     *
+     * <p>This method assumes that the invitation has already been validated and is in {@code ACCEPTED} state.</p>
+     *
+     * @param invitation the accepted invitation from which to create the new member
+     * @throws IllegalArgumentException if the person is already a member of the organization
+     * @since 1.0
+     */
+    private void addMember(OrganizationInvitation invitation, OrganizationMemberType workerType) {
+        PersonId personId = invitation.getInvitedPersonId();
+
+        if (isAlreadyMember(personId)) {
+            throw new IllegalArgumentException("This person is already a member of the organization.");
+        }
+
+        OrganizationMember member = new OrganizationMember(this, personId, workerType);
+        members.add(member);
+    }
+
+    /**
      * Checks whether a person is already a member of this organization.
      *
      * @param personId the ID of the person to verify
@@ -170,5 +212,12 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
             return null;
         }
         return invitations.getLast();
+    }
+
+    private OrganizationInvitation selectInvitationFromId(Long invitationId) {
+        return this.invitations.stream()
+                .filter(i -> i.getId().equals(invitationId))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("Invitation not found in this organization"));
     }
 }

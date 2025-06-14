@@ -2,17 +2,17 @@ package com.galaxiawonder.propgms.propgmsplatform.organizations.application.inte
 
 import com.galaxiawonder.propgms.propgmsplatform.iam.interfaces.acl.IAMContextFacade;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.CreateOrganizationCommand;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.DeleteOrganizationCommand;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.InvitePersonToOrganizationByEmailCommand;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.UpdateOrganizationCommand;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.*;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitation;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitationStatus;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMemberType;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationInvitationStatuses;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationMemberTypes;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationStatuses;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.repositories.OrganizationInvitationStatusRepository;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.repositories.OrganizationMemberTypeRepository;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.repositories.OrganizationRepository;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.repositories.OrganizationStatusRepository;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
@@ -36,18 +36,21 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
     private final OrganizationRepository organizationRepository;
     private final OrganizationStatusRepository organizationStatusRepository;
     private final OrganizationInvitationStatusRepository organizationInvitationStatusRepository;
+    private final OrganizationMemberTypeRepository organizationMemberTypeRepository;
     private final IAMContextFacade iamContextFacade;
 
     public OrganizationCommandServiceImpl(
             OrganizationRepository organizationRepository,
             OrganizationStatusRepository organizationStatusRepository,
             OrganizationInvitationStatusRepository organizationInvitationStatusRepository,
+            OrganizationMemberTypeRepository organizationMemberTypeRepository,
             IAMContextFacade iamContextFacade
     ) {
         this.organizationRepository = organizationRepository;
         this.organizationStatusRepository = organizationStatusRepository;
         this.iamContextFacade = iamContextFacade;
         this.organizationInvitationStatusRepository = organizationInvitationStatusRepository;
+        this.organizationMemberTypeRepository = organizationMemberTypeRepository;
     }
     /**
      * {@inheritDoc}
@@ -120,13 +123,60 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
         Organization organization = this.organizationRepository.findById(command.organizationId())
                 .orElseThrow(() -> new EntityNotFoundException("Organization doesn't exist"));
 
-        OrganizationInvitationStatus pendingStatus = this.organizationInvitationStatusRepository.findByName(OrganizationInvitationStatuses.PENDING)
-                .orElseThrow(() -> new IllegalStateException("Default status 'PENDING' not found"));
+        OrganizationInvitationStatus pendingStatus = getOrganizationInvitationStatus(OrganizationInvitationStatuses.PENDING);
 
         organization.addInvitation(personId, pendingStatus);
 
         organizationRepository.save(organization);
 
+        return returnOrganizationProfilePair(organization);
+    }
+
+    /**
+     * Handles the command to accept an organization invitation by its ID.
+     *
+     * <p>This method:
+     * <ul>
+     *   <li>Fetches the {@link Organization} that owns the invitation using the invitation ID.</li>
+     *   <li>Retrieves the {@link OrganizationInvitationStatus} corresponding to {@code ACCEPTED}.</li>
+     *   <li>Delegates to the aggregate root to apply the domain logic and accept the invitation.</li>
+     *   <li>Persists the updated {@link Organization}, including the accepted invitation.</li>
+     *   <li>Returns a pair containing the updated organization and the inviter's {@link ProfileDetails}.</li>
+     * </ul>
+     *
+     * @param command the {@link AcceptInvitationCommand} containing the ID of the invitation to accept
+     * @return an {@link Optional} containing a pair of {@link Organization} and {@link ProfileDetails}
+     * @throws EntityNotFoundException if the organization or invitation is not found
+     * @throws IllegalStateException if the invitation cannot be accepted (e.g., already accepted or rejected)
+     *
+     * @since 1.0
+     */
+    @Override
+    public Optional<ImmutablePair<Organization, ProfileDetails>> handle(AcceptInvitationCommand command) {
+        Organization organization = this.organizationRepository.findOrganizationByInvitationId(command.invitationId())
+                .orElseThrow(()-> new EntityNotFoundException("No organization found for the given invitation id: " + command.invitationId()));
+
+        OrganizationInvitationStatus acceptedStatus = getOrganizationInvitationStatus(OrganizationInvitationStatuses.ACCEPTED);
+        OrganizationMemberType workerType = getOrganizationMemberType(OrganizationMemberTypes.WORKER);
+
+        organization.acceptInvitation(command.invitationId(), acceptedStatus, workerType);
+
+        organizationRepository.save(organization);
+
+        return returnOrganizationProfilePair(organization);
+    }
+
+    private OrganizationInvitationStatus getOrganizationInvitationStatus(OrganizationInvitationStatuses status) {
+        return this.organizationInvitationStatusRepository.findByName(status)
+                .orElseThrow(() -> new IllegalStateException("Organization invitation status"));
+    }
+
+    private OrganizationMemberType getOrganizationMemberType(OrganizationMemberTypes status) {
+        return this.organizationMemberTypeRepository.findByName(status)
+                .orElseThrow(() -> new IllegalStateException("Organization member type not found"));
+    }
+
+    private Optional<ImmutablePair<Organization, ProfileDetails>> returnOrganizationProfilePair(Organization organization) {
         ProfileDetails profileDetails = iamContextFacade.getProfileDetailsById(organization.getCreatedBy().personId());
 
         return Optional.of(ImmutablePair.of(organization, profileDetails));

@@ -4,7 +4,6 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggr
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.CreateOrganizationMemberCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationMemberTypes;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.entities.AuditableModel;
-import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.OrganizationId;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -41,10 +40,19 @@ public class OrganizationMember extends AuditableModel {
     @JoinColumn(name = "organization_id", nullable = false)
     private Organization organization;
 
-    /** The role or type of the member within the organization (e.g., CONTRACTOR, WORKER). */
-    @Column(nullable = false)
-    private OrganizationMemberTypes memberType;
+    /**
+     * Current status of the invitation (e.g., PENDING, ACCEPTED, REJECTED).
+     */
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "member_type_id", nullable = false, unique = false)
+    private OrganizationMemberType memberType;
 
     /** Protected default constructor for JPA. */
-    protected OrganizationMember() {}
+    public OrganizationMember() {}
+
+    public OrganizationMember(Organization organization, PersonId personId, OrganizationMemberType workerType) {
+        this.organization = organization;
+        this.personId = personId;
+        this.memberType = workerType;
+    }
 }

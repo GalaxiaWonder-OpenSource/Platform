@@ -1,11 +1,9 @@
 package com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services;
 
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.CreateOrganizationCommand;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.DeleteOrganizationCommand;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.InvitePersonToOrganizationByEmailCommand;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.UpdateOrganizationCommand;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.*;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitation;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
 import jakarta.persistence.EntityNotFoundException;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -62,4 +60,26 @@ public interface OrganizationCommandService {
      * @since 1.0
      */
     Optional<ImmutablePair<Organization, ProfileDetails>> handle(InvitePersonToOrganizationByEmailCommand command);
+
+
+    /**
+     * Handles the command to accept an invitation by its ID.
+     *
+     * <p>This method performs the following actions:
+     * <ul>
+     *   <li>Resolves the {@link Organization} aggregate that contains the invitation.</li>
+     *   <li>Validates that the invitation exists and is in a {@code PENDING} state.</li>
+     *   <li>Marks the invitation as {@code ACCEPTED} using domain logic.</li>
+     *   <li>Persists the updated {@link Organization} aggregate, cascading the changes.</li>
+     *   <li>Returns the updated organization and inviter profile for response purposes.</li>
+     * </ul>
+     *
+     * @param command the {@link AcceptInvitationCommand} containing the invitation ID to accept
+     * @return an {@link Optional} containing a pair of the updated {@link Organization} and the inviter's {@link ProfileDetails}
+     * @throws EntityNotFoundException if the invitation or the associated organization is not found
+     * @throws IllegalStateException if the invitation is not in a {@code PENDING} state or cannot be accepted
+     *
+     * @since 1.0
+     */
+    Optional<ImmutablePair<Organization, ProfileDetails>> handle(AcceptInvitationCommand command);
 }

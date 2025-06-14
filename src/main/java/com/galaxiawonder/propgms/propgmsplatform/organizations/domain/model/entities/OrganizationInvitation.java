@@ -58,8 +58,8 @@ public class OrganizationInvitation extends AuditableModel {
     /**
      * Marks this invitation as accepted.
      */
-    public void accept() {
-        this.status = new OrganizationInvitationStatus(OrganizationInvitationStatuses.ACCEPTED);
+    public void accept(OrganizationInvitationStatus acceptedStatus) {
+        this.status = acceptedStatus;
     }
 
     /**
@@ -75,6 +75,6 @@ public class OrganizationInvitation extends AuditableModel {
      * @return true if the status is PENDING
      */
     public boolean isPending() {
-        return new OrganizationInvitationStatus(OrganizationInvitationStatuses.PENDING).equals(this.status);
+        return this.status.getName().name().equals("PENDING");
     }
 }
