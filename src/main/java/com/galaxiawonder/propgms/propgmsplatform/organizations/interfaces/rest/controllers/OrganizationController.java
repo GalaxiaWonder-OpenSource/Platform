@@ -6,6 +6,7 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.comm
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.RejectInvitationCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.UpdateOrganizationCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitation;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllInvitationsByOrganizationIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetOrganizationByIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationQueryService;
@@ -21,11 +22,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -195,5 +198,34 @@ public class OrganizationController {
                     return new ResponseEntity<>(resourceResponse, HttpStatus.CREATED);
                 })
                 .orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    /**
+     * Retrieves all invitations associated with a specific organization.
+     *
+     * @param organizationId the ID of the organization
+     * @return a list of {@link OrganizationInvitationResource} objects
+     */
+    @Operation(
+            summary = "Get all invitations by organization ID",
+            description = "Retrieves all invitations associated with the given organization ID"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Invitations retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Organization not found")
+    })
+    @GetMapping("/{organizationId}/invitations")
+    public ResponseEntity<List<OrganizationInvitationResource>> getAllInvitationsByPersonId(
+            @Parameter(description = "ID of the organization", required = true)
+            @PathVariable Long organizationId) {
+
+        List<ImmutablePair<OrganizationInvitation, ProfileDetails>> organizationInvitations =
+                organizationQueryService.handle(new GetAllInvitationsByOrganizationIdQuery(organizationId));
+
+        List<OrganizationInvitationResource> resources = organizationInvitations.stream()
+                .map(OrganizationInvitationResourceFromEntityAssembler::toResourceFromPair)
+                .toList();
+
+        return new ResponseEntity<>(resources, HttpStatus.OK);
     }
 }
