@@ -5,23 +5,42 @@ import jakarta.persistence.Embeddable;
 import java.util.Objects;
 
 /**
- * Represents a RUC, a unique tax identification number in certain countries.
+ * Ruc
  *
- * The RUC must follow these validation rules:
- * - It must be exactly 11 characters long, consisting only of digits.
- * - It must begin with either "10" or "20".
+ * @summary
+ * Value object representing a RUC (Registro Único de Contribuyentes), a unique tax identification number
+ * commonly used in certain countries like Peru.
  *
- * @param value the RUC value, which must not be null and must meet the specified validation rules.
- * @throws NullPointerException if the provided value is null.
- * @throws IllegalArgumentException if the value does not meet the validation rules (not exactly 11 digits or does not start with "10" or "20").
+ * <p>The RUC must satisfy the following rules:</p>
+ * <ul>
+ *   <li>Must be exactly 11 digits long</li>
+ *   <li>Must start with "10" (individual) or "20" (company)</li>
+ * </ul>
+ *
+ * <p>This class is immutable and validated upon instantiation.</p>
+ *
+ * @param value the RUC string to be validated and stored
  */
 @Embeddable
 public record Ruc(String value) {
 
+    /**
+     * Creates an empty RUC with a blank value.
+     * Intended for use by frameworks that require a no-arg constructor.
+     */
     public Ruc() {
         this("");
     }
 
+    /**
+     * Validates and constructs a {@link Ruc} instance.
+     *
+     * @param value the RUC value
+     *
+     * @throws NullPointerException if the provided value is {@code null}
+     * @throws IllegalArgumentException if the value is not exactly 11 digits long
+     *                                  or does not start with "10" or "20"
+     */
     public Ruc {
         Objects.requireNonNull(value, "RUC cannot be null");
 
@@ -33,10 +52,4 @@ public record Ruc(String value) {
             throw new IllegalArgumentException("RUC must begin with '10' or '20'");
         }
     }
-
-    @Override
-    public String toString() {
-        return value;
-    }
 }
-

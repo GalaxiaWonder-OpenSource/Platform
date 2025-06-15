@@ -14,7 +14,7 @@ public record UpdateOrganizationCommand(Long organizationId, String commercialNa
      *                       Cannot be null or less than 1.
      * @param commercialName the commercial name of an organization
      *                       Cannot be null or blank
-     * @throws IllegalArgumentException if organizationId is null or less than 1.
+     * @throws IllegalArgumentException if personId is null or less than 1.
      * @throws IllegalArgumentException if commercial name is null or blank
      */
     public UpdateOrganizationCommand {

@@ -3,34 +3,44 @@ package com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.com
 import jakarta.annotation.Nullable;
 
 /**
+ * CreateOrganizationCommand
+ *
  * @summary
- * A command object representing the data required to create a new organization source.
+ * Command object representing the data required to create a new organization.
  *
- * This command encapsulates the necessary fields for creating an organization source, including:
- * - legalName: The legal name of the organization. Must not be null or empty.
- * - CommercialName: The commercial name of the organization, which can be null.
- * - ruc: The RUC of the organization.
- *        Must be a valid RUC as per the defined validation rules.
- * - createdBy: The identifier of the entity or user who created the organization. Must not be null or empty.
- * - status: The operational status of the organization. Must not be null.
+ * <p>This command encapsulates the necessary fields for creating an organization source, including:</p>
+ * <ul>
+ *   <li><strong>legalName</strong>: The legal name of the organization. Must not be null or blank.</li>
+ *   <li><strong>commercialName</strong>: The commercial name of the organization. Can be null.</li>
+ *   <li><strong>ruc</strong>: The RUC (tax ID) of the organization. Must follow valid format.</li>
+ *   <li><strong>createdBy</strong>: The identifier of the user/entity that created the organization. Must not be null.</li>
+ * </ul>
  *
- * Validation is applied to ensure all required fields are properly set and meet the necessary constraints:
- * - legalName must not be null or blank.
- * - RUC must meet the predefined formatting and validation rules.
- * - createdBy must not be null or blank.
- * - status must not be null.
+ * <p>Validation is applied to ensure all required fields meet defined constraints.</p>
  *
- * @param legalName The legal name of the organization.
- * @param commercialName The commercial name of the organization.
- * @param ruc The RUC of the organization.
- * @param createdBy The creator of the organization entity.
- *
- * @throws IllegalArgumentException if any of the validation constraints on the parameters are violated.
+ * @param legalName the legal name of the organization
+ * @param commercialName the commercial name of the organization (optional)
+ * @param ruc the tax identification number (RUC) of the organization
+ * @param createdBy the ID of the creator
  */
 public record CreateOrganizationCommand(String legalName, @Nullable String commercialName, String ruc, Long createdBy) {
+
+    /**
+     * Constructs a new {@link CreateOrganizationCommand} with the given data and validates required fields.
+     *
+     * @throws IllegalArgumentException if legalName is null or blank
+     * @throws IllegalArgumentException if ruc is null or blank
+     * @throws IllegalArgumentException if createdBy is null
+     */
     public CreateOrganizationCommand {
-        if (legalName == null || legalName.isBlank()) throw new IllegalArgumentException("legalName cannot be null or empty");
-        if (ruc== null || ruc.isBlank()) throw new IllegalArgumentException("RUC cannot be null or empty");
-        if (createdBy == null) throw new IllegalArgumentException("createdBy cannot be null or empty");
+        if (legalName == null || legalName.isBlank()) {
+            throw new IllegalArgumentException("legalName cannot be null or blank");
+        }
+        if (ruc == null || ruc.isBlank()) {
+            throw new IllegalArgumentException("ruc cannot be null or blank");
+        }
+        if (createdBy == null) {
+            throw new IllegalArgumentException("createdBy cannot be null");
+        }
     }
 }

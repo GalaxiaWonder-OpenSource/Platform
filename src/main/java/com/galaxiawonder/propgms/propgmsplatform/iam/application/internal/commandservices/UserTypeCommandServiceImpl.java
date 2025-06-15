@@ -5,7 +5,6 @@ import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities.UserT
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.UserTypes;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.services.UserTypeCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persitence.jpa.repositories.UserTypeRepository;
-import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -23,21 +22,21 @@ import java.util.Arrays;
  */
 @Service
 public class UserTypeCommandServiceImpl implements UserTypeCommandService {
+
+    /** Repository for managing {@link UserType} entities. */
     private final UserTypeRepository userTypeRepository;
 
+    /**
+     * Constructs a new {@code UserTypeCommandServiceImpl} with the specified repository.
+     *
+     * @param userTypeRepository the repository used to persist {@link UserType} entities
+     */
     public UserTypeCommandServiceImpl(UserTypeRepository userTypeRepository) {
         this.userTypeRepository = userTypeRepository;
     }
 
     /**
-     * Handles the seeding of user types.
-     *
-     * @summary
-     * Iterates through predefined user types and inserts them into the repository
-     * if they are not already present.
-     *
-     * @param command the command that triggers the seeding process
-     * @since 1.0
+     * {@inheritDoc}
      */
     @Override
     public void handle(SeedUserTypeCommand command) {

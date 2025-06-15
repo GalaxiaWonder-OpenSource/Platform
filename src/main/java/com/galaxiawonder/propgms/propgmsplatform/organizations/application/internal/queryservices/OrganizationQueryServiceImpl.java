@@ -1,11 +1,20 @@
 package com.galaxiawonder.propgms.propgmsplatform.organizations.application.internal.queryservices;
 
+import com.galaxiawonder.propgms.propgmsplatform.iam.interfaces.acl.IAMContextFacade;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitation;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMember;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllInvitationsByOrganizationIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllMembersByOrganizationIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetOrganizationByIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationQueryService;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.OrganizationRepository;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.repositories.OrganizationInvitationRepository;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.repositories.OrganizationRepository;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -17,10 +26,20 @@ import java.util.Optional;
  */
 @Service
 public class OrganizationQueryServiceImpl implements OrganizationQueryService {
+    /** Repository for querying {@link Organization} entities from the data source. */
     private final OrganizationRepository organizationRepository;
 
-    public OrganizationQueryServiceImpl(OrganizationRepository organizationRepository) {
+    /** IAMContext Facade for querying data such as {@link ProfileDetails} */
+    private final IAMContextFacade iamContextFacade;
+
+    /**
+     * Constructs a new {@code OrganizationQueryServiceImpl} with the given repository.
+     *
+     * @param organizationRepository the repository used to fetch organization data
+     */
+    public OrganizationQueryServiceImpl(OrganizationRepository organizationRepository, IAMContextFacade iamContextFacade) {
         this.organizationRepository = organizationRepository;
+        this.iamContextFacade = iamContextFacade;
     }
 
     /**
@@ -30,4 +49,47 @@ public class OrganizationQueryServiceImpl implements OrganizationQueryService {
     public Optional<Organization> handle(GetOrganizationByIdQuery query){
         return organizationRepository.findById(query.id());
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ImmutablePair<OrganizationInvitation, ProfileDetails>> handle(GetAllInvitationsByOrganizationIdQuery query) {
+        Organization organization = organizationRepository.findById(query.organizationId())
+                .orElseThrow(() -> new IllegalArgumentException("No organization found by the given ID: " + query.organizationId()));
+
+        List<OrganizationInvitation> organizationInvitations = organization.getInvitations();
+
+        return organizationInvitations.stream()
+                .map(invitation -> {
+                    ProfileDetails profileDetails = iamContextFacade
+                            .getProfileDetailsById(
+                                    invitation.getInvitedPersonId().personId()
+                            );
+                    return ImmutablePair.of(invitation, profileDetails);
+                })
+                .toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ImmutablePair<OrganizationMember, ProfileDetails>> handle(GetAllMembersByOrganizationIdQuery query) {
+        Organization organization = organizationRepository.findById(query.organizationId())
+                .orElseThrow(() -> new IllegalArgumentException("No organization found by the given ID: " + query.organizationId()));
+
+        List<OrganizationMember> organizationMembers = organization.getMembers();
+
+        return organizationMembers.stream()
+                .map(member -> {
+                    ProfileDetails profileDetails = iamContextFacade
+                            .getProfileDetailsById(
+                                    member.getPersonId().personId()
+                            );
+                    return ImmutablePair.of(member, profileDetails);
+                })
+                .toList();
+    }
+
 }

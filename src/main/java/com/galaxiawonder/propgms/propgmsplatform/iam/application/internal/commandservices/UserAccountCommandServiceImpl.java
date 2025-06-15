@@ -81,15 +81,7 @@ public class UserAccountCommandServiceImpl implements UserAccountCommandService 
     }
 
     /**
-     * Handles the registration of a new user account and associated person.
-     * Validates uniqueness of username, email, and (if present) phone number.
-     * If valid, persists the person and account with the corresponding {@link UserType}.
-     *
-     * @param command the registration command containing user credentials and personal data
-     * @return an {@code Optional<UserAccount>} containing the created account, or empty if creation fails
-     * @throws IllegalArgumentException if the username, email, or phone number already exists,
-     *                                  or if the user type is invalid
-     * @since 1.0
+     * {@inheritDoc}
      */
     @Transactional
     public Optional<UserAccount> handle(SignUpCommand command) {
@@ -115,19 +107,7 @@ public class UserAccountCommandServiceImpl implements UserAccountCommandService 
 
 
     /**
-     * Handles the sign-in process for an existing {@link UserAccount}.
-     * <p>
-     * This method verifies that the user exists and that the provided password matches
-     * the stored hash. If both validations succeed, a token is generated and returned.
-     * </p>
-     *
-     * @param command the {@link SignInCommand} containing the user's credentials
-     * @return an {@link Optional} containing a pair with the authenticated {@link UserAccount}
-     *         and the generated token; empty if authentication fails
-     *
-     * @throws RuntimeException if the user is not found or the password is incorrect
-     *
-     * @since 1.0
+     * {@inheritDoc}
      */
     @Override
     public Optional<ImmutablePair<UserAccount, String>> handle(SignInCommand command) {

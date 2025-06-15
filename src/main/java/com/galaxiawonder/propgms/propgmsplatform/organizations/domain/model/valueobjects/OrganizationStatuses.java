@@ -8,7 +8,7 @@ package com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.val
  * - ACTIVE: Indicates that the organization is currently operational.
  * - INACTIVE: Indicates that the organization is not currently operational.
  */
-public enum OrganizationStatus {
+public enum OrganizationStatuses {
     ACTIVE,
     INACTIVE
 }

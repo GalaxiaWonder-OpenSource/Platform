@@ -74,6 +74,10 @@ public class BearerTokenServiceImpl implements BearerTokenService {
         return authorizationParameter.startsWith(BEARER_TOKEN_PREFIX);
     }
 
+    /**
+     *
+     * {@inheritDoc}
+     */
     @Override
     public String getBearerTokenFrom(HttpServletRequest token) {
         String parameter = getAuthorizationParameterFrom(token);
@@ -81,11 +85,19 @@ public class BearerTokenServiceImpl implements BearerTokenService {
         return null;
     }
 
+    /**
+     *
+     * {@inheritDoc}
+     */
     @Override
     public String generateToken(Authentication authentication) {
         return buildTokenWithDefaultParameters(authentication.getName());
     }
 
+    /**
+     *
+     * {@inheritDoc}
+     */
     @Override
     public String generateToken(String username) {
         return buildTokenWithDefaultParameters(username);
@@ -95,16 +107,28 @@ public class BearerTokenServiceImpl implements BearerTokenService {
         return buildTokenCustomParameters(username, personId);
     }
 
+    /**
+     *
+     * {@inheritDoc}
+     */
     @Override
     public String getUsernameFromToken(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
+    /**
+     *
+     * {@inheritDoc}
+     */
     @Override
     public String getPersonIdFromToken(String token) {
         return extractAllClaims(token).get("personId", String.class);
     }
 
+    /**
+     *
+     * {@inheritDoc}
+     */
     @Override
     public boolean validateToken(String token) {
         try {
