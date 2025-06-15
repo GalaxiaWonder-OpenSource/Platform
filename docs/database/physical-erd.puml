@@ -1,12 +1,39 @@
-@startuml "Prop GMS Physical ERD"
-!define table(x) class x << (E,#ADD1B2) >>
+@startuml
+hide circle
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
 
-' Define table UserType
-package "IAM" {
-    table(user_types) {
-      * id : BIGINT <<PK>>
-      --
-      * name : VARCHAR(20) <<Enum>>
-    }
+entity "persons" as Person {
+  * id : BIGINT [PK]
+  --
+  name_first : VARCHAR
+  name_last : VARCHAR
+  email : VARCHAR UNIQUE
+  phone : VARCHAR?
+  professional_id : VARCHAR?
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
 }
+
+entity "user_accounts" as UserAccount {
+  * id : BIGINT [PK]
+  --
+  user_name : VARCHAR UNIQUE
+  hashed_password : VARCHAR
+  user_type_id : BIGINT [FK]
+  person_id : BIGINT [FK]
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+entity "user_types" as UserType {
+  * id : BIGINT [PK]
+  --
+  name : VARCHAR(20)
+}
+
+' Relaciones
+UserAccount::person_id --> Person::id : FK_user_person
+UserAccount::user_type_id --> UserType::id : FK_user_type
+
 @enduml
