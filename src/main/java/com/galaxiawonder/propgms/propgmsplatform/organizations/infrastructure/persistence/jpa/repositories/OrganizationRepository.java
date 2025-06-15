@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -54,5 +55,19 @@ public interface OrganizationRepository extends JpaRepository<Organization, Long
     WHERE m.id = :memberId
 """)
     Optional<Organization> findOrganizationByMemberId(@Param("memberId") Long memberId);
+
+    /**
+     * Retrieves all {@link Organization} entities where the given person is registered as a member.
+     *
+     * @param personId the ID of the person
+     * @return a list of organizations where the person is a member
+     */
+    @Query("""
+    SELECT o
+    FROM Organization o
+    JOIN o.members m
+    WHERE m.personId.personId = :personId
+""")
+    Optional<List<Organization>> findAllOrganizationsByOrganizationMemberPersonId(@Param("personId") Long personId);
 
 }

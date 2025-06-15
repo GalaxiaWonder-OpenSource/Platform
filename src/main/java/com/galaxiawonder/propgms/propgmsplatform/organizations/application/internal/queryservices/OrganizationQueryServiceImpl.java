@@ -6,9 +6,9 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.enti
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMember;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllInvitationsByOrganizationIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllMembersByOrganizationIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllOrganizationsByMemberPersonIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetOrganizationByIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationQueryService;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.repositories.OrganizationInvitationRepository;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.repositories.OrganizationRepository;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -90,6 +90,16 @@ public class OrganizationQueryServiceImpl implements OrganizationQueryService {
                     return ImmutablePair.of(member, profileDetails);
                 })
                 .toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Organization> handle(GetAllOrganizationsByMemberPersonIdQuery query) {
+
+        return organizationRepository.findAllOrganizationsByOrganizationMemberPersonId(query.personId())
+                .orElseThrow(()-> new IllegalArgumentException("The person with the ID " + query.personId() + " does not belong to any organization"));
     }
 
 }

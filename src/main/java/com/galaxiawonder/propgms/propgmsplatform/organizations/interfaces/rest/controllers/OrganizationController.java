@@ -6,6 +6,7 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.enti
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMember;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllInvitationsByOrganizationIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllMembersByOrganizationIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllOrganizationsByMemberPersonIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetOrganizationByIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationQueryService;
@@ -279,4 +280,34 @@ public class OrganizationController {
         return ResponseEntity.noContent().build();
     }
 
+
+    /**
+     * Retrieves all organizations where a given person is a member.
+     *
+     * @param personId the ID of the person
+     * @return a list of {@link OrganizationResource} objects representing the organizations
+     */
+    @Operation(
+            summary = "Get organizations by person ID",
+            description = "Retrieves all organizations where the given person is a registered member"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Organizations retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Person not found or has no memberships")
+    })
+    @GetMapping("/by-person-id/{id}")
+    public ResponseEntity<List<OrganizationResource>> getOrganizationsByPersonId(
+            @Parameter(description = "ID of the person", required = true)
+            @PathVariable("id") Long personId
+    ) {
+        List<Organization> organizations = organizationQueryService.handle(
+                new GetAllOrganizationsByMemberPersonIdQuery(personId)
+        );
+
+        List<OrganizationResource> resources = organizations.stream()
+                .map(OrganizationResourceFromEntityAssembler::toResourceFromEntity)
+                .toList();
+
+        return new ResponseEntity<>(resources, HttpStatus.OK);
+    }
 }

@@ -5,6 +5,7 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.enti
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMember;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllInvitationsByOrganizationIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllMembersByOrganizationIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllOrganizationsByMemberPersonIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetOrganizationByIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -64,4 +65,23 @@ public interface OrganizationQueryService {
      */
     List<ImmutablePair<OrganizationMember, ProfileDetails>> handle(GetAllMembersByOrganizationIdQuery query);
 
+    /**
+     * Handles the query to retrieve all {@link Organization} entities in which
+     * the specified person is currently registered as a member.
+     *
+     * <p>
+     * This method performs the following actions:
+     * <ul>
+     *   <li>Searches for all {@link OrganizationMember} records linked to the given {@code personId}.</li>
+     *   <li>Retrieves the corresponding {@link Organization} instances for those memberships.</li>
+     *   <li>Returns the complete list of organizations associated with the person.</li>
+     * </ul>
+     * </p>
+     *
+     * @param query the {@link GetAllOrganizationsByMemberPersonIdQuery} containing the target person's ID
+     * @return a {@link List} of {@link Organization} entities where the person is a member
+     *
+     * @since 1.0
+     */
+    List<Organization> handle(GetAllOrganizationsByMemberPersonIdQuery query);
 }

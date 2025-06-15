@@ -12,10 +12,7 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valu
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationStatuses;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationCommandService;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.repositories.OrganizationInvitationStatusRepository;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.repositories.OrganizationMemberTypeRepository;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.repositories.OrganizationRepository;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.repositories.OrganizationStatusRepository;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.repositories.*;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
 import jakarta.persistence.EntityNotFoundException;
@@ -49,6 +46,9 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
     /** Facade to interact with Identity and Access Management context. */
     private final IAMContextFacade iamContextFacade;
 
+    /** Repository for retrieving {@link OrganizationInvitation} entities. */
+    OrganizationInvitationRepository organizationInvitationRepository;
+
     /**
      * Constructs a new {@code OrganizationCommandServiceImpl} with required dependencies.
      *
@@ -63,13 +63,15 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
             OrganizationStatusRepository organizationStatusRepository,
             OrganizationInvitationStatusRepository organizationInvitationStatusRepository,
             OrganizationMemberTypeRepository organizationMemberTypeRepository,
-            IAMContextFacade iamContextFacade
+            IAMContextFacade iamContextFacade,
+            OrganizationInvitationRepository organizationInvitationRepository
     ) {
         this.organizationRepository = organizationRepository;
         this.organizationStatusRepository = organizationStatusRepository;
         this.iamContextFacade = iamContextFacade;
         this.organizationInvitationStatusRepository = organizationInvitationStatusRepository;
         this.organizationMemberTypeRepository = organizationMemberTypeRepository;
+        this.organizationInvitationRepository = organizationInvitationRepository;
     }
 
     /**
@@ -124,7 +126,9 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
      * {@inheritDoc}
      */
     @Transactional
-    public Optional<Triple<Organization, OrganizationInvitation, ProfileDetails>> handle(InvitePersonToOrganizationByEmailCommand command) {
+    public Optional<Triple<Organization, OrganizationInvitation, ProfileDetails>> handle(
+            InvitePersonToOrganizationByEmailCommand command) {
+
         var personId = new PersonId(this.iamContextFacade.getPersonIdFromEmail(command.email()));
 
         Organization organization = this.organizationRepository.findById(command.organizationId())
@@ -132,11 +136,17 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
 
         OrganizationInvitationStatus pendingStatus = getOrganizationInvitationStatus(OrganizationInvitationStatuses.PENDING);
 
-        OrganizationInvitation invitation = organization.addInvitation(personId, pendingStatus);
+        organization.addInvitation(personId, pendingStatus);
 
         saveOrganization(organization);
 
-        return returnInvitationTripleResult(organization, invitation);
+        var persistedInvitation = organizationInvitationRepository
+                .findTopByOrganizationIdAndInvitedPersonIdOrderByIdDesc(
+                        organization.getId(), personId
+                )
+                .orElseThrow(() -> new IllegalStateException("Failed to persist invitation"));
+
+        return returnInvitationTripleResult(organization, persistedInvitation);
     }
 
     /**
