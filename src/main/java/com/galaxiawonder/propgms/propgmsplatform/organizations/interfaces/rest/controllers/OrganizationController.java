@@ -6,14 +6,13 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.comm
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.RejectInvitationCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.UpdateOrganizationCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitation;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMember;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllInvitationsByOrganizationIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllMembersByOrganizationIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetOrganizationByIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationQueryService;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.assemblers.CreateOrganizationCommandFromResourceAssembler;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.assemblers.InvitePersonToOrganizationCommandFromResource;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.assemblers.OrganizationInvitationResourceFromEntityAssembler;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.assemblers.OrganizationResourceFromEntityAssembler;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.assemblers.*;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.resources.*;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
 import io.swagger.v3.oas.annotations.Operation;
@@ -228,4 +227,35 @@ public class OrganizationController {
 
         return new ResponseEntity<>(resources, HttpStatus.OK);
     }
+
+
+    /**
+     * Retrieves all members associated with a specific organization.
+     *
+     * @param organizationId the ID of the organization
+     * @return a list of {@link OrganizationMemberResource} objects
+     */
+    @Operation(
+            summary = "Get all members by organization ID",
+            description = "Retrieves all active members associated with the given organization ID"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Members retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Organization not found")
+    })
+    @GetMapping("/{organizationId}/members")
+    public ResponseEntity<List<OrganizationMemberResource>> getAllMembersByOrganizationId(
+            @Parameter(description = "ID of the organization", required = true)
+            @PathVariable Long organizationId) {
+
+        List<ImmutablePair<OrganizationMember, ProfileDetails>> organizationMembers =
+                organizationQueryService.handle(new GetAllMembersByOrganizationIdQuery(organizationId));
+
+        List<OrganizationMemberResource> resources = organizationMembers.stream()
+                .map(OrganizationMemberResourceFromEntityAssembler::toResourceFromPair)
+                .toList();
+
+        return new ResponseEntity<>(resources, HttpStatus.OK);
+    }
+
 }

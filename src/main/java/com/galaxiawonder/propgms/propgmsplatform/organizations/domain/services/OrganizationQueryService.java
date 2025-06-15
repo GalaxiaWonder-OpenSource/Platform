@@ -2,7 +2,9 @@ package com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services;
 
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitation;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMember;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllInvitationsByOrganizationIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllMembersByOrganizationIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetOrganizationByIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -43,4 +45,23 @@ public interface OrganizationQueryService {
      * @since 1.0
      */
     List<ImmutablePair<OrganizationInvitation, ProfileDetails>> handle(GetAllInvitationsByOrganizationIdQuery query);
+
+    /**
+     * Handles the query to retrieve all organization members associated with a given organization ID.
+     *
+     * <p>This method performs the following actions:</p>
+     * <ul>
+     *   <li>Fetches all {@link OrganizationMember} entities linked to the specified organization.</li>
+     *   <li>For each member, resolves and includes the {@link ProfileDetails} of the associated person.</li>
+     *   <li>Returns the result as a list of {@link ImmutablePair} entries, where the left element is the member
+     *   and the right element is the corresponding profile details.</li>
+     * </ul>
+     *
+     * @param query the {@link GetAllMembersByOrganizationIdQuery} containing the target organization ID
+     * @return a {@link List} of {@link ImmutablePair} each containing an {@link OrganizationMember} and its associated {@link ProfileDetails}
+     *
+     * @since 1.0
+     */
+    List<ImmutablePair<OrganizationMember, ProfileDetails>> handle(GetAllMembersByOrganizationIdQuery query);
+
 }

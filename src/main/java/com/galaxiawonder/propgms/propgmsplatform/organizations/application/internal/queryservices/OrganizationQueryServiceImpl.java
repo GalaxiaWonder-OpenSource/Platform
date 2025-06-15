@@ -3,7 +3,9 @@ package com.galaxiawonder.propgms.propgmsplatform.organizations.application.inte
 import com.galaxiawonder.propgms.propgmsplatform.iam.interfaces.acl.IAMContextFacade;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitation;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMember;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllInvitationsByOrganizationIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllMembersByOrganizationIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetOrganizationByIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationQueryService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.repositories.OrganizationInvitationRepository;
@@ -68,4 +70,26 @@ public class OrganizationQueryServiceImpl implements OrganizationQueryService {
                 })
                 .toList();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ImmutablePair<OrganizationMember, ProfileDetails>> handle(GetAllMembersByOrganizationIdQuery query) {
+        Organization organization = organizationRepository.findById(query.organizationId())
+                .orElseThrow(() -> new IllegalArgumentException("No organization found by the given ID: " + query.organizationId()));
+
+        List<OrganizationMember> organizationMembers = organization.getMembers();
+
+        return organizationMembers.stream()
+                .map(member -> {
+                    ProfileDetails profileDetails = iamContextFacade
+                            .getProfileDetailsById(
+                                    member.getPersonId().personId()
+                            );
+                    return ImmutablePair.of(member, profileDetails);
+                })
+                .toList();
+    }
+
 }
