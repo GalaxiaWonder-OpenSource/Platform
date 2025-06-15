@@ -4,7 +4,7 @@ import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.commands.SeedU
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities.UserType;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.UserTypes;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.services.UserTypeCommandService;
-import com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persitence.jpa.repositories.UserTypeRepository;
+import com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persistence.jpa.repositories.UserTypeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;

@@ -6,7 +6,7 @@ import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.queries.GetPer
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.queries.GetPersonIdByEmailQuery;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.EmailAddress;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.services.PersonQueryService;
-import com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persitence.jpa.repositories.PersonRepository;
+import com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persistence.jpa.repositories.PersonRepository;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;

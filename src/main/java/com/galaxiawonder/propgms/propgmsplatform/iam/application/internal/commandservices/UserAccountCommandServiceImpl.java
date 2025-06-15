@@ -9,9 +9,9 @@ import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.commands.SignU
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities.UserType;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.*;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.services.UserAccountCommandService;
-import com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persitence.jpa.repositories.PersonRepository;
-import com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persitence.jpa.repositories.UserAccountRepository;
-import com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persitence.jpa.repositories.UserTypeRepository;
+import com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persistence.jpa.repositories.PersonRepository;
+import com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persistence.jpa.repositories.UserAccountRepository;
+import com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persistence.jpa.repositories.UserTypeRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.tuple.ImmutablePair;

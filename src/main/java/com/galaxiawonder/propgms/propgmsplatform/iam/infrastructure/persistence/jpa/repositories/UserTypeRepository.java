@@ -1,4 +1,4 @@
-package com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persitence.jpa.repositories;
+package com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persistence.jpa.repositories;
 
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.entities.UserType;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.UserTypes;

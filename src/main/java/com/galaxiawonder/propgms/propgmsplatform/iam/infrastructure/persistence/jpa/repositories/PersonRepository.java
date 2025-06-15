@@ -1,9 +1,8 @@
-package com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persitence.jpa.repositories;
+package com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persistence.jpa.repositories;
 
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates.Person;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.EmailAddress;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.PhoneNumber;
-import lombok.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
