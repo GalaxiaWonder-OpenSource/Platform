@@ -41,4 +41,18 @@ public interface OrganizationRepository extends JpaRepository<Organization, Long
     WHERE i.id = :invitationId
 """)
     Optional<Organization> findOrganizationByInvitationId(@Param("invitationId") Long invitationId);
+
+    /**
+     * Finds an organization by using a member's ID.
+     *
+     * @param memberId the ID of the organization member
+     * @return the {@link Organization} that contains the member with the given ID
+     */
+    @Query("""
+    SELECT m.organization
+    FROM OrganizationMember m
+    WHERE m.id = :memberId
+""")
+    Optional<Organization> findOrganizationByMemberId(@Param("memberId") Long memberId);
+
 }

@@ -101,4 +101,20 @@ public interface OrganizationCommandService {
      * @since 1.0
      */
     Optional<Triple<Organization, OrganizationInvitation, ProfileDetails>> handle(RejectInvitationCommand rejectInvitationCommand);
+
+    /**
+     * Handles the command to delete an organization member by their unique ID.
+     *
+     * <p>
+     * This method performs validation and removes the corresponding {@link OrganizationMember}
+     * entity from the system. It may also trigger additional domain events or cleanup operations
+     * depending on business rules.
+     * </p>
+     *
+     * @param command the {@link DeleteOrganizationMemberCommand} containing the ID of the member to delete
+     * @throws IllegalArgumentException if the member does not exist or cannot be deleted due to business constraints
+     *
+     * @since 1.0
+     */
+    void handle(DeleteOrganizationMemberCommand command);
 }

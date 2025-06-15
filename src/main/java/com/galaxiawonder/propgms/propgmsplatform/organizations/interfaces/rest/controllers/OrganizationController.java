@@ -1,10 +1,7 @@
 package com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.controllers;
 
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.AcceptInvitationCommand;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.DeleteOrganizationCommand;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.RejectInvitationCommand;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.UpdateOrganizationCommand;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.*;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitation;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMember;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllInvitationsByOrganizationIdQuery;
@@ -256,6 +253,30 @@ public class OrganizationController {
                 .toList();
 
         return new ResponseEntity<>(resources, HttpStatus.OK);
+    }
+
+    /**
+     * Deletes an organization member by their unique ID.
+     *
+     * @param memberId the ID of the member to be removed
+     * @return HTTP 204 No Content if successful
+     */
+    @Operation(
+            summary = "Delete a member from the organization",
+            description = "Removes a member from the organization by their unique member ID"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Member deleted successfully"),
+            @ApiResponse(responseCode = "400", description = "Business rule violation (e.g. trying to delete a CONTRACTOR)"),
+            @ApiResponse(responseCode = "404", description = "Member or organization not found")
+    })
+    @DeleteMapping("/organization-members/{memberId}")
+    public ResponseEntity<Void> deleteMemberById(
+            @Parameter(description = "ID of the organization member", required = true)
+            @PathVariable Long memberId
+    ) {
+        organizationCommandService.handle(new DeleteOrganizationMemberCommand(memberId));
+        return ResponseEntity.noContent().build();
     }
 
 }

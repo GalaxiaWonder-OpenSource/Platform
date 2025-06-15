@@ -4,6 +4,7 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.comm
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.*;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.CommercialName;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.LegalName;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationMemberTypes;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
@@ -59,9 +60,6 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrganizationInvitation> invitations = new ArrayList<>();
 
-    /*
-    * Members and invitations will be implemented later.
-    * */
 
     protected Organization() {}
 
@@ -75,7 +73,6 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
      *                - createdBy must not be null or empty.
      *                - status must not be null.
      */
-
     public Organization(CreateOrganizationCommand command, OrganizationStatus status, OrganizationMemberType contractorType) {
         this.legalName = new LegalName(command.legalName());
         this.commercialName = command.commercialName() != null ? new CommercialName(command.commercialName()) : new CommercialName(""); this.ruc = new Ruc(command.ruc());
@@ -196,6 +193,32 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
         OrganizationMember member = new OrganizationMember(this, personId, workerType);
         members.add(member);
     }
+
+    /**
+     * Removes a member from the organization using their unique member ID.
+     *
+     * <p>
+     * This operation ensures the member exists and is not of type {@code CONTRACTOR}
+     * before attempting to remove them from the organization.
+     * </p>
+     *
+     * @param memberId the unique ID of the {@link OrganizationMember} to remove
+     * @throws IllegalArgumentException if the member is not part of the organization
+     *                                   or if the member's type is {@code CONTRACTOR}
+     */
+    public void removeMemberById(Long memberId) {
+        OrganizationMember member = members.stream()
+                .filter(m -> m.getId().equals(memberId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No member found with ID: " + memberId));
+
+        if (member.getMemberType().getName() == OrganizationMemberTypes.CONTRACTOR) {
+            throw new IllegalArgumentException("Cannot remove member with role CONTRACTOR");
+        }
+
+        members.remove(member);
+    }
+
 
     /**
      * Checks whether a person is already a member of this organization.

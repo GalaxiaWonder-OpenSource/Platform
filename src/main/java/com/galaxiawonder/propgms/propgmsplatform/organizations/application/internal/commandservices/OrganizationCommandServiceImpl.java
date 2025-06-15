@@ -134,7 +134,7 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
 
         OrganizationInvitation invitation = organization.addInvitation(personId, pendingStatus);
 
-        organizationRepository.save(organization);
+        saveOrganization(organization);
 
         return returnInvitationTripleResult(organization, invitation);
     }
@@ -152,7 +152,7 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
 
         OrganizationInvitation invitation = organization.acceptInvitation(command.invitationId(), acceptedStatus, workerType);
 
-        organizationRepository.save(organization);
+        saveOrganization(organization);
 
         return returnInvitationTripleResult(organization, invitation);
     }
@@ -169,9 +169,23 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
 
         OrganizationInvitation invitation = organization.rejectInvitation(rejectInvitationCommand.invitationId(), rejectedStatus);
 
-        organizationRepository.save(organization);
+        saveOrganization(organization);
 
         return returnInvitationTripleResult(organization, invitation);
+    }
+
+    @Override
+    public void handle(DeleteOrganizationMemberCommand command) {
+        Organization organization = organizationRepository.findOrganizationByMemberId(command.organizationMemberId())
+                .orElseThrow(()-> new IllegalArgumentException("No organization found for the given organization member ID: " + command.organizationMemberId()));
+
+        organization.removeMemberById(command.organizationMemberId());
+
+        saveOrganization(organization);
+    }
+
+    private void saveOrganization(Organization organization) {
+        organizationRepository.save(organization);
     }
 
     /**

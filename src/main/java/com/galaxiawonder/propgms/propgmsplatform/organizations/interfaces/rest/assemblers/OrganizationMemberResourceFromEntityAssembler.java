@@ -22,7 +22,7 @@ public class OrganizationMemberResourceFromEntityAssembler {
 
         return new OrganizationMemberResource(
                 member.getId(),
-                profile.firstName() + " " + profile.firstName(),
+                profile.firstName() + " " + profile.lastName(),
                 member.getMemberType().getStringName(),
                 member.getCreatedAt()
         );
