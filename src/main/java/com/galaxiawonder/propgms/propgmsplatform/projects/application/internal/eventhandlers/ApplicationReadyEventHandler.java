@@ -2,8 +2,10 @@ package com.galaxiawonder.propgms.propgmsplatform.projects.application.internal.
 
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.SeedProjectStatusCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.SeedSpecialtyCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.SeedTaskStatusCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectStatusCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.SpecialtyCommandService;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.TaskStatusCommandService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -22,6 +24,7 @@ import java.sql.Timestamp;
  * This includes:
  * - Project Statuses (e.g., DESIGN_IN_PROCESS, APPROVED)
  * - Project Specialties (e.g., ARCHITECTURE, SANITATION)
+ * - Task Statuses (e.g., DRAFT, PENDING)
  *
  * This operation is typically executed once on application startup.
  *
@@ -38,6 +41,9 @@ public class ApplicationReadyEventHandler {
     /** Service for executing commands related to project specialties. */
     private final SpecialtyCommandService specialtyCommandService;
 
+    /** Service for executing commands related to task statuses. */
+    private final TaskStatusCommandService taskStatusCommandService;
+
     /** Logger instance for recording application events. */
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationReadyEventHandler.class);
 
@@ -47,10 +53,14 @@ public class ApplicationReadyEventHandler {
      * @param projectStatusCommandService the service used for seeding project statuses
      * @param specialtyCommandService the service used for seeding project specialties
      */
-    public ApplicationReadyEventHandler(ProjectStatusCommandService projectStatusCommandService,
-                                        SpecialtyCommandService specialtyCommandService) {
+    public ApplicationReadyEventHandler(
+            ProjectStatusCommandService projectStatusCommandService,
+            SpecialtyCommandService specialtyCommandService,
+            TaskStatusCommandService taskStatusCommandService
+    ) {
         this.projectStatusCommandService = projectStatusCommandService;
         this.specialtyCommandService = specialtyCommandService;
+        this.taskStatusCommandService = taskStatusCommandService;
     }
 
     /**
@@ -65,6 +75,7 @@ public class ApplicationReadyEventHandler {
 
         projectStatusCommandService.handle(new SeedProjectStatusCommand());
         specialtyCommandService.handle(new SeedSpecialtyCommand());
+        taskStatusCommandService.handle(new SeedTaskStatusCommand());
 
         LOGGER.info("Project statuses seeding completed for {} at {}", applicationName, currentTimestamp());
     }
