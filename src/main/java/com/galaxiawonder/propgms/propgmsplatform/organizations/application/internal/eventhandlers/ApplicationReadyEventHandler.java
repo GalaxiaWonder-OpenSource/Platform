@@ -72,7 +72,7 @@ public class ApplicationReadyEventHandler {
     @EventListener
     public void onApplicationReady(ApplicationReadyEvent event) {
         var applicationName = event.getApplicationContext().getId();
-        LOGGER.info("🔄 Verifying if organization statuses need seeding for {} at {}", applicationName, currentTimestamp());
+        LOGGER.info("Verifying if organization statuses need seeding for {} at {}", applicationName, currentTimestamp());
 
         organizationStatusCommandService.handle(new SeedOrganizationStatusCommand());
 
@@ -80,7 +80,7 @@ public class ApplicationReadyEventHandler {
 
         organizationInvitationStatusCommandService.handle(new SeedOrganizationInvitationStatusCommand());
 
-        LOGGER.info("✅ Organization statuses seeding completed for {} at {}", applicationName, currentTimestamp());
+        LOGGER.info("Organization statuses seeding completed for {} at {}", applicationName, currentTimestamp());
     }
 
     private Timestamp currentTimestamp() {
