@@ -35,14 +35,14 @@ public class Specialty {
     private Long id;
 
     /**
-     * Enum value representing the specialty type.
+     * Enum description representing the specialty type.
      */
     @Enumerated(EnumType.STRING)
     @Column(length = 30)
     private Specialties name;
 
     /**
-     * Constructs a {@code Specialty} with a specified {@link Specialties} value.
+     * Constructs a {@code Specialty} with a specified {@link Specialties} description.
      *
      * @param name the predefined specialty
      */
@@ -60,11 +60,11 @@ public class Specialty {
     }
 
     /**
-     * Converts a string representation of the specialty name to a {@link Specialty} instance.
+     * Converts a string representation of the specialty projectName to a {@link Specialty} instance.
      *
-     * @param name the string value of the enum constant
-     * @return a new {@code Specialty} instance with the corresponding enum value
-     * @throws IllegalArgumentException if the name does not match any enum constant
+     * @param name the string description of the enum constant
+     * @return a new {@code Specialty} instance with the corresponding enum description
+     * @throws IllegalArgumentException if the projectName does not match any enum constant
      */
     public static Specialty toSpecialtyFromName(String name) {
         return new Specialty(Specialties.valueOf(name));
@@ -85,7 +85,7 @@ public class Specialty {
     /**
      * Returns the string representation of the enum-based specialty.
      *
-     * @return the name of the specialty as a string
+     * @return the projectName of the specialty as a string
      */
     public String getStringName() {
         return name.name();

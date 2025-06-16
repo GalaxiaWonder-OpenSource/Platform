@@ -12,7 +12,7 @@ import java.util.Optional;
  *
  * @summary
  * JPA repository for managing {@link OrganizationMemberType} entities.
- * Provides methods to query organization member types by name and check for existence.
+ * Provides methods to query organization member types by projectName and check for existence.
  *
  * <p>This repository maps {@link OrganizationMemberTypes} enum values to persisted entities,
  * allowing the system to maintain a list of predefined member roles (e.g., {@code CONTRACTOR}, {@code WORKER}).</p>
@@ -25,17 +25,17 @@ import java.util.Optional;
 public interface OrganizationMemberTypeRepository extends JpaRepository<OrganizationMemberType, Long> {
 
     /**
-     * Finds an organization member type by its name.
+     * Finds an organization member type by its projectName.
      *
-     * @param name the {@link OrganizationMemberTypes} enum representing the member type name
+     * @param name the {@link OrganizationMemberTypes} enum representing the member type projectName
      * @return an {@link Optional} containing the {@link OrganizationMemberType} if found
      */
     Optional<OrganizationMemberType> findByName(OrganizationMemberTypes name);
 
     /**
-     * Checks if an organization member type exists by its name.
+     * Checks if an organization member type exists by its projectName.
      *
-     * @param name the {@link OrganizationMemberTypes} enum representing the member type name
+     * @param name the {@link OrganizationMemberTypes} enum representing the member type projectName
      * @return true if the organization member type exists, false otherwise
      */
     boolean existsByName(OrganizationMemberTypes name);

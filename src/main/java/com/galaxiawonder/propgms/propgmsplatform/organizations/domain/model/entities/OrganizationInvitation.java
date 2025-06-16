@@ -22,10 +22,10 @@ public class OrganizationInvitation extends AuditableModel {
     private Organization organization;
 
     /**
-     * Embedded value object representing the invited person.
+     * Embedded description object representing the invited person.
      */
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "person_id", nullable = false, updatable = false))
+    @AttributeOverride(name = "description", column = @Column(name = "person_id", nullable = false, updatable = false))
     private PersonId invitedPersonId;
 
     /**

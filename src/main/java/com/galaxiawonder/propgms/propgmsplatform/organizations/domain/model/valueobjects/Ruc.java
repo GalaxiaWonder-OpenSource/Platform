@@ -25,7 +25,7 @@ import java.util.Objects;
 public record Ruc(String value) {
 
     /**
-     * Creates an empty RUC with a blank value.
+     * Creates an empty RUC with a blank description.
      * Intended for use by frameworks that require a no-arg constructor.
      */
     public Ruc() {
@@ -35,10 +35,10 @@ public record Ruc(String value) {
     /**
      * Validates and constructs a {@link Ruc} instance.
      *
-     * @param value the RUC value
+     * @param value the RUC description
      *
-     * @throws NullPointerException if the provided value is {@code null}
-     * @throws IllegalArgumentException if the value is not exactly 11 digits long
+     * @throws NullPointerException if the provided description is {@code null}
+     * @throws IllegalArgumentException if the description is not exactly 11 digits long
      *                                  or does not start with "10" or "20"
      */
     public Ruc {

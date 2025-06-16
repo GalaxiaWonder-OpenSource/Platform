@@ -23,7 +23,7 @@ import lombok.Getter;
 @Entity
 public class UserAccount extends AuditableAbstractAggregateRoot<UserAccount> {
 
-    /** Unique username for account authentication, represented as a value object */
+    /** Unique username for account authentication, represented as a description object */
     @Getter
     @Embedded
     private UserName userName;
@@ -52,7 +52,7 @@ public class UserAccount extends AuditableAbstractAggregateRoot<UserAccount> {
     /**
      * Constructs a UserAccount with username, hashed password and user type.
      *
-     * @param userName  the plain username to be wrapped in a value object
+     * @param userName  the plain username to be wrapped in a description object
      * @param password  the hashed password (must be pre-encoded)
      * @param userType  the role type assigned to the user
      */

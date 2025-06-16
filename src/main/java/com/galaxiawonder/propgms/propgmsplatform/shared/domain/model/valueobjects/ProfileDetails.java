@@ -5,7 +5,7 @@ package com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjec
  *
  * @summary
  * Read model representing basic personal profile information.
- * This record is commonly used to expose user identity data such as name and email
+ * This record is commonly used to expose user identity data such as projectName and email
  * across bounded contexts without exposing internal domain structures.
  *
  * <p>Typical use cases include:</p>
@@ -14,8 +14,8 @@ package com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjec
  *   <li>Enriching other domain models (e.g., organization members)</li>
  * </ul>
  *
- * @param firstName the person's given name
- * @param lastName the person's family name
+ * @param firstName the person's given projectName
+ * @param lastName the person's family projectName
  * @param email the person's email address
  *
  * @author

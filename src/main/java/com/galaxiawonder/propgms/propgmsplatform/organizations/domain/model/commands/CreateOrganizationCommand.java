@@ -10,16 +10,16 @@ import jakarta.annotation.Nullable;
  *
  * <p>This command encapsulates the necessary fields for creating an organization source, including:</p>
  * <ul>
- *   <li><strong>legalName</strong>: The legal name of the organization. Must not be null or blank.</li>
- *   <li><strong>commercialName</strong>: The commercial name of the organization. Can be null.</li>
+ *   <li><strong>legalName</strong>: The legal projectName of the organization. Must not be null or blank.</li>
+ *   <li><strong>commercialName</strong>: The commercial projectName of the organization. Can be null.</li>
  *   <li><strong>ruc</strong>: The RUC (tax ID) of the organization. Must follow valid format.</li>
  *   <li><strong>createdBy</strong>: The identifier of the user/entity that created the organization. Must not be null.</li>
  * </ul>
  *
  * <p>Validation is applied to ensure all required fields meet defined constraints.</p>
  *
- * @param legalName the legal name of the organization
- * @param commercialName the commercial name of the organization (optional)
+ * @param legalName the legal projectName of the organization
+ * @param commercialName the commercial projectName of the organization (optional)
  * @param ruc the tax identification number (RUC) of the organization
  * @param createdBy the ID of the creator
  */

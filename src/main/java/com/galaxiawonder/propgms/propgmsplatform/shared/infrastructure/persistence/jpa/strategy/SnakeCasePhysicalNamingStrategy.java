@@ -23,7 +23,7 @@ public class SnakeCasePhysicalNamingStrategy implements PhysicalNamingStrategy {
 
     /**
      * Converts the Schema Name to Snake Case
-     * @param identifier schema name
+     * @param identifier schema projectName
      * @param jdbcEnvironment jdbc environment
      * @return Snake Case Schema Name
      */
@@ -34,7 +34,7 @@ public class SnakeCasePhysicalNamingStrategy implements PhysicalNamingStrategy {
 
     /**
      * Converts the Table Name to Snake Case and Pluralizes it
-     * @param identifier table name
+     * @param identifier table projectName
      * @param jdbcEnvironment jdbc environment
      * @return Snake Case and Pluralized Table Name
      */
@@ -45,7 +45,7 @@ public class SnakeCasePhysicalNamingStrategy implements PhysicalNamingStrategy {
 
     /**
      * Converts the Sequence Name to Snake Case
-     * @param identifier sequence name
+     * @param identifier sequence projectName
      * @param jdbcEnvironment jdbc environment
      * @return Snake Case Sequence Name
      */
@@ -56,7 +56,7 @@ public class SnakeCasePhysicalNamingStrategy implements PhysicalNamingStrategy {
 
     /**
      * Converts the Column Name to Snake Case
-     * @param identifier column name
+     * @param identifier column projectName
      * @param jdbcEnvironment jdbc environment
      * @return Snake Case Column Name
      */

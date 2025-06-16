@@ -8,7 +8,7 @@ package com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.queries;
  * using their unique identifier within the system.
  *
  * <p>This query is typically handled within the IAM context to resolve
- * person identity details (e.g., name, email) based on a given {@code personId}.</p>
+ * person identity details (e.g., projectName, email) based on a given {@code personId}.</p>
  *
  * @param personId the unique identifier of the person to be retrieved
  *

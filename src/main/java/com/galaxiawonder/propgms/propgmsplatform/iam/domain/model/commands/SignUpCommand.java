@@ -17,8 +17,8 @@ import jakarta.annotation.Nullable;
  * @param username   the unique identifier to be used for authentication
  * @param password   the plain (pre-hash) password provided by the user
  * @param userType   the user category (e.g., TYPE_CLIENT, TYPE_WORKER) to determine permissions and role
- * @param firstName  the person's first name
- * @param lastName   the person's last name
+ * @param firstName  the person's first projectName
+ * @param lastName   the person's last projectName
  * @param email      the person's email address (must be unique and valid)
  * @param phone      the person's optional phone number, must be in E.164 format (e.g., +51987654321) if present
  *

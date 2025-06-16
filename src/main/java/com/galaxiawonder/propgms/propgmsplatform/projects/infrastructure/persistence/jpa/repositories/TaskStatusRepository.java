@@ -12,7 +12,7 @@ import java.util.Optional;
  *
  * @summary
  * JPA repository for managing {@link TaskStatus} entities associated with tasks.
- * Provides methods to query task statuses by name and check for existence.
+ * Provides methods to query task statuses by projectName and check for existence.
  *
  * This repository is specific to statuses tied to task lifecycle management.
  *
@@ -24,17 +24,17 @@ import java.util.Optional;
 public interface TaskStatusRepository extends JpaRepository<TaskStatus, Long> {
 
     /**
-     * Finds a task status by its name.
+     * Finds a task status by its projectName.
      *
-     * @param name the {@link TaskStatuses} enum representing the task status name
+     * @param name the {@link TaskStatuses} enum representing the task status projectName
      * @return an {@link Optional} containing the {@link TaskStatus} if found
      */
     Optional<TaskStatus> findByName(TaskStatuses name);
 
     /**
-     * Checks if a task status exists by its name.
+     * Checks if a task status exists by its projectName.
      *
-     * @param name the {@link TaskStatuses} enum representing the task status name
+     * @param name the {@link TaskStatuses} enum representing the task status projectName
      * @return true if the task status exists, false otherwise
      */
     boolean existsByName(TaskStatuses name);

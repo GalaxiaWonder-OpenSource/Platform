@@ -31,7 +31,7 @@ public class OrganizationMember extends AuditableModel {
 
     /** Unique identifier of the person associated with this membership. */
     @Column(nullable = false, updatable = false)
-    @AttributeOverride(name = "value", column = @Column(name = "person_id"))
+    @AttributeOverride(name = "description", column = @Column(name = "person_id"))
     @Embedded
     private PersonId personId;
 

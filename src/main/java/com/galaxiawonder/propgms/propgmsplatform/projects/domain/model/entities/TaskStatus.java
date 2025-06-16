@@ -36,7 +36,7 @@ public class TaskStatus {
     private Long id;
 
     /**
-     * Enum value representing the task status.
+     * Enum description representing the task status.
      */
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false, unique = true)
@@ -45,7 +45,7 @@ public class TaskStatus {
     /**
      * Constructs a {@code TaskStatus} with the given {@link TaskStatuses}.
      *
-     * @param name the enum value representing the task status
+     * @param name the enum description representing the task status
      */
     public TaskStatus(TaskStatuses name) {
         this.name = name;
@@ -61,11 +61,11 @@ public class TaskStatus {
     }
 
     /**
-     * Converts a string to a {@link TaskStatus} using the corresponding enum value.
+     * Converts a string to a {@link TaskStatus} using the corresponding enum description.
      *
      * @param name the string representation of the enum constant
-     * @return a new {@code TaskStatus} instance with the corresponding enum value
-     * @throws IllegalArgumentException if the name does not match any enum constant
+     * @return a new {@code TaskStatus} instance with the corresponding enum description
+     * @throws IllegalArgumentException if the projectName does not match any enum constant
      */
     public static TaskStatus toTaskStatusFromName(String name) {
         return new TaskStatus(TaskStatuses.valueOf(name));
@@ -86,7 +86,7 @@ public class TaskStatus {
     /**
      * Returns the string representation of the enum-based task status.
      *
-     * @return the name of the task status as a string
+     * @return the projectName of the task status as a string
      */
     public String getStringName() {
         return name.name();

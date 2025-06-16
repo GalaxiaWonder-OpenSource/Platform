@@ -199,7 +199,7 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
     }
 
     /**
-     * Retrieves the {@link OrganizationStatus} entity matching the given enum value.
+     * Retrieves the {@link OrganizationStatus} entity matching the given enum description.
      *
      * @param status the {@link OrganizationStatuses} enum representing the desired status
      * @return the corresponding {@link OrganizationStatus} entity
@@ -211,7 +211,7 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
     }
 
     /**
-     * Retrieves the {@link OrganizationInvitationStatus} entity matching the given enum value.
+     * Retrieves the {@link OrganizationInvitationStatus} entity matching the given enum description.
      *
      * @param status the {@link OrganizationInvitationStatuses} enum representing the invitation status
      * @return the corresponding {@link OrganizationInvitationStatus} entity
@@ -223,7 +223,7 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
     }
 
     /**
-     * Retrieves the {@link OrganizationMemberType} entity matching the given enum value.
+     * Retrieves the {@link OrganizationMemberType} entity matching the given enum description.
      *
      * @param status the {@link OrganizationMemberTypes} enum representing the member type
      * @return the corresponding {@link OrganizationMemberType} entity

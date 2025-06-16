@@ -19,11 +19,11 @@ import java.util.Date;
  * </p>
  *
  * @param id               the unique identifier of the invitation
- * @param organizationName the name of the organization issuing the invitation (nullable)
- * @param invitedBy        the name or email of the user who sent the invitation (nullable)
+ * @param organizationName the projectName of the organization issuing the invitation (nullable)
+ * @param invitedBy        the projectName or email of the user who sent the invitation (nullable)
  * @param status           the current status of the invitation (e.g., PENDING, ACCEPTED, REJECTED)
  * @param invitedAt        the timestamp indicating when the invitation was created
- * @param invitedPerson    the name or email of the person being invited (nullable)
+ * @param invitedPerson    the projectName or email of the person being invited (nullable)
  *
  * @author
  * Galaxia Wonder Development Team

@@ -36,14 +36,14 @@ public class ProjectStatus {
     private Long id;
 
     /**
-     * Enum value representing the status of the project.
+     * Enum description representing the status of the project.
      */
     @Enumerated(EnumType.STRING)
     @Column(length = 30)
     private ProjectStatuses name;
 
     /**
-     * Constructs a {@code ProjectStatus} with a specified {@link ProjectStatuses} value.
+     * Constructs a {@code ProjectStatus} with a specified {@link ProjectStatuses} description.
      *
      * @param name the predefined project status
      */
@@ -61,11 +61,11 @@ public class ProjectStatus {
     }
 
     /**
-     * Converts a string representation of the project status name to a {@link ProjectStatus} instance.
+     * Converts a string representation of the project status projectName to a {@link ProjectStatus} instance.
      *
-     * @param name the string value of the enum constant
-     * @return a new {@code ProjectStatus} instance with the corresponding enum value
-     * @throws IllegalArgumentException if the name does not match any enum constant
+     * @param name the string description of the enum constant
+     * @return a new {@code ProjectStatus} instance with the corresponding enum description
+     * @throws IllegalArgumentException if the projectName does not match any enum constant
      */
     public static ProjectStatus toProjectStatusFromName(String name) {
         return new ProjectStatus(ProjectStatuses.valueOf(name));
@@ -86,7 +86,7 @@ public class ProjectStatus {
     /**
      * Returns the string representation of the enum-based project status.
      *
-     * @return the name of the project status as a string
+     * @return the projectName of the project status as a string
      */
     public String getStringName() {
         return name.name();

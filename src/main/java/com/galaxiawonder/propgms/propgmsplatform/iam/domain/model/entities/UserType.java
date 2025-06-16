@@ -33,13 +33,13 @@ public class UserType {
     @Id
     private Long id;
 
-    /** Enum name representing the user type classification */
+    /** Enum projectName representing the user type classification */
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private UserTypes name;
 
     /**
-     * Constructs a UserType with a specified {@link UserTypes} value.
+     * Constructs a UserType with a specified {@link UserTypes} description.
      *
      * @param name the predefined user type classification
      */
@@ -57,11 +57,11 @@ public class UserType {
     }
 
     /**
-     * Converts a string representation of the user type name to a {@link UserType} instance.
+     * Converts a string representation of the user type projectName to a {@link UserType} instance.
      *
-     * @param name the string value of the enum constant
-     * @return a new {@code UserType} instance with the corresponding enum value
-     * @throws IllegalArgumentException if the name does not match any enum constant
+     * @param name the string description of the enum constant
+     * @return a new {@code UserType} instance with the corresponding enum description
+     * @throws IllegalArgumentException if the projectName does not match any enum constant
      */
     public static UserType toUserTypeFromName(String name) {
         return new UserType(UserTypes.valueOf(name));
@@ -83,7 +83,7 @@ public class UserType {
     /**
      * Returns the string representation of the enum-based user type.
      *
-     * @return the name of the user type as a string
+     * @return the projectName of the user type as a string
      */
     public String getStringName() {
         return name.name();

@@ -12,7 +12,7 @@ import java.util.Optional;
  *
  * @summary
  * JPA repository for managing {@link UserType} entities.
- * Provides methods to query user types by name and check for existence.
+ * Provides methods to query user types by projectName and check for existence.
  *
  * @author
  * Galaxia Wonder Development Team
@@ -22,17 +22,17 @@ import java.util.Optional;
 public interface UserTypeRepository extends JpaRepository<UserType, Long> {
 
     /**
-     * Finds a user type by its name.
+     * Finds a user type by its projectName.
      *
-     * @param name the {@link UserTypes} enum representing the user type name
+     * @param name the {@link UserTypes} enum representing the user type projectName
      * @return an {@link Optional} containing the {@link UserType} if found
      */
     Optional<UserType> findByName(UserTypes name);
 
     /**
-     * Checks if a user type exists by its name.
+     * Checks if a user type exists by its projectName.
      *
-     * @param name the {@link UserTypes} enum representing the user type name
+     * @param name the {@link UserTypes} enum representing the user type projectName
      * @return true if the user type exists, false otherwise
      */
     boolean existsByName(UserTypes name);

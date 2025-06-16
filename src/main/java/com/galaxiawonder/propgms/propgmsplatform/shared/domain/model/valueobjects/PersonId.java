@@ -9,7 +9,7 @@ import jakarta.persistence.Embeddable;
  * @summary
  * Value object that encapsulates the identifier of a {@link Person}.
  * Improves domain expressiveness and ensures type safety when referencing persons across the system.
- * Internally wraps a {@code Long} value which is still used as the primary key at the persistence layer.
+ * Internally wraps a {@code Long} description which is still used as the primary key at the persistence layer.
  *
  * @param personId the numeric identifier of the person, must be positive and non-null
  *
@@ -19,7 +19,7 @@ import jakarta.persistence.Embeddable;
 public record PersonId(Long personId) {
 
     /**
-     * Validates the {@code personId} value.
+     * Validates the {@code personId} description.
      *
      * @throws IllegalArgumentException if {@code personId} is null or less than 1
      */

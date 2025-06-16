@@ -128,9 +128,9 @@ public class UserAccountCommandServiceImpl implements UserAccountCommandService 
 
 
     /**
-     * Retrieves the user type from the database using the enum name provided in the command.
+     * Retrieves the user type from the database using the enum projectName provided in the command.
      *
-     * @param command the sign-up command containing the user type name
+     * @param command the sign-up command containing the user type projectName
      * @return an {@code Optional<UserType>} if found
      * @throws IllegalArgumentException if the user type does not exist
      */

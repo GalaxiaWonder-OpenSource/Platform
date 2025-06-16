@@ -41,7 +41,7 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
     /**
      * Finds a person entity by their email address.
      *
-     * @param emailAddress the {@link EmailAddress} value object representing the person's email
+     * @param emailAddress the {@link EmailAddress} description object representing the person's email
      * @return an {@link Optional} containing the {@link Person} if found, or {@link Optional#empty()} if no match exists
      *
      * @since 1.0
