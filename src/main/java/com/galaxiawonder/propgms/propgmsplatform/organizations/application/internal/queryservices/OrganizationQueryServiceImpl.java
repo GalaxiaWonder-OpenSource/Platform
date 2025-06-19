@@ -75,21 +75,11 @@ public class OrganizationQueryServiceImpl implements OrganizationQueryService {
      * {@inheritDoc}
      */
     @Override
-    public List<ImmutablePair<OrganizationMember, ProfileDetails>> handle(GetAllMembersByOrganizationIdQuery query) {
+    public List<OrganizationMember> handle(GetAllMembersByOrganizationIdQuery query) {
         Organization organization = organizationRepository.findById(query.organizationId())
                 .orElseThrow(() -> new IllegalArgumentException("No organization found by the given ID: " + query.organizationId()));
 
-        List<OrganizationMember> organizationMembers = organization.getMembers();
-
-        return organizationMembers.stream()
-                .map(member -> {
-                    ProfileDetails profileDetails = iamContextFacade
-                            .getProfileDetailsById(
-                                    member.getPersonId().personId()
-                            );
-                    return ImmutablePair.of(member, profileDetails);
-                })
-                .toList();
+        return organization.getMembers();
     }
 
     /**

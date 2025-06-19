@@ -63,7 +63,7 @@ public interface OrganizationQueryService {
      *
      * @since 1.0
      */
-    List<ImmutablePair<OrganizationMember, ProfileDetails>> handle(GetAllMembersByOrganizationIdQuery query);
+    List<OrganizationMember> handle(GetAllMembersByOrganizationIdQuery query);
 
     /**
      * Handles the query to retrieve all {@link Organization} entities in which

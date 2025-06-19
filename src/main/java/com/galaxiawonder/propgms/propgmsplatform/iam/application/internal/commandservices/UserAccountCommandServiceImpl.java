@@ -12,6 +12,7 @@ import com.galaxiawonder.propgms.propgmsplatform.iam.domain.services.UserAccount
 import com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persistence.jpa.repositories.PersonRepository;
 import com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persistence.jpa.repositories.UserAccountRepository;
 import com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persistence.jpa.repositories.UserTypeRepository;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.EmailAddress;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.tuple.ImmutablePair;

@@ -1,10 +1,12 @@
 package com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities;
 
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.EmailAddress;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonName;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.CreateOrganizationMemberCommand;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationMemberTypes;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.entities.AuditableModel;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -35,6 +37,18 @@ public class OrganizationMember extends AuditableModel {
     @Embedded
     private PersonId personId;
 
+    /** Full name of organization member, encapsulated in a value object */
+    @Getter
+    @Embedded
+    private PersonName name;
+
+    /** Unique email of the organization member, represented as a value object */
+    @Getter
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "address", column = @Column(name = "email"))})
+    private EmailAddress email;
+
     /** Unique identifier of the organization this member belongs to. */
     @ManyToOne
     @JoinColumn(name = "organization_id", nullable = false)
@@ -50,9 +64,11 @@ public class OrganizationMember extends AuditableModel {
     /** Protected default constructor for JPA. */
     public OrganizationMember() {}
 
-    public OrganizationMember(Organization organization, PersonId personId, OrganizationMemberType workerType) {
+    public OrganizationMember(Organization organization, PersonId personId, OrganizationMemberType workerType, ProfileDetails profileDetails) {
         this.organization = organization;
         this.personId = personId;
         this.memberType = workerType;
+        this.name = profileDetails.name();
+        this.email = profileDetails.email();
     }
 }

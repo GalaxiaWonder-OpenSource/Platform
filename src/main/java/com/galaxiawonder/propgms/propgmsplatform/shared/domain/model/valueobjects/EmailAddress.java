@@ -1,4 +1,4 @@
-package com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects;
+package com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects;
 
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates.Person;
 import jakarta.persistence.Embeddable;

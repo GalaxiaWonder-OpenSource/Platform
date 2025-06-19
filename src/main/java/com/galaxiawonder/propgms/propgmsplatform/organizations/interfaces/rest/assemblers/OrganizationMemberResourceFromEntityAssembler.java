@@ -11,20 +11,17 @@ public class OrganizationMemberResourceFromEntityAssembler {
      * Converts a pair of {@link OrganizationMember} and {@link ProfileDetails} into
      * an {@link OrganizationMemberResource}.
      *
-     * @param pair the pair consisting of a member and their associated profile details
+     * @param entity the pair consisting of a member and their associated profile details
      * @return a resource DTO representing the organization member
      */
-    public static OrganizationMemberResource toResourceFromPair(
-            ImmutablePair<OrganizationMember, ProfileDetails> pair
+    public static OrganizationMemberResource toResourceFromEntity(
+            OrganizationMember entity
     ) {
-        OrganizationMember member = pair.getLeft();
-        ProfileDetails profile = pair.getRight();
-
         return new OrganizationMemberResource(
-                member.getId(),
-                profile.firstName() + " " + profile.lastName(),
-                member.getMemberType().getStringName(),
-                member.getCreatedAt()
+                entity.getId(),
+                entity.getName().getFullName(),
+                entity.getMemberType().getStringName(),
+                entity.getCreatedAt()
         );
     }
 }
