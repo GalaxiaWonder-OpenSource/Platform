@@ -27,11 +27,7 @@ public class IAMContextFacadeImpl implements IAMContextFacade {
         var person = this.personQueryService.handle(new GetPersonByIdQuery(personId))
                 .orElseThrow(() -> new EntityNotFoundException("Person not found with ID: " + personId));
 
-        return new ProfileDetails(
-                person.getFirstName(),
-                person.getLastName(),
-                person.getEmail()
-        );
+        return createProfileDetails(person);
     }
 
     /**
@@ -42,11 +38,7 @@ public class IAMContextFacadeImpl implements IAMContextFacade {
         var person = this.personQueryService.handle(new GetPersonByEmailQuery(email))
                 .orElseThrow(() -> new EntityNotFoundException("Person not found with email: " + email));
 
-        return new ProfileDetails(
-                person.getFirstName(),
-                person.getLastName(),
-                person.getEmail()
-        );
+        return createProfileDetails(person);
     }
 
     /**
@@ -57,9 +49,12 @@ public class IAMContextFacadeImpl implements IAMContextFacade {
         var person = this.personQueryService.handle(new GetPersonByIdQuery(id))
                 .orElseThrow(() -> new EntityNotFoundException("Person not found with id: " + id));
 
+        return createProfileDetails(person);
+    }
+
+    private static ProfileDetails createProfileDetails(Person person) {
         return new ProfileDetails(
-                person.getFirstName(),
-                person.getLastName(),
+                person.getName(),
                 person.getEmail()
         );
     }

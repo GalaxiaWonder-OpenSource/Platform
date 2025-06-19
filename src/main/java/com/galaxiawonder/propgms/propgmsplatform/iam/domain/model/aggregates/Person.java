@@ -1,8 +1,8 @@
 package com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates;
 
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.commands.SignUpCommand;
-import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.EmailAddress;
-import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.PersonName;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.EmailAddress;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonName;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.PhoneNumber;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.ProfessionalId;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
@@ -28,10 +28,12 @@ import java.util.Objects;
 @Table(name = "persons")
 public class Person extends AuditableAbstractAggregateRoot<Person> {
     /** Full name of the person, encapsulated in a value object */
+    @Getter
     @Embedded
     private PersonName name;
 
     /** Unique email of the person, represented as a value object */
+    @Getter
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "address", column = @Column(name = "email"))})
@@ -81,42 +83,6 @@ public class Person extends AuditableAbstractAggregateRoot<Person> {
         if (command.phone() != null) {
             this.phone = new PhoneNumber(command.phone());
         }
-    }
-
-    /**
-     * Retrieves the person's first name.
-     *
-     * @return the first name
-     */
-    public String getFirstName() {
-        return name.firstName();
-    }
-
-    /**
-     * Retrieves the person's last name.
-     *
-     * @return the last name
-     */
-    public String getLastName() {
-        return name.lastName();
-    }
-
-    /**
-     * Retrieves the person's full name as a single formatted string.
-     *
-     * @return the full name
-     */
-    public String getFullName() {
-        return name.getFullName();
-    }
-
-    /**
-     * Retrieves the person's email address as a plain string.
-     *
-     * @return the email address
-     */
-    public String getEmail() {
-        return email.address();
     }
 
     /**

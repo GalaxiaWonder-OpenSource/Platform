@@ -8,6 +8,7 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valu
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.Ruc;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -73,13 +74,13 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
      *                - createdBy must not be null or empty.
      *                - status must not be null.
      */
-    public Organization(CreateOrganizationCommand command, OrganizationStatus status, OrganizationMemberType contractorType) {
+    public Organization(CreateOrganizationCommand command, OrganizationStatus status, OrganizationMemberType contractorType, ProfileDetails profileDetails) {
         this.legalName = new LegalName(command.legalName());
         this.commercialName = command.commercialName() != null ? new CommercialName(command.commercialName()) : new CommercialName(""); this.ruc = new Ruc(command.ruc());
         this.createdBy = new PersonId(command.createdBy());
         this.status = status;
 
-        addContractor(command, contractorType);
+        addContractor(command, contractorType, profileDetails);
     }
 
     /**
@@ -138,7 +139,7 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
      *
      * @since 1.0
      */
-    public OrganizationInvitation acceptInvitation(Long invitationId, OrganizationInvitationStatus acceptedStatus, OrganizationMemberType memberType) {
+    public OrganizationInvitation acceptInvitation(Long invitationId, OrganizationInvitationStatus acceptedStatus, OrganizationMemberType memberType, ProfileDetails profileDetails) {
         OrganizationInvitation invitation = selectInvitationFromId(invitationId);
 
         if (!invitation.isPending()) {
@@ -147,7 +148,7 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
 
         invitation.accept(acceptedStatus);
 
-        addMember(invitation, memberType);
+        addMember(invitation, memberType, profileDetails);
 
         return invitation;
     }
@@ -164,11 +165,12 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
         return invitation;
     }
 
-    private void addContractor(CreateOrganizationCommand command, OrganizationMemberType contractorType) {
+    private void addContractor(CreateOrganizationCommand command, OrganizationMemberType contractorType, ProfileDetails profileDetails) {
         OrganizationMember member = new OrganizationMember(
                 this,
                 new PersonId(command.createdBy()),
-                contractorType
+                contractorType,
+                profileDetails
         );
 
         members.add(member);
@@ -183,14 +185,14 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
      * @throws IllegalArgumentException if the person is already a member of the organization
      * @since 1.0
      */
-    private void addMember(OrganizationInvitation invitation, OrganizationMemberType workerType) {
+    private void addMember(OrganizationInvitation invitation, OrganizationMemberType workerType, ProfileDetails profileDetails) {
         PersonId personId = invitation.getInvitedPersonId();
 
         if (isAlreadyMember(personId)) {
             throw new IllegalArgumentException("This person is already a member of the organization.");
         }
 
-        OrganizationMember member = new OrganizationMember(this, personId, workerType);
+        OrganizationMember member = new OrganizationMember(this, personId, workerType, profileDetails);
         members.add(member);
     }
 
@@ -246,19 +248,7 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
                 .anyMatch(inv -> inv.isPending() && personId.equals(inv.getInvitedPersonId()));
     }
 
-    /**
-     * Returns the most recently added {@link OrganizationInvitation}.
-     *
-     * @return the last invitation in the list, or {@code null} if the list is empty
-     */
-    public OrganizationInvitation getLastInvitation() {
-        if (invitations == null || invitations.isEmpty()) {
-            return null;
-        }
-        return invitations.getLast();
-    }
-
-    private OrganizationInvitation selectInvitationFromId(Long invitationId) {
+    public OrganizationInvitation selectInvitationFromId(Long invitationId) {
         return this.invitations.stream()
                 .filter(i -> i.getId().equals(invitationId))
                 .findFirst()

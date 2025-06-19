@@ -14,8 +14,7 @@ package com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjec
  *   <li>Enriching other domain models (e.g., organization members)</li>
  * </ul>
  *
- * @param firstName the person's given name
- * @param lastName the person's family name
+ * @param name the person's full name, including first and last name.
  * @param email the person's email address
  *
  * @author
@@ -23,8 +22,7 @@ package com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjec
  * @since 1.0
  */
 public record ProfileDetails(
-        String firstName,
-        String lastName,
-        String email
+        PersonName name,
+        EmailAddress email
 ) {}
 

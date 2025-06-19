@@ -32,7 +32,7 @@ public class OrganizationInvitationResourceFromEntityAssembler {
         return new OrganizationInvitationResource(
                 invitation.getId(),
                 organization.getCommercialName().commercialName(),
-                contractorPerson.firstName() + " " + contractorPerson.lastName(),
+                contractorPerson.name().getFullName(),
                 invitation.getStatus().getStringName(),
                 invitation.getCreatedAt(),
                 null
@@ -65,7 +65,7 @@ public class OrganizationInvitationResourceFromEntityAssembler {
                 null,
                 invitation.getStatus().getStringName(),
                 invitation.getCreatedAt(),
-                invitedPerson.firstName() + " " + invitedPerson.lastName()
+                invitedPerson.name().getFullName()
         );
     }
 }

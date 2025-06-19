@@ -246,11 +246,11 @@ public class OrganizationController {
             @Parameter(description = "ID of the organization", required = true)
             @PathVariable Long organizationId) {
 
-        List<ImmutablePair<OrganizationMember, ProfileDetails>> organizationMembers =
+        List<OrganizationMember> organizationMembers =
                 organizationQueryService.handle(new GetAllMembersByOrganizationIdQuery(organizationId));
 
         List<OrganizationMemberResource> resources = organizationMembers.stream()
-                .map(OrganizationMemberResourceFromEntityAssembler::toResourceFromPair)
+                .map(OrganizationMemberResourceFromEntityAssembler::toResourceFromEntity)
                 .toList();
 
         return new ResponseEntity<>(resources, HttpStatus.OK);

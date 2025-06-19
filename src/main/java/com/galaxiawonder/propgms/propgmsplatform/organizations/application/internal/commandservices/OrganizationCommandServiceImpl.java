@@ -86,7 +86,9 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
 
         OrganizationMemberType contractorType = getOrganizationMemberType(OrganizationMemberTypes.CONTRACTOR);
 
-        var organization = new Organization(command, status, contractorType);
+        var contractorProfileDetails = iamContextFacade.getProfileDetailsById(command.createdBy());
+
+        var organization = new Organization(command, status, contractorType, contractorProfileDetails);
 
         var createdOrganization = organizationRepository.save(organization);
         return Optional.of(createdOrganization);
@@ -160,11 +162,15 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
         OrganizationInvitationStatus acceptedStatus = getOrganizationInvitationStatus(OrganizationInvitationStatuses.ACCEPTED);
         OrganizationMemberType workerType = getOrganizationMemberType(OrganizationMemberTypes.WORKER);
 
-        OrganizationInvitation invitation = organization.acceptInvitation(command.invitationId(), acceptedStatus, workerType);
+        OrganizationInvitation invitation = organization.selectInvitationFromId(command.invitationId());
+
+        var profileDetails = iamContextFacade.getProfileDetailsById(invitation.getInvitedPersonId().personId());
+
+        OrganizationInvitation acceptInvitation = organization.acceptInvitation(command.invitationId(), acceptedStatus, workerType, profileDetails);
 
         saveOrganization(organization);
 
-        return returnInvitationTripleResult(organization, invitation);
+        return returnInvitationTripleResult(organization, acceptInvitation);
     }
 
     /**
