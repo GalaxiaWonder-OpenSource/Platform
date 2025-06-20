@@ -1,9 +1,12 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates;
 
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.ProjectStatus;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.DateRange;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.Description;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.ProjectName;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.OrganizationId;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -32,6 +35,21 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     @Embedded
     private Description description;
 
+    /** Range of dates within the project will be done. */
+    @Getter
+    @Embedded
+    private DateRange dateRange;
+
+    /** Identifier of the organization responsible for the project. */
+    @Getter
+    @Embedded
+    private OrganizationId organizationId;
+
+    /** Identifier of the person or entity in charge of contracting. */
+    @Getter
+    @Embedded
+    private PersonId contractingEntityId;
+
     /** Current status of the project, represented as an entity. */
     @Getter
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
@@ -47,11 +65,17 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
      * @param projectName the projectName of the project
      * @param description the project's description
      * @param status the current status of the project
+     * @param dateRange the range within the project activities will be done
+     * @param organizationId the ID of the organization in charge of the project.
+     * @param contractingEntityId the ID of the person who
      */
-    public Project(ProjectName projectName, Description description, ProjectStatus status) {
+    public Project(ProjectName projectName, Description description, ProjectStatus status, DateRange dateRange, OrganizationId organizationId, PersonId contractingEntityId) {
         this.projectName = projectName;
         this.description = description;
         this.status = status;
+        this.dateRange = dateRange;
+        this.organizationId = organizationId;
+        this.contractingEntityId = contractingEntityId;
     }
 
     /**

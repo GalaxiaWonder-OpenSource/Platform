@@ -1,5 +1,6 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities;
 
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.DateRange;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.Description;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.MilestoneItemName;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
@@ -21,7 +22,7 @@ import java.util.Date;
  * Uses the {@link InheritanceType#JOINED} strategy to map each concrete subclass
  * to its own dedicated database table, while preserving common fields in a shared base.
  *
- * Common fields include projectName, description, start and end dates, and audit metadata.
+ * Common fields include projectName, description, startDate and endDate dates, and audit metadata.
  *
  * @author
  * Galaxia Wonder Development Team
@@ -48,19 +49,9 @@ public abstract class MilestoneItem extends AuditableAbstractAggregateRoot<Miles
     @Embedded
     private Description description;
 
-    /**
-     * The planned start date of the milestone item.
-     */
     @Getter
-    @Setter
-    private Date startDate;
-
-    /**
-     * The planned end date of the milestone item.
-     */
-    @Getter
-    @Setter
-    private Date endDate;
+    @Embedded
+    private DateRange range;
 
     /**
      * The identifier of the milestone this item belongs to.

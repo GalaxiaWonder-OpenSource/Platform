@@ -3,10 +3,10 @@ package com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregat
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.MilestoneItem;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.Specialty;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.TaskStatus;
-import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.TaskSubmissionId;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.TaskSubmission;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 
 @Entity
 public class Task extends MilestoneItem {
@@ -21,9 +21,14 @@ public class Task extends MilestoneItem {
     private TaskStatus status;
 
     @Getter
-    @Setter
     @Embedded
-    private TaskSubmissionId taskSubmissionId;
+    private PersonId personId;
+
+    /** Task submission associated with this task. */
+    @Getter
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "task_submission_id", unique = true)
+    private TaskSubmission taskSubmission;
 
     public Task() {}
 }
