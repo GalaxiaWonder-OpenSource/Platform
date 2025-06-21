@@ -19,7 +19,8 @@ public class OrganizationResourceFromEntityAssembler {
                 entity.getCommercialName().toString(),
                 entity.getRuc().value(),
                 entity.getCreatedBy().personId(),
-                entity.getStatus().getStringName()
+                entity.getStatus().getStringName(),
+                entity.getCreatedAt()
         );
     }
 }
