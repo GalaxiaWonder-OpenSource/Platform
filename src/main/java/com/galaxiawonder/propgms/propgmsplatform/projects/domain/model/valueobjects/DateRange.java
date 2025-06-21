@@ -35,11 +35,12 @@ public record DateRange(
      * @throws IllegalArgumentException if startDate is after endDate
      */
     public DateRange {
-        if (startDate != null && endDate != null) {
-            if(startDate.after(endDate)) {
-                throw new IllegalArgumentException("Start date cannot be set after endDate date");
-            }
+        if (startDate == null || endDate == null) {
             throw new IllegalArgumentException("Start and endDate date cannot be null");
+        }
+
+        if(startDate.after(endDate)) {
+            throw new IllegalArgumentException("Start date cannot be set after endDate date");
         }
     }
 }

@@ -74,11 +74,11 @@ public class ProjectTeamMember extends AuditableAbstractAggregateRoot<ProjectTea
      */
     public ProjectTeamMember(
             ProjectId projectId,
-            Specialty specialty,
-            OrganizationMemberId organizationMemberId,
             PersonId personId,
+            OrganizationMemberId organizationMemberId,
             PersonName name,
-            EmailAddress email
+            EmailAddress email,
+            Specialty specialty
     ) {
         this.projectId = projectId;
         this.specialty = specialty;

@@ -7,7 +7,11 @@ package com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.com
  * @param commercialName the commercial projectName of an organization
  * Cannot be null or blank.
  */
-public record UpdateOrganizationCommand(Long organizationId, String commercialName) {
+public record UpdateOrganizationCommand(
+        Long organizationId,
+        String commercialName,
+        String legalName
+) {
     /**
      * Constructor
      * @param organizationId the organization id
