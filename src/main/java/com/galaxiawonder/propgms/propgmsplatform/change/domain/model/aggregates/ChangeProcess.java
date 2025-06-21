@@ -107,7 +107,7 @@ public class ChangeProcess extends AuditableAbstractAggregateRoot<ChangeProcess>
      */
     public void respondToChange(ChangeProcessStatus status, ChangeResponse response) {
         if (!isPending()) {
-            throw new IllegalStateException("Only pending changes can be approved.");
+            throw new IllegalStateException("Only pending changes can be approved or rejected.");
         }
         this.status = status;
         this.response = response;
