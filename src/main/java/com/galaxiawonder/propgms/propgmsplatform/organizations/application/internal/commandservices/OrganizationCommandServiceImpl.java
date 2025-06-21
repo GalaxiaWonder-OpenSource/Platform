@@ -117,7 +117,7 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
             throw new IllegalArgumentException("Organization doesn't exist");
         var organizationToUpdate = result.get();
         try{
-            var updatedOrganization = organizationRepository.save(organizationToUpdate.updateInformation(command.commercialName()));
+            var updatedOrganization = organizationRepository.save(organizationToUpdate.updateInformation(command.commercialName(), command.legalName()));
             return Optional.of(updatedOrganization);
         } catch (Exception e){
             throw new IllegalArgumentException("Error while updating organization: %s".formatted(e.getMessage()));

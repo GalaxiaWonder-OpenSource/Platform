@@ -121,7 +121,12 @@ public class OrganizationController {
             @PathVariable Long id,
             @RequestBody UpdateOrganizationResource resource) {
 
-        var command = new UpdateOrganizationCommand(id, resource.commercialName());
+        var command = new UpdateOrganizationCommand(
+                id,
+                resource.commercialName() != null ? resource.commercialName() : "",
+                resource.legalName() != null ? resource.legalName() : ""
+        );
+
         organizationCommandService.handle(command);
         return ResponseEntity.ok("Organization with given ID successfully updated");
     }
