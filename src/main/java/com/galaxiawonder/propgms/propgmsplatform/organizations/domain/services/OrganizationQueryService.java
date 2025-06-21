@@ -2,11 +2,9 @@ package com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services;
 
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitation;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitationStatus;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMember;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllInvitationsByOrganizationIdQuery;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllMembersByOrganizationIdQuery;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllOrganizationsByMemberPersonIdQuery;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetOrganizationByIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.*;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
@@ -84,4 +82,24 @@ public interface OrganizationQueryService {
      * @since 1.0
      */
     List<Organization> handle(GetAllOrganizationsByMemberPersonIdQuery query);
+
+    /**
+     * Handles the query to retrieve all {@link Organization} entities that have
+     * sent invitations to the specified person.
+     *
+     * <p>
+     * This method performs the following actions:
+     * <ul>
+     *   <li>Searches for all invitations addressed to the given {@code personId}.</li>
+     *   <li>Retrieves the corresponding {@link Organization} entities that issued those invitations.</li>
+     *   <li>Returns a filtered list of organizations associated with the invitations that have a {@link OrganizationInvitationStatus} equals to PENDING.</li>
+     * </ul>
+     * </p>
+     *
+     * @param query the {@link GetAllInvitationsByPersonIdQuery} containing the target person's ID
+     * @return a {@link List} of {@link Organization} entities that have invited the person
+     *
+     * @since 1.0
+     */
+    List<ImmutablePair<OrganizationInvitation, ProfileDetails>> handle(GetAllInvitationsByPersonIdQuery query);
 }

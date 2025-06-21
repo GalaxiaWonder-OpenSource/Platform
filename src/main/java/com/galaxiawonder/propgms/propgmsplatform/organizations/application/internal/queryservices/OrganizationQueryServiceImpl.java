@@ -4,10 +4,7 @@ import com.galaxiawonder.propgms.propgmsplatform.iam.interfaces.acl.IAMContextFa
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitation;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMember;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllInvitationsByOrganizationIdQuery;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllMembersByOrganizationIdQuery;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllOrganizationsByMemberPersonIdQuery;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetOrganizationByIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.*;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationQueryService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.repositories.OrganizationRepository;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
@@ -90,6 +87,28 @@ public class OrganizationQueryServiceImpl implements OrganizationQueryService {
 
         return organizationRepository.findAllOrganizationsByOrganizationMemberPersonId(query.personId())
                 .orElseThrow(()-> new IllegalArgumentException("The person with the ID " + query.personId() + " does not belong to any organization"));
+    }
+
+    /**
+     *
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ImmutablePair<OrganizationInvitation, ProfileDetails>> handle(GetAllInvitationsByPersonIdQuery query) {
+        Long personId = query.personId();
+
+        List<Organization> organizations = organizationRepository.findAll();
+
+        return organizations.stream()
+                .flatMap(org -> org.getInvitations().stream()
+                        .filter(invitation ->
+                                invitation.getInvitedPersonId().personId().equals(personId)
+                                        && invitation.isPending())
+                        .map(invitation -> {
+                            ProfileDetails profile = iamContextFacade.getProfileDetailsById(personId);
+                            return ImmutablePair.of(invitation, profile);
+                        }))
+                .toList();
     }
 
 }
