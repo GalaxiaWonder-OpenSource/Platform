@@ -135,7 +135,7 @@ public class ChangeProcess extends AuditableAbstractAggregateRoot<ChangeProcess>
      * @return false if change process has a null change response id, true if not.
      */
     public boolean hasResponse() {
-        return this.changeResponseId != null;
+        return this.response != null;
     }
 
 }
