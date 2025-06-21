@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -247,11 +248,12 @@ public class OrganizationController {
             @Parameter(description = "ID of the person", required = true)
             @PathVariable Long personId) {
 
-        List<ImmutablePair<OrganizationInvitation, ProfileDetails>> organizationInvitations =
+        List<Triple<Organization, OrganizationInvitation, ProfileDetails>> organizationInvitations =
                 organizationQueryService.handle(new GetAllInvitationsByPersonIdQuery(personId));
 
         List<OrganizationInvitationResource> resources = organizationInvitations.stream()
-                .map(OrganizationInvitationResourceFromEntityAssembler::toResourceFromPair)
+                .map(OrganizationInvitationResourceFromEntityAssembler::toResourceFromEntity)
+                .filter(Objects::nonNull)
                 .toList();
 
         return new ResponseEntity<>(resources, HttpStatus.OK);

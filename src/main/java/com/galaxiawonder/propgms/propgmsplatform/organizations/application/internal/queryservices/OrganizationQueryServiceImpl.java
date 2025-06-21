@@ -9,6 +9,7 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.O
 import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.repositories.OrganizationRepository;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -94,7 +95,7 @@ public class OrganizationQueryServiceImpl implements OrganizationQueryService {
      * {@inheritDoc}
      */
     @Override
-    public List<ImmutablePair<OrganizationInvitation, ProfileDetails>> handle(GetAllInvitationsByPersonIdQuery query) {
+    public List<Triple<Organization, OrganizationInvitation, ProfileDetails>> handle(GetAllInvitationsByPersonIdQuery query) {
         Long personId = query.personId();
 
         List<Organization> organizations = organizationRepository.findAll();
@@ -105,10 +106,9 @@ public class OrganizationQueryServiceImpl implements OrganizationQueryService {
                                 invitation.getInvitedPersonId().personId().equals(personId)
                                         && invitation.isPending())
                         .map(invitation -> {
-                            ProfileDetails profile = iamContextFacade.getProfileDetailsById(personId);
-                            return ImmutablePair.of(invitation, profile);
+                            ProfileDetails profile = iamContextFacade.getProfileDetailsById(org.getCreatedBy().personId());
+                            return Triple.of(org, invitation, profile);
                         }))
                 .toList();
     }
-
 }
