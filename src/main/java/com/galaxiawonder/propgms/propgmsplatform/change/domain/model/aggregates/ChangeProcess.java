@@ -103,32 +103,24 @@ public class ChangeProcess extends AuditableAbstractAggregateRoot<ChangeProcess>
      * Reassigns the current change process status to {@code APPROVED}
      *
      * @param approvedStatus the new {@link ChangeProcessStatus} to be assigned
-     * @param orderId the new {@link ChangeOrderId} to be assigned
      * @param responseId the new {@link ChangeResponseId} to be assigned
      * @throws IllegalArgumentException if the change process is not pending
      */
-    public void approve(ChangeProcessStatus approvedStatus, ChangeOrderId orderId, ChangeResponseId responseId) {
+    public void respondToChange(ChangeProcessStatus approvedStatus, ChangeOrderId orderId, ChangeResponseId responseId) {
         if (!isPending()) {
             throw new IllegalStateException("Only pending changes can be approved.");
         }
         this.status = approvedStatus;
-        this.changeOrderId = orderId;
         this.changeResponseId = responseId;
     }
 
     /**
-     * Reassigns the current change process status to {@code APPROVED}
+     * Reassigns the {@link ChangeOrder} linked to the change process.
      *
-     * @param rejectedStatus the new {@link ChangeProcessStatus} to be assigned
-     * @param responseId the new {@link ChangeResponseId} to be assigned
-     * @throws IllegalArgumentException if the change process is not pending
+     * @param changeOrderId the new {@link ChangeOrderId} to be assigned
      */
-    public void reject(ChangeProcessStatus rejectedStatus, ChangeResponseId responseId) {
-        if (!isPending()) {
-            throw new IllegalStateException("Only pending changes can be approved.");
-        }
-        this.status = rejectedStatus;
-        this.changeResponseId = responseId;
+    public void setChangeOrder(ChangeOrderId changeOrderId) {
+        this.changeOrderId = changeOrderId;
     }
 
     /**
