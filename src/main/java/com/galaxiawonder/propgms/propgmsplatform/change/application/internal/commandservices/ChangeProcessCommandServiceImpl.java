@@ -5,6 +5,7 @@ import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.commands.Cr
 import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.commands.RespondToChangeCommand;
 import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.entities.ChangeOrigin;
 import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.entities.ChangeProcessStatus;
+import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.valueobjects.ChangeOrigins;
 import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.valueobjects.ChangeProcessStatuses;
 import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.valueobjects.ChangeResponse;
 import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.valueobjects.Justification;
@@ -36,11 +37,11 @@ public class ChangeProcessCommandServiceImpl implements ChangeProcessCommandServ
 
     @Transactional
     public Optional<ChangeProcess> handle(CreateChangeProcessCommand command) {
-        ChangeOrigin origin = changeOriginRepository.findById(command.origin())
+        ChangeOrigin origin = changeOriginRepository.findByName(ChangeOrigins.valueOf(command.origin()))
                 .orElseThrow(() -> new IllegalArgumentException("Invalid origin ID"));
 
         ChangeProcessStatus status = command.status() != null
-                ? changeProcessStatusRepository.findByName(command.status())
+                ? changeProcessStatusRepository.findByName(ChangeProcessStatuses.valueOf(command.status()))
                 .orElseThrow(() -> new IllegalArgumentException("Invalid status enum"))
                 : changeProcessStatusRepository.findByName(ChangeProcessStatuses.valueOf("PENDING"))
                 .orElseThrow(() -> new IllegalStateException("Default status PENDING not found"));

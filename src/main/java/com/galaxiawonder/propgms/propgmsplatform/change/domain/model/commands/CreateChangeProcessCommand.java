@@ -1,11 +1,10 @@
 package com.galaxiawonder.propgms.propgmsplatform.change.domain.model.commands;
-import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.valueobjects.ChangeProcessStatuses;
 import jakarta.annotation.Nullable;
 
-public record CreateChangeProcessCommand(Long origin, @Nullable ChangeProcessStatuses status, String justification, Long projectId)
+public record CreateChangeProcessCommand(String origin, @Nullable String status, String justification, Long projectId)
 {
     public CreateChangeProcessCommand {
-        if (origin == null || origin < 1) {
+        if (origin == null || origin.isEmpty()) {
             throw new IllegalArgumentException("origin must be greater than 0");
         }
         if (justification == null || justification.isBlank()) {
