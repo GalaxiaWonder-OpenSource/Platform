@@ -32,6 +32,9 @@ public enum Specialties {
     ELECTRICITY,
 
     /** Communication and data network systems. */
-    COMMUNICATIONS
+    COMMUNICATIONS,
+
+    /** Non applicable. */
+    NON_APPLICABLE
 }
 
