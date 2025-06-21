@@ -25,4 +25,6 @@ public interface ChangeProcessStatusRepository extends JpaRepository<ChangeProce
      * @return an {@link Optional} containing the {@link ChangeProcessStatus} if its found
      */
     Optional<ChangeProcessStatus> findByName(ChangeProcessStatuses name);
+    boolean existsByName(ChangeProcessStatuses name);
+
 }
