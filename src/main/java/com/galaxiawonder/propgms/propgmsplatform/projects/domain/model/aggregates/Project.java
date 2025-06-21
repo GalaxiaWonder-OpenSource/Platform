@@ -1,12 +1,14 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates;
 
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.ProjectStatus;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.events.ProjectCreatedEvent;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.DateRange;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.Description;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.ProjectName;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.OrganizationId;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProjectId;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -115,6 +117,26 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
             throw new IllegalArgumentException("Project status cannot be null");
         }
         this.status = newStatus;
+    }
+
+    /**
+     * Registers a {@link ProjectCreatedEvent} after the project has been successfully created and
+     * persisted, signaling that post-creation actions such as initial team member assignment can proceed.
+     *
+     * <p>This method is intended to be called **after** the entity has been saved, ensuring that
+     * the project ID and other relevant data are available for the event payload.</p>
+     *
+     * <p>The event is stored temporarily and will be dispatched by the application event publisher
+     * at the appropriate time in the transaction lifecycle.</p>
+     *
+     * @see com.galaxiawonder.propgms.propgmsplatform.projects.application.internal.eventhandlers.ProjectCreatedEventHandler
+     */
+    public void projectCreated() {
+        this.registerEvent(new ProjectCreatedEvent(
+                this,
+                this.getOrganizationId(),
+                new ProjectId(this.getId()))
+        );
     }
 }
 

@@ -2,19 +2,24 @@ package com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.contr
 
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Project;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetAllProjectsByTeamMemberPersonIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectCommandService;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectQueryService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.CreateProjectCommandFromResourceAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.ProjectResourceFromEntityAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.CreateProjectResource;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.ProjectResource;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * AuthenticationController
@@ -32,9 +37,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Projects", description = "Endpoints for Projects")
 public class ProjectController {
     private final ProjectCommandService projectCommandService;
+    private final ProjectQueryService projectQueryService;
 
-    ProjectController(ProjectCommandService projectCommandService) {
+    ProjectController(ProjectCommandService projectCommandService,
+                      ProjectQueryService projectQueryService) {
         this.projectCommandService = projectCommandService;
+        this.projectQueryService = projectQueryService;
     }
 
     @PostMapping()
@@ -46,5 +54,35 @@ public class ProjectController {
         ProjectResource response = ProjectResourceFromEntityAssembler.toResourceFromEntity(project);
 
         return new ResponseEntity<>(response,HttpStatus.CREATED);
+    }
+
+    /**
+     * Retrieves all projects where a given person is a team member.
+     *
+     * @param personId the ID of the person
+     * @return a list of {@link ProjectResource} objects representing the projects
+     */
+    @Operation(
+            summary = "Get projects by person ID",
+            description = "Retrieves all projects where the given person is registered as a project team member"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Projects retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Person not found or is not assigned to any projects")
+    })
+    @GetMapping("/by-person-id/{id}")
+    public ResponseEntity<List<ProjectResource>> getProjectsByPersonId(
+            @Parameter(description = "ID of the person", required = true)
+            @PathVariable("id") Long personId
+    ) {
+        List<Project> projects = projectQueryService.handle(
+                new GetAllProjectsByTeamMemberPersonIdQuery(personId)
+        );
+
+        List<ProjectResource> resources = projects.stream()
+                .map(ProjectResourceFromEntityAssembler::toResourceFromEntity)
+                .toList();
+
+        return new ResponseEntity<>(resources, HttpStatus.OK);
     }
 }
