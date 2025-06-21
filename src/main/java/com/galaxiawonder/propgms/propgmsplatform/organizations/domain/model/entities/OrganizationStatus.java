@@ -36,14 +36,14 @@ public class OrganizationStatus {
     private Long id;
 
     /**
-     * Enum value representing the classification of the organization's status.
+     * Enum description representing the classification of the organization's status.
      */
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private OrganizationStatuses name;
 
     /**
-     * Constructs an {@code OrganizationStatus} with a specified {@link OrganizationStatuses} value.
+     * Constructs an {@code OrganizationStatus} with a specified {@link OrganizationStatuses} description.
      *
      * @param name the predefined organization status classification
      */
@@ -61,11 +61,11 @@ public class OrganizationStatus {
     }
 
     /**
-     * Converts a string representation of the organization status name to an {@link OrganizationStatus} instance.
+     * Converts a string representation of the organization status projectName to an {@link OrganizationStatus} instance.
      *
-     * @param name the string value of the enum constant
-     * @return a new {@code OrganizationStatus} instance with the corresponding enum value
-     * @throws IllegalArgumentException if the name does not match any enum constant
+     * @param name the string description of the enum constant
+     * @return a new {@code OrganizationStatus} instance with the corresponding enum description
+     * @throws IllegalArgumentException if the projectName does not match any enum constant
      */
     public static OrganizationStatus toOrganizationStatusFromName(String name) {
         return new OrganizationStatus(OrganizationStatuses.valueOf(name));
@@ -87,7 +87,7 @@ public class OrganizationStatus {
     /**
      * Returns the string representation of the enum-based organization status.
      *
-     * @return the name of the organization status as a string
+     * @return the projectName of the organization status as a string
      */
     public String getStringName() {
         return name.name();

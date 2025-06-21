@@ -9,7 +9,7 @@ import jakarta.persistence.Embeddable;
  * @summary
  * Value object that encapsulates the identifier of an {@link OrganizationMember}.
  * Improves domain expressiveness and ensures type safety when referencing organization members across the system.
- * Internally wraps a {@code Long} value which is still used as the primary key at the persistence layer.
+ * Internally wraps a {@code Long} description which is still used as the primary key at the persistence layer.
  *
  * @param organizationMemberId the numeric identifier of the organization member, must be positive and non-null
  *
@@ -19,7 +19,7 @@ import jakarta.persistence.Embeddable;
 public record OrganizationMemberId(Long organizationMemberId) {
 
     /**
-     * Validates the {@code organizationMemberId} value.
+     * Validates the {@code organizationMemberId} description.
      *
      * @throws IllegalArgumentException if {@code organizationMemberId} is null or less than 1
      */

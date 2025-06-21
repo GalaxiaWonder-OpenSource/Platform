@@ -44,7 +44,7 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
 
     @Column(nullable = false, updatable = false)
     @Getter
-    @AttributeOverride(name = "value", column = @Column(name = "created_by"))
+    @AttributeOverride(name = "description", column = @Column(name = "created_by"))
     @Embedded
     private PersonId createdBy;
 
@@ -85,10 +85,11 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
 
     /**
      * Create a new Organization with the given title and description
-     * @param commercialName The commercial name of the organization
+     * @param commercialName The commercial projectName of the organization
      */
-    public Organization updateInformation(String commercialName){
-        this.commercialName = new CommercialName(commercialName);
+    public Organization updateInformation(String commercialName, String legalName){
+        if(!commercialName.isBlank()) this.commercialName = new CommercialName(commercialName);
+        if(!legalName.isBlank()) this.legalName = new LegalName(legalName);
         return this;
     }
 

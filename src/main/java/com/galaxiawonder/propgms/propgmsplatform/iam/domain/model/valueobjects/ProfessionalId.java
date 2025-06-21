@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  * Value object that encapsulates a validated professional ID for registered engineers or architects in Peru.
  * Valid formats are {@code CIP######} or {@code CAP######}, for Colegio de Ingenieros and Colegio de Arquitectos respectively.
  *
- * Internally wraps a {@code String} value stored as CHAR(9) in the database.
+ * Internally wraps a {@code String} description stored as CHAR(9) in the database.
  *
  * @since 1.0
  */
@@ -33,7 +33,7 @@ public class ProfessionalId {
      * Default constructor for JPA.
      *
      * @summary
-     * Initializes the value to an empty string. Not recommended for direct usage.
+     * Initializes the description to an empty string. Not recommended for direct usage.
      */
     protected ProfessionalId() {
         this.value = "";
@@ -43,8 +43,8 @@ public class ProfessionalId {
      * Constructs a new {@link ProfessionalId} with format validation.
      *
      * @param value the professional ID string, must match either {@code CIP######} or {@code CAP######}
-     * @throws NullPointerException     if {@code value} is null
-     * @throws IllegalArgumentException if {@code value} does not match the expected format
+     * @throws NullPointerException     if {@code description} is null
+     * @throws IllegalArgumentException if {@code description} does not match the expected format
      */
     public ProfessionalId(String value) {
         Objects.requireNonNull(value, "Professional ID cannot be null");
@@ -59,7 +59,7 @@ public class ProfessionalId {
     /**
      * Checks if a string matches the CIP pattern.
      *
-     * @param value the value to check
+     * @param value the description to check
      * @return true if it matches CIP format; false otherwise
      */
     boolean isValidCip(String value) {
@@ -69,7 +69,7 @@ public class ProfessionalId {
     /**
      * Checks if a string matches the CAP pattern.
      *
-     * @param value the value to check
+     * @param value the description to check
      * @return true if it matches CAP format; false otherwise
      */
     boolean isValidCap(String value) {
@@ -87,7 +87,7 @@ public class ProfessionalId {
     }
 
     /**
-     * Checks for value-based equality.
+     * Checks for description-based equality.
      *
      * @param o the object to compare
      * @return true if values match
@@ -102,7 +102,7 @@ public class ProfessionalId {
     /**
      * Computes the hash code.
      *
-     * @return hash code based on value
+     * @return hash code based on description
      */
     @Override
     public int hashCode() {

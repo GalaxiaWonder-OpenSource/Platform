@@ -14,7 +14,7 @@ import java.util.Objects;
  * <p>The RUC must satisfy the following rules:</p>
  * <ul>
  *   <li>Must be exactly 11 digits long</li>
- *   <li>Must start with "10" (individual) or "20" (company)</li>
+ *   <li>Must startDate with "10" (individual) or "20" (company)</li>
  * </ul>
  *
  * <p>This class is immutable and validated upon instantiation.</p>
@@ -25,7 +25,7 @@ import java.util.Objects;
 public record Ruc(String value) {
 
     /**
-     * Creates an empty RUC with a blank value.
+     * Creates an empty RUC with a blank description.
      * Intended for use by frameworks that require a no-arg constructor.
      */
     public Ruc() {
@@ -35,11 +35,11 @@ public record Ruc(String value) {
     /**
      * Validates and constructs a {@link Ruc} instance.
      *
-     * @param value the RUC value
+     * @param value the RUC description
      *
-     * @throws NullPointerException if the provided value is {@code null}
-     * @throws IllegalArgumentException if the value is not exactly 11 digits long
-     *                                  or does not start with "10" or "20"
+     * @throws NullPointerException if the provided description is {@code null}
+     * @throws IllegalArgumentException if the description is not exactly 11 digits long
+     *                                  or does not startDate with "10" or "20"
      */
     public Ruc {
         Objects.requireNonNull(value, "RUC cannot be null");

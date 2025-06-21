@@ -48,12 +48,12 @@ public class ApplicationReadyEventHandler {
     @EventListener
     public void onApplicationReady(ApplicationReadyEvent event) {
         var applicationName = event.getApplicationContext().getId();
-        LOGGER.info("🚀 Verifying if user types need seeding for {} at {}", applicationName, currentTimestamp());
+        LOGGER.info("Verifying if user types need seeding for {} at {}", applicationName, currentTimestamp());
 
         var seedCommand = new SeedUserTypeCommand();
         userTypeCommandService.handle(seedCommand);
 
-        LOGGER.info("✅ User types seeding completed for {} at {}", applicationName, currentTimestamp());
+        LOGGER.info("User types seeding completed for {} at {}", applicationName, currentTimestamp());
     }
 
     private Timestamp currentTimestamp() {

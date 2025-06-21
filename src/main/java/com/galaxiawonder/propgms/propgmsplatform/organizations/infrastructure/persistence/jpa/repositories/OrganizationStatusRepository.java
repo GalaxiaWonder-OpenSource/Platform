@@ -12,7 +12,7 @@ import java.util.Optional;
  *
  * @summary
  * JPA repository for managing {@link OrganizationStatus} entities.
- * Provides methods to query organization statuses by name and check for existence.
+ * Provides methods to query organization statuses by projectName and check for existence.
  *
  * @author
  * Galaxia Wonder Development Team
@@ -22,17 +22,17 @@ import java.util.Optional;
 public interface OrganizationStatusRepository extends JpaRepository<OrganizationStatus, Long> {
 
     /**
-     * Finds an organization status by its name.
+     * Finds an organization status by its projectName.
      *
-     * @param name the {@link OrganizationStatuses} enum representing the status name
+     * @param name the {@link OrganizationStatuses} enum representing the status projectName
      * @return an {@link Optional} containing the {@link OrganizationStatus} if found
      */
     Optional<OrganizationStatus> findByName(OrganizationStatuses name);
 
     /**
-     * Checks if an organization status exists by its name.
+     * Checks if an organization status exists by its projectName.
      *
-     * @param name the {@link OrganizationStatuses} enum representing the status name
+     * @param name the {@link OrganizationStatuses} enum representing the status projectName
      * @return true if the organization status exists, false otherwise
      */
     boolean existsByName(OrganizationStatuses name);

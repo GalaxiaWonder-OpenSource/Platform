@@ -12,7 +12,7 @@ import java.util.Optional;
  *
  * @summary
  * JPA repository for managing {@link OrganizationInvitationStatus} entities.
- * Provides methods to query invitation statuses by name and check for existence.
+ * Provides methods to query invitation statuses by projectName and check for existence.
  *
  * <p>This repository maps {@link OrganizationInvitationStatuses} enum values
  * to persisted status entities used throughout the organization invitation process.</p>
@@ -25,17 +25,17 @@ import java.util.Optional;
 public interface OrganizationInvitationStatusRepository extends JpaRepository<OrganizationInvitationStatus, Long> {
 
     /**
-     * Finds an organization invitation status by its enum name.
+     * Finds an organization invitation status by its enum projectName.
      *
-     * @param name the {@link OrganizationInvitationStatuses} enum representing the status name
+     * @param name the {@link OrganizationInvitationStatuses} enum representing the status projectName
      * @return an {@link Optional} containing the {@link OrganizationInvitationStatus} if found
      */
     Optional<OrganizationInvitationStatus> findByName(OrganizationInvitationStatuses name);
 
     /**
-     * Checks if an organization invitation status exists by its enum name.
+     * Checks if an organization invitation status exists by its enum projectName.
      *
-     * @param name the {@link OrganizationInvitationStatuses} enum representing the status name
+     * @param name the {@link OrganizationInvitationStatuses} enum representing the status projectName
      * @return true if the invitation status exists, false otherwise
      */
     boolean existsByName(OrganizationInvitationStatuses name);
