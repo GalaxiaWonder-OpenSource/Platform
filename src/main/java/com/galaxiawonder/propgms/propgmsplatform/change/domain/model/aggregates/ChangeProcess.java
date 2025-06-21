@@ -4,7 +4,7 @@ import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.entities.Ch
 import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.entities.ChangeProcessStatus;
 import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.valueobjects.ChangeOrderId;
 import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.valueobjects.ChangeProcessStatuses;
-import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.valueobjects.ChangeResponseId;
+import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.valueobjects.ChangeResponse;
 import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.valueobjects.Justification;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProjectId;
@@ -61,8 +61,7 @@ public class ChangeProcess extends AuditableAbstractAggregateRoot<ChangeProcess>
      */
     @Getter
     @Embedded
-    @AttributeOverride(name = "changeResponseId", column = @Column(name = "change_response_id", nullable = true))
-    private ChangeResponseId changeResponseId;
+    private ChangeResponse response;
 
     /**
      * Identifier of the project linked to change process
@@ -102,16 +101,16 @@ public class ChangeProcess extends AuditableAbstractAggregateRoot<ChangeProcess>
     /**
      * Reassigns the current change process status to {@code APPROVED}
      *
-     * @param approvedStatus the new {@link ChangeProcessStatus} to be assigned
-     * @param responseId the new {@link ChangeResponseId} to be assigned
+     * @param status the new {@link ChangeProcessStatus} to be assigned
+     * @param response the new {@link ChangeResponse} to be assigned
      * @throws IllegalArgumentException if the change process is not pending
      */
-    public void respondToChange(ChangeProcessStatus approvedStatus, ChangeOrderId orderId, ChangeResponseId responseId) {
+    public void respondToChange(ChangeProcessStatus status, ChangeResponse response) {
         if (!isPending()) {
             throw new IllegalStateException("Only pending changes can be approved.");
         }
-        this.status = approvedStatus;
-        this.changeResponseId = responseId;
+        this.status = status;
+        this.response = response;
     }
 
     /**
