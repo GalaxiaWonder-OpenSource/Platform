@@ -86,12 +86,6 @@ public class ProjectCommandServiceImpl implements ProjectCommandService {
         var project = new Project(command, initialStatus, new PersonId(contractingEntityId));
         var createdProject = projectRepository.save(project);
 
-        eventPublisher.publishEvent(new ProjectCreatedEvent(
-                this,
-                createdProject.getOrganizationId(),
-                new ProjectId(createdProject.getId())
-        ));
-
         return Optional.of(createdProject);
     }
 
@@ -115,18 +109,23 @@ public class ProjectCommandServiceImpl implements ProjectCommandService {
      */
     @Override
     public Optional<Project> handle(UpdateProjectCommand command) {
-        var project = projectRepository.findById(command.projectId())
-                .orElseThrow(() -> new IllegalArgumentException("Project not found with ID: " + command.projectId()));
-
-        project.updateInformation(
-                new ProjectName(command.name()),
-                new Description(command.description()),
-                getProjectStatus(command.status()),
-                command.endingDate()
-        );
-
-        var updatedProject = projectRepository.save(project);
-
-        return Optional.of(updatedProject);
+        var result = projectRepository.findById(command.projectId());
+        if (result.isEmpty())
+            throw new IllegalArgumentException("Project doesn't exist");
+        var projectToUpdate = result.get();
+        try {
+            var updatedProject = projectRepository.save(
+                    projectToUpdate.updateInformation(
+                            command.name(),
+                            command.description(),
+                            getProjectStatus(command.status()),
+                            command.endingDate()
+                    )
+            );
+            return Optional.of(updatedProject);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error while updating project: %s".formatted(e.getMessage()));
+        }
     }
+
 }

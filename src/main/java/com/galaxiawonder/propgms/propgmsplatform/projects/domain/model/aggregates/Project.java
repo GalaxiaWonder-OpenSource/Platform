@@ -1,8 +1,5 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates;
 
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.CommercialName;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.LegalName;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.ProjectStatus;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.events.ProjectCreatedEvent;
@@ -64,7 +61,7 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     /** Current status of the project, represented as an entity. */
     @Getter
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "status_id", nullable = false, unique = false)
+    @JoinColumn(name = "project_status_id", nullable = false, unique = false)
     private ProjectStatus status;
 
     /** Default constructor required by JPA. */
@@ -89,28 +86,17 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     /**
      * Updates editable fields of the project in a partial and atomic operation.
      *
-     * @param newName the new name of the project (optional)
-     * @param newDescription the new description of the project (optional)
-     * @param newStatus the new status of the project (optional)
-     * @param newEndingDate the new ending date of the project (optional)
-     * @return the updated project instance
+     * @param projectName     the new name of the project (optional, ignored if null or blank)
+     * @param description     the new description of the project (optional, ignored if null or blank)
+     * @param newStatus       the new status of the project (optional)
+     * @param newEndingDate   the new ending date of the project (optional)
+     * @return                the updated project instance
      */
-    public Project updateInformation(ProjectName newName, Description newDescription, ProjectStatus newStatus, Date newEndingDate) {
-        if (newName != null) {
-            this.projectName = newName;
-        }
-
-        if (newDescription != null) {
-            this.description = newDescription;
-        }
-
-        if (newStatus != null) {
-            this.status = newStatus;
-        }
-
-        if (newEndingDate != null) {
-            this.dateRange = new DateRange(this.dateRange.startDate(), newEndingDate);
-        }
+    public Project updateInformation(String projectName, String description, ProjectStatus newStatus, Date newEndingDate) {
+        if (!projectName.isBlank()) this.projectName = new ProjectName(projectName);
+        if (!description.isBlank()) this.description = new Description(description);
+        if (newStatus != null) this.status = newStatus;
+        if (newEndingDate != null) this.dateRange = new DateRange(this.dateRange.startDate(), newEndingDate);
 
         return this;
     }

@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * AuthenticationController
@@ -48,15 +49,14 @@ public class ProjectController {
         this.projectQueryService = projectQueryService;
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<ProjectResource> createProject(@RequestBody CreateProjectResource resource) {
-        Project project = projectCommandService.handle(
-                CreateProjectCommandFromResourceAssembler.toCommandFromResource(resource)
-        ).orElseThrow(() -> new RuntimeException("Error while creating the project"));
+        Optional<Project> project = projectCommandService
+                .handle(CreateProjectCommandFromResourceAssembler.toCommandFromResource(resource));
 
-        ProjectResource response = ProjectResourceFromEntityAssembler.toResourceFromEntity(project);
-
-        return new ResponseEntity<>(response,HttpStatus.CREATED);
+        return project
+                .map(source -> new ResponseEntity<>(ProjectResourceFromEntityAssembler.toResourceFromEntity(source), HttpStatus.CREATED))
+                .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
     /**
