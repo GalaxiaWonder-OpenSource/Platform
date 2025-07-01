@@ -1,7 +1,11 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.domain.services;
 
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.DeleteOrganizationCommand;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.UpdateOrganizationCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Project;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.UpdateProjectCommand;
 import jakarta.persistence.EntityNotFoundException;
 
 import java.util.Optional;
@@ -24,4 +28,17 @@ public interface ProjectCommandService {
      * @since 1.0
      */
     Optional<Project> handle(CreateProjectCommand command);
+    /**
+     * Handle an update project command
+     * @param command The update project command containing the course data
+     * @return The updated course
+     * @see UpdateProjectCommand
+     */
+    Optional<Project> handle(UpdateProjectCommand command);
+    /**
+     * Handles a delete course command.
+     * @param command The delete project command containing the id
+     * @see DeleteProjectCommand
+     */
+    void handle(DeleteProjectCommand command);
 }

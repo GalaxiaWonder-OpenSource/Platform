@@ -4,6 +4,8 @@ import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates.Per
 import com.galaxiawonder.propgms.propgmsplatform.iam.interfaces.acl.IAMContextFacade;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Project;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.UpdateProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.ProjectStatus;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.events.ProjectCreatedEvent;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.DateRange;
@@ -19,6 +21,7 @@ import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobject
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -67,43 +70,63 @@ public class ProjectCommandServiceImpl implements ProjectCommandService {
         this.eventPublisher = eventPublisher;
     }
 
-
     /**
      * {@inheritDoc}
      */
     @Override
     public Optional<Project> handle(CreateProjectCommand command) {
-        Long contractingEntityId = this.iamContextFacade.getPersonIdFromEmail(command.contractingEntityEmail());
+        if (command == null) {
+            throw new IllegalArgumentException("CreateProjectCommand must not be null");
+        }
 
-        ProjectStatus basicStudiesStatus = getProjectStatus(ProjectStatuses.BASIC_STUDIES);
+        Long contractingEntityId = iamContextFacade.getPersonIdFromEmail(command.contractingEntityEmail());
 
-        Project project = new Project(
-                new ProjectName(command.projectName()),
-                new Description(command.description()),
-                basicStudiesStatus,
-                new DateRange(command.startDate(), command.endDate()),
-                new OrganizationId(command.organizationId()),
-                new PersonId(contractingEntityId)
-        );
+        ProjectStatus initialStatus = getProjectStatus(ProjectStatuses.BASIC_STUDIES);
 
-        this.projectRepository.save(project);
-
-        // The direct publishing of the event done by calling the publish event method
-        // from the entity didn't seem to work.
-        // Temporarily solved by using ApplicationEventPublisher injected on constructor
-        // project.projectCreated();
+        var project = new Project(command, initialStatus, new PersonId(contractingEntityId));
+        var createdProject = projectRepository.save(project);
 
         eventPublisher.publishEvent(new ProjectCreatedEvent(
                 this,
-                project.getOrganizationId(),
-                new ProjectId(project.getId())
+                createdProject.getOrganizationId(),
+                new ProjectId(createdProject.getId())
         ));
 
-        return Optional.of(project);
+        return Optional.of(createdProject);
     }
 
     private ProjectStatus getProjectStatus(ProjectStatuses status) {
         return this.projectStatusRepository.findByName(status)
                 .orElseThrow(() -> new IllegalStateException("Project status not found"));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void handle(DeleteProjectCommand command) {
+        var project = projectRepository.findById(command.id())
+                .orElseThrow(() -> new IllegalArgumentException("Project not found with ID: " + command.id()));
+
+        projectRepository.delete(project);
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<Project> handle(UpdateProjectCommand command) {
+        var project = projectRepository.findById(command.projectId())
+                .orElseThrow(() -> new IllegalArgumentException("Project not found with ID: " + command.projectId()));
+
+        project.updateInformation(
+                new ProjectName(command.name()),
+                new Description(command.description()),
+                getProjectStatus(command.status()),
+                command.endingDate()
+        );
+
+        var updatedProject = projectRepository.save(project);
+
+        return Optional.of(updatedProject);
     }
 }

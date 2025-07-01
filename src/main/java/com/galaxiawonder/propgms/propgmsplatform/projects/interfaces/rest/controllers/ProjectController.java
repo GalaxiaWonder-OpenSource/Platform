@@ -2,6 +2,8 @@ package com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.contr
 
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Project;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.UpdateProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetAllProjectsByTeamMemberPersonIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectQueryService;
@@ -9,6 +11,7 @@ import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemb
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.ProjectResourceFromEntityAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.CreateProjectResource;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.ProjectResource;
+import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.UpdateProjectResource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -84,5 +87,46 @@ public class ProjectController {
                 .toList();
 
         return new ResponseEntity<>(resources, HttpStatus.OK);
+    }
+    /**
+     * delete
+     */
+    @DeleteMapping("{id}")
+    @Operation(
+            summary = "Delete project by ID",
+            description = "Deletes a project with the given ID"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Project deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Project not found")
+    })
+    public ResponseEntity<?> deleteProject(@PathVariable Long id) {
+        var deleteProjectCommand = new DeleteProjectCommand(id);
+        projectCommandService.handle(deleteProjectCommand);
+        return ResponseEntity.ok("Organization with given RUC successfully deleted");
+    }
+    @PatchMapping("{id}")
+    @Operation(
+            summary = "Update project by ID",
+            description = "Updates a project with the given ID using provided fields"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Project updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "404", description = "Project not found")
+    })
+    public ResponseEntity<String> updateProject(
+            @PathVariable Long id,
+            @RequestBody UpdateProjectResource resource
+    ) {
+        var command = new UpdateProjectCommand(
+                id,
+                resource.name(),
+                resource.description(),
+                resource.status(),
+                resource.endingDate()
+        );
+        projectCommandService.handle(command);
+        return ResponseEntity.ok("Project with given ID successfully updated");
     }
 }

@@ -1,5 +1,9 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates;
 
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.CommercialName;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.LegalName;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.ProjectStatus;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.events.ProjectCreatedEvent;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.DateRange;
@@ -11,6 +15,9 @@ import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobject
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProjectId;
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.util.Date;
 
 /**
  * Project
@@ -25,6 +32,8 @@ import lombok.Getter;
  * @since 1.0
  */
 @Entity
+@Table(name = "projects")
+@EntityListeners(AuditingEntityListener.class)
 public class Project extends AuditableAbstractAggregateRoot<Project> {
 
     /** Name of the project, encapsulated in a description object. */
@@ -64,20 +73,46 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     /**
      * Constructs a project with the required fields.
      *
-     * @param projectName the projectName of the project
-     * @param description the project's description
+     * @param
      * @param status the current status of the project
-     * @param dateRange the range within the project activities will be done
-     * @param organizationId the ID of the organization in charge of the project.
      * @param contractingEntityId the ID of the person who
      */
-    public Project(ProjectName projectName, Description description, ProjectStatus status, DateRange dateRange, OrganizationId organizationId, PersonId contractingEntityId) {
-        this.projectName = projectName;
-        this.description = description;
+    public Project(CreateProjectCommand command, ProjectStatus status, PersonId contractingEntityId) {
+        this.projectName = new ProjectName(command.projectName());
+        this.description = new Description(command.description());
         this.status = status;
-        this.dateRange = dateRange;
-        this.organizationId = organizationId;
+        this.dateRange = new DateRange(command.startDate(), command.endDate());
+        this.organizationId = new OrganizationId(command.organizationId());
         this.contractingEntityId = contractingEntityId;
+    }
+
+    /**
+     * Updates editable fields of the project in a partial and atomic operation.
+     *
+     * @param newName the new name of the project (optional)
+     * @param newDescription the new description of the project (optional)
+     * @param newStatus the new status of the project (optional)
+     * @param newEndingDate the new ending date of the project (optional)
+     * @return the updated project instance
+     */
+    public Project updateInformation(ProjectName newName, Description newDescription, ProjectStatus newStatus, Date newEndingDate) {
+        if (newName != null) {
+            this.projectName = newName;
+        }
+
+        if (newDescription != null) {
+            this.description = newDescription;
+        }
+
+        if (newStatus != null) {
+            this.status = newStatus;
+        }
+
+        if (newEndingDate != null) {
+            this.dateRange = new DateRange(this.dateRange.startDate(), newEndingDate);
+        }
+
+        return this;
     }
 
     /**
