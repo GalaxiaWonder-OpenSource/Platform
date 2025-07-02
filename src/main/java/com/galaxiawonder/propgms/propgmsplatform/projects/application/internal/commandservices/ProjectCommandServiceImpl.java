@@ -118,11 +118,17 @@ public class ProjectCommandServiceImpl implements ProjectCommandService {
             throw new IllegalArgumentException("Project doesn't exist");
         var projectToUpdate = result.get();
         try {
+            ProjectStatus newStatus = projectToUpdate.getStatus(); // Mantener el status actual por defecto
+
+            if (command.status() != null) {
+                ProjectStatuses statusEnum = ProjectStatuses.valueOf(command.status().toUpperCase());
+                newStatus = getProjectStatus(statusEnum);
+            }
             var updatedProject = projectRepository.save(
                     projectToUpdate.updateInformation(
                             command.name(),
                             command.description(),
-                            getProjectStatus(command.status()),
+                            newStatus,
                             command.endingDate()
                     )
             );

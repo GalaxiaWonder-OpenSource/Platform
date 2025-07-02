@@ -260,8 +260,6 @@ public class OrganizationController {
         return new ResponseEntity<>(resources, HttpStatus.OK);
     }
 
-
-
     /**
      * Retrieves all members associated with a specific organization.
      *

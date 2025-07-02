@@ -1,7 +1,5 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands;
 
-import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.ProjectStatuses;
-
 import java.util.Date;
 
 /**
@@ -16,7 +14,7 @@ public record UpdateProjectCommand(
         Long projectId,
         String name,
         String description,
-        ProjectStatuses status,
+        String status,
         Date endingDate
 ) {
     /**
