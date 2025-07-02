@@ -6,16 +6,29 @@ import java.util.Date;
  * CreateProjectCommand
  *
  * @summary
- * Command object used to encapsulate the data required to create a new project.
- * It includes information such as name, description, date range, associated organization,
- * and the email of the contracting entity.
+ * Command object representing the data required to create a new project.
  *
- * @param projectName the name of the project to be created
- * @param description a short description or summary of the project
- * @param startDate the expected starting date of the project
- * @param endDate the expected completion date of the project
- * @param organizationId the ID of the organization responsible for the project
- * @param contractingEntityEmail the email address of the person or entity that requested or contracted the project
+ * <p>This command encapsulates all necessary fields to define a project within the system,
+ * including its name, description, planned schedule, associated organization,
+ * and contracting entity details.</p>
+ *
+ * <ul>
+ *   <li><strong>projectName</strong>: The official name of the project. Must not be null or blank.</li>
+ *   <li><strong>description</strong>: A concise description or summary of the project. Must not be null or blank.</li>
+ *   <li><strong>startDate</strong>: The planned start date of the project. Must not be null.</li>
+ *   <li><strong>endDate</strong>: The expected end date of the project. Must not be null.</li>
+ *   <li><strong>organizationId</strong>: The identifier of the organization responsible for executing the project. Must not be null.</li>
+ *   <li><strong>contractingEntityEmail</strong>: Email of the client or entity that requested the project. Must not be null or blank.</li>
+ * </ul>
+ *
+ * <p>Validation is applied to ensure all required fields meet the defined constraints and business rules.</p>
+ *
+ * @param projectName the name of the project
+ * @param description a short descriptive summary
+ * @param startDate the planned starting date
+ * @param endDate the planned completion date
+ * @param organizationId the ID of the responsible organization
+ * @param contractingEntityEmail email of the contracting client or entity
  *
  * @since 1.0
  */

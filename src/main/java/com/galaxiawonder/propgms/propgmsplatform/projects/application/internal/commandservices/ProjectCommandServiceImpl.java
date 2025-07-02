@@ -2,6 +2,10 @@ package com.galaxiawonder.propgms.propgmsplatform.projects.application.internal.
 
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates.Person;
 import com.galaxiawonder.propgms.propgmsplatform.iam.interfaces.acl.IAMContextFacade;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitationStatus;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationStatus;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationInvitationStatuses;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationStatuses;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Project;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectCommand;
@@ -25,18 +29,11 @@ import java.util.Date;
 import java.util.Optional;
 
 /**
- * Service implementation that handles command operations for {@link Project} entities,
- * such as creating and updating project records in the system.
- *
- * <p>This service encapsulates the logic needed to persist new projects,
- * retrieve project statuses, and publish related domain events.</p>
- *
- * <p>It uses the {@link IAMContextFacade} to retrieve identity-related data,
- * and publishes events via {@link ApplicationEventPublisher} when necessary.</p>
- *
- * @author
- * Galaxia Wonder Development Team
- * @since 1.0
+ * ProjectCommandService Implementation
+ *  *
+ *  * @summary
+ *  * Implementation of the ProjectCommandService interface.
+ *  * It is responsible for handling project commands.
  */
 @Service
 public class ProjectCommandServiceImpl implements ProjectCommandService {
@@ -89,6 +86,13 @@ public class ProjectCommandServiceImpl implements ProjectCommandService {
         return Optional.of(createdProject);
     }
 
+    /**
+     * Retrieves the {@link ProjectStatus} entity matching the given enum description.
+     *
+     * @param status the {@link ProjectStatuses} enum representing the desired status
+     * @return the corresponding {@link ProjectStatus} entity
+     * @throws IllegalStateException if the status is not found in the repository
+     */
     private ProjectStatus getProjectStatus(ProjectStatuses status) {
         return this.projectStatusRepository.findByName(status)
                 .orElseThrow(() -> new IllegalStateException("Project status not found"));
@@ -127,5 +131,4 @@ public class ProjectCommandServiceImpl implements ProjectCommandService {
             throw new IllegalArgumentException("Error while updating project: %s".formatted(e.getMessage()));
         }
     }
-
 }

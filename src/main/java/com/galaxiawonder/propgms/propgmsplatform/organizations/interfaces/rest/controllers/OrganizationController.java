@@ -48,6 +48,7 @@ public class OrganizationController {
      * @see OrganizationCommandService
      * @see OrganizationQueryService
      */
+
     public OrganizationController(OrganizationCommandService organizationCommandService, OrganizationQueryService organizationQueryService) {
         this.organizationCommandService = organizationCommandService;
         this.organizationQueryService = organizationQueryService;

@@ -4,13 +4,21 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.comm
 import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.resources.CreateOrganizationResource;
 
 /**
- * Assembler to create a CreateOrganizationCommand from a CreateOrganizationResource
+ * CreateOrganizationCommandFromResourceAssembler
+ *
+ * @summary
+ * Utility class that transforms a {@link CreateOrganizationResource} into a {@link CreateOrganizationCommand}.
+ * Used to map incoming API resource data into a domain-level command for organization creation.
+ *
+ * @author
+ * Galaxia Wonder Development Team
+ * @since 1.0
  */
 public class CreateOrganizationCommandFromResourceAssembler {
     /**
-     * Converts a CreateOrganizationResource to a CreateOrganizationCommand.
-     * @param resource CreateOrganizationResource to convert
-     * @return CreateOrganizationCommand created from the resource
+     * Converts a {@link CreateOrganizationResource} into a {@link CreateOrganizationCommand}.
+     * @param resource the incoming resource object from the API layer
+     * @return a {@code CreateOrganizationCommand} populated with data from the resource
      */
     public static CreateOrganizationCommand toCommandFromResource(CreateOrganizationResource resource) {
         return new CreateOrganizationCommand(resource.legalName(), resource.commercialName(), resource.ruc(), resource.createdBy());

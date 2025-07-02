@@ -74,10 +74,9 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
 
     /**
      * Constructs a project with the required fields.
-     *
-     * @param
-     * @param status the current status of the project
-     * @param contractingEntityId the ID of the person who
+     * @param command Contains projectName (max 30 characters), description (max 200 characters), and dateRange (startDate cannot be after endDate)
+     * @param status The current status of the project
+     * @param contractingEntityId The ID of the contracting person or entity
      */
     public Project(CreateProjectCommand command, ProjectStatus status, PersonId contractingEntityId) {
         this.projectName = new ProjectName(command.projectName());

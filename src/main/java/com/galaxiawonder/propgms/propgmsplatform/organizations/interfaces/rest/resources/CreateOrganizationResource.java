@@ -1,7 +1,7 @@
 package com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.resources;
 
 /**
- *
+ * Resource representing the data required to create a new organization via REST.
  * @param legalName The legal projectName of the organization.
  * @param commercialName The commercial projectName of the organization.
  * @param ruc The RUC of the organization.

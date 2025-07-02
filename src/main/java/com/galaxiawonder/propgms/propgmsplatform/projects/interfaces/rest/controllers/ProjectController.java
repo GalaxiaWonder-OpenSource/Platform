@@ -1,5 +1,9 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.controllers;
 
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationCommandService;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationQueryService;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.resources.CreateOrganizationResource;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.resources.OrganizationResource;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Project;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectCommand;
@@ -43,12 +47,27 @@ public class ProjectController {
     private final ProjectCommandService projectCommandService;
     private final ProjectQueryService projectQueryService;
 
+    /**
+     * Constructor for ProjectController.
+     * @param projectCommandService Project command service
+     * @param projectQueryService Project query service}
+     * @see ProjectCommandService
+     * @see ProjectQueryService
+     */
+
     ProjectController(ProjectCommandService projectCommandService,
                       ProjectQueryService projectQueryService) {
         this.projectCommandService = projectCommandService;
         this.projectQueryService = projectQueryService;
     }
 
+    /**
+     * Creates a Project
+     * @param resource CreateProjectResource containing the required params
+     * @return ResponseEntity with the created project resource, or bad request if the resource is invalid
+     * @see CreateProjectResource
+     * @see ProjectResource
+     */
     @PostMapping
     public ResponseEntity<ProjectResource> createProject(@RequestBody CreateProjectResource resource) {
         Optional<Project> project = projectCommandService
@@ -88,9 +107,7 @@ public class ProjectController {
 
         return new ResponseEntity<>(resources, HttpStatus.OK);
     }
-    /**
-     * delete
-     */
+
     @DeleteMapping("{id}")
     @Operation(
             summary = "Delete project by ID",
