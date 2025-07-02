@@ -103,7 +103,7 @@ public class ProjectController {
     public ResponseEntity<?> deleteProject(@PathVariable Long id) {
         var deleteProjectCommand = new DeleteProjectCommand(id);
         projectCommandService.handle(deleteProjectCommand);
-        return ResponseEntity.ok("Organization with given RUC successfully deleted");
+        return ResponseEntity.ok("Project successfully deleted");
     }
     @PatchMapping("{id}")
     @Operation(
@@ -115,7 +115,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "400", description = "Invalid request"),
             @ApiResponse(responseCode = "404", description = "Project not found")
     })
-    public ResponseEntity<String> updateProject(
+    public ResponseEntity<?> updateProject(
             @PathVariable Long id,
             @RequestBody UpdateProjectResource resource
     ) {

@@ -34,26 +34,31 @@ import java.util.Date;
 public class Project extends AuditableAbstractAggregateRoot<Project> {
 
     /** Name of the project, encapsulated in a description object. */
+    @Column(nullable = false)
     @Getter
     @Embedded
     private ProjectName projectName;
 
     /** Description of the project, encapsulated in a description object. */
+    @Column
     @Getter
     @Embedded
     private Description description;
 
     /** Range of dates within the project will be done. */
+    @Column(nullable = false)
     @Getter
     @Embedded
     private DateRange dateRange;
 
     /** Identifier of the organization responsible for the project. */
+    @Column(nullable = false)
     @Getter
     @Embedded
     private OrganizationId organizationId;
 
     /** Identifier of the person or entity in charge of contracting. */
+    @Column(nullable = false)
     @Getter
     @Embedded
     private PersonId contractingEntityId;
@@ -61,7 +66,7 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     /** Current status of the project, represented as an entity. */
     @Getter
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "project_status_id", nullable = false, unique = false)
+    @JoinColumn(name = "status_id", nullable = false, unique = false)
     private ProjectStatus status;
 
     /** Default constructor required by JPA. */
