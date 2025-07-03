@@ -11,6 +11,7 @@ import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetAllTeamMembersByProjectIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectQueryService;
+import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.CreateProjectTeamMemberCommandFromResourceAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.ProjectTeamMemberResourceFromEntityAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.*;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectCommand;
@@ -154,6 +155,35 @@ public class ProjectController {
         );
         projectCommandService.handle(command);
         return ResponseEntity.ok("Project with given ID successfully updated");
+    }
+
+    /**
+     * Adds a new team member to a project.
+     *
+     * @param resource AddProjectTeamMemberResource containing orgMemberId and projectId
+     * @return ResponseEntity with the created team member resource
+     */
+    @Operation(
+            summary = "Add team member to project",
+            description = "Adds a new team member to the specified project"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Team member added successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request or member already exists in project"),
+            @ApiResponse(responseCode = "404", description = "Project or organization member not found")
+    })
+    @PostMapping("/{projectId}/team-members")
+    public ResponseEntity<ProjectTeamMemberResource> createTeamMemberToProject(
+            @RequestBody CreateProjectTeamMemberResource resource
+    ) {
+        Optional<ProjectTeamMember> teamMember = projectCommandService
+                .handle(CreateProjectTeamMemberCommandFromResourceAssembler.toCommandFromResource(resource));
+
+        return teamMember
+                .map(source -> new ResponseEntity<>(
+                        ProjectTeamMemberResourceFromEntityAssembler.toResourceFromEntity(source),
+                        HttpStatus.CREATED))
+                .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
     /**

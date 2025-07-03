@@ -8,11 +8,10 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.enti
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationStatus;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationInvitationStatuses;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationStatuses;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.acl.OrganizationContextFacade;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Project;
-import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectCommand;
-import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectCommand;
-import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectTeamMemberCommand;
-import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.UpdateProjectCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.ProjectTeamMember;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.*;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.ProjectStatus;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.events.ProjectCreatedEvent;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.DateRange;
@@ -22,7 +21,9 @@ import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobje
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.infrastructure.persistence.jpa.repositories.ProjectRepository;
 import com.galaxiawonder.propgms.propgmsplatform.projects.infrastructure.persistence.jpa.repositories.ProjectStatusRepository;
+import com.galaxiawonder.propgms.propgmsplatform.projects.infrastructure.persistence.jpa.repositories.ProjectTeamMemberRepository;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.OrganizationId;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.OrganizationMemberId;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProjectId;
 import org.springframework.context.ApplicationEventPublisher;
@@ -52,6 +53,12 @@ public class ProjectCommandServiceImpl implements ProjectCommandService {
     /** Publisher used to dispatch domain events such as {@link ProjectCreatedEvent}. */
     private final ApplicationEventPublisher eventPublisher;
 
+    /** Repository interface for managing and retrieving {@link ProjectTeamMember} entities. */
+    private final ProjectTeamMemberRepository projectTeamMemberRepository;
+
+    /** Facade for accessing organization context and member information. */
+    private final OrganizationContextFacade organizationContextFacade;
+
     /**
      * Constructs the service implementation with required dependencies.
      *
@@ -63,11 +70,15 @@ public class ProjectCommandServiceImpl implements ProjectCommandService {
     public ProjectCommandServiceImpl(ProjectRepository projectRepository,
                                      IAMContextFacade iamContextFacade,
                                      ProjectStatusRepository projectStatusRepository,
-                                     ApplicationEventPublisher eventPublisher) {
+                                     ApplicationEventPublisher eventPublisher,
+                                     ProjectTeamMemberRepository projectTeamMemberRepository,
+                                     OrganizationContextFacade organizationContextFacade) {
         this.projectRepository = projectRepository;
         this.iamContextFacade = iamContextFacade;
         this.projectStatusRepository = projectStatusRepository;
         this.eventPublisher = eventPublisher;
+        this.projectTeamMemberRepository = projectTeamMemberRepository;
+        this.organizationContextFacade = organizationContextFacade;
     }
 
     /**
@@ -139,6 +150,18 @@ public class ProjectCommandServiceImpl implements ProjectCommandService {
         } catch (Exception e) {
             throw new IllegalArgumentException("Error while updating project: %s".formatted(e.getMessage()));
         }
+    }
+
+    @Override
+    public Optional<ProjectTeamMember> handle(CreateProjectTeamMemberCommand command) {
+        if (command == null) {
+            throw new IllegalArgumentException("CreateProjectTeamMemberCommand must not be null");
+        }
+
+        var teamMember = new ProjectTeamMember(command.organizationMemberId(), command.projectId());
+        var createdTeamMember = projectTeamMemberRepository.save(teamMember);
+
+        return Optional.of(createdTeamMember);
     }
 
     @Override

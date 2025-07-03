@@ -60,21 +60,9 @@ public class ProjectTeamMemberCommandServiceImpl implements ProjectTeamMemberCom
      */
     @Override
     public Optional<ProjectTeamMember> handle(CreateProjectTeamMemberCommand command) {
-        Specialty getSpecialty = getSpecialty(Specialties.valueOf(command.specialty()));
-
-        ProfileDetails profileDetails = this.iamContextFacade.getProfileDetailsById(command.personId());
-
-        ProjectTeamMember projectTeamMember = new ProjectTeamMember(
-                new ProjectId(command.projectId()),
-                new PersonId(command.personId()),
-                new OrganizationMemberId(command.organizationMemberId()),
-                profileDetails,
-                getSpecialty
-        );
-
-        this.projectTeamMemberRepository.save(projectTeamMember);
-
-        return Optional.of(projectTeamMember);
+        var teamMember = new ProjectTeamMember(command.organizationMemberId(), command.projectId());
+        var createdTeamMember = projectTeamMemberRepository.save(teamMember);
+        return Optional.of(createdTeamMember);
     }
 
     /**

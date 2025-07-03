@@ -5,10 +5,8 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.comm
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.UpdateOrganizationCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMember;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Project;
-import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectCommand;
-import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectCommand;
-import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectTeamMemberCommand;
-import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.UpdateProjectCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.ProjectTeamMember;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.*;
 import jakarta.persistence.EntityNotFoundException;
 
 import java.util.Optional;
@@ -41,6 +39,16 @@ public interface ProjectCommandService {
      * @see DeleteProjectCommand
      */
     void handle(DeleteProjectCommand command);
+    /**
+     * Handles the create project team member command.
+     * @param command The create project team member command containing the organization member ID and project ID.
+     * @return The created project team member.
+     *
+     * @throws IllegalArgumentException If any required field in the command is null.
+     * @throws EntityNotFoundException If the associated project or organization member is not found.
+     * @see CreateProjectTeamMemberCommand
+     */
+    Optional<ProjectTeamMember> handle(CreateProjectTeamMemberCommand command);
     /**
      * Handles the command to delete an organization member by their unique ID.
      *
