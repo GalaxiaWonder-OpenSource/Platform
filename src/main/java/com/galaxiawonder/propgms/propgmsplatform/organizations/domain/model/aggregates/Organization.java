@@ -11,6 +11,7 @@ import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobject
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
@@ -57,6 +58,7 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrganizationMember> members = new ArrayList<>();
 
+    @Setter
     @Getter
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrganizationInvitation> invitations = new ArrayList<>();
@@ -254,5 +256,9 @@ public class Organization extends AuditableAbstractAggregateRoot<Organization> {
                 .filter(i -> i.getId().equals(invitationId))
                 .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException("Invitation not found in this organization"));
+    }
+
+    public void removeInvitationsByPersonId(PersonId personId) {
+        invitations.removeIf(invitation -> invitation.getInvitedPersonId().equals(personId));
     }
 }
