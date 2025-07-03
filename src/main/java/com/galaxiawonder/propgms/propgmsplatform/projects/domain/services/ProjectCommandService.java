@@ -1,10 +1,13 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.domain.services;
 
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.DeleteOrganizationCommand;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.DeleteOrganizationMemberCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.UpdateOrganizationCommand;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMember;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Project;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectTeamMemberCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.UpdateProjectCommand;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -38,4 +41,19 @@ public interface ProjectCommandService {
      * @see DeleteProjectCommand
      */
     void handle(DeleteProjectCommand command);
+    /**
+     * Handles the command to delete an organization member by their unique ID.
+     *
+     * <p>
+     * This method performs validation and removes the corresponding {@link OrganizationMember}
+     * entity from the system. It may also trigger additional domain events or cleanup operations
+     * depending on business rules.
+     * </p>
+     *
+     * @param command the {@link DeleteProjectTeamMemberCommand} containing the ID of the team member to delete
+     * @throws IllegalArgumentException if the member does not exist or cannot be deleted due to business constraints
+     *
+     * @since 1.0
+     */
+    void handle(DeleteProjectTeamMemberCommand command);
 }

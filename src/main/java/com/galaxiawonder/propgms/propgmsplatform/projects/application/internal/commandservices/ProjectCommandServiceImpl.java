@@ -2,6 +2,8 @@ package com.galaxiawonder.propgms.propgmsplatform.projects.application.internal.
 
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates.Person;
 import com.galaxiawonder.propgms.propgmsplatform.iam.interfaces.acl.IAMContextFacade;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.DeleteOrganizationMemberCommand;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitationStatus;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationStatus;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationInvitationStatuses;
@@ -9,6 +11,7 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valu
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Project;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectTeamMemberCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.UpdateProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.ProjectStatus;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.events.ProjectCreatedEvent;
@@ -137,4 +140,16 @@ public class ProjectCommandServiceImpl implements ProjectCommandService {
             throw new IllegalArgumentException("Error while updating project: %s".formatted(e.getMessage()));
         }
     }
+
+    @Override
+    public void handle(DeleteProjectTeamMemberCommand command) {
+        Project project = projectRepository.findProjectByTeamMemberId(command.teamMemberId())
+                .orElseThrow(() -> new IllegalArgumentException("No project found for the given team member ID: " + command.teamMemberId()));
+
+        project.removeTeamMemberById(command.teamMemberId());
+
+        saveProject(project);
+    }
+
+    private void saveProject(Project project) { projectRepository.save(project);}
 }

@@ -3,8 +3,10 @@ package com.galaxiawonder.propgms.propgmsplatform.projects.domain.services;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Project;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.ProjectTeamMember;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetAllProjectsByTeamMemberPersonIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetAllTeamMembersByProjectIdQuery;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProjectQueryService {
     /**
@@ -22,9 +24,9 @@ public interface ProjectQueryService {
      *
      * @param query the {@link GetAllProjectsByTeamMemberPersonIdQuery} containing the target person's ID
      * @return a {@link List} of {@link Project} entities where the person is a registered team member
-     *
      * @since 1.0
      */
+    List<ProjectTeamMember> handle(GetAllTeamMembersByProjectIdQuery query);
     List<Project> handle(GetAllProjectsByTeamMemberPersonIdQuery query);
 
 }

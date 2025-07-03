@@ -7,6 +7,7 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.r
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Project;
 
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.ProjectTeamMember;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectTeamMemberCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetAllTeamMembersByProjectIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectQueryService;
@@ -156,7 +157,7 @@ public class ProjectController {
     }
 
     /**
-     * Retrieves all members associated with a specific project.
+     * Retrieves all team members associated with a specific project.
      *
      * @param projectId the ID of the project
      * @return a list of {@link OrganizationMemberResource} objects
@@ -169,19 +170,43 @@ public class ProjectController {
             @ApiResponse(responseCode = "200", description = "Members retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "Project not found")
     })
-    @GetMapping("/{projectId}/members")
-    public ResponseEntity<List<ProjectTeamMemberResource>> getAllMembersByProjectId(
+
+    @GetMapping("/{projectId}/team-members")
+    public ResponseEntity<List<ProjectTeamMemberResource>> getTeamMembersByProjectId(
             @Parameter(description = "ID of the project", required = true)
-            @PathVariable Long projectId) {
+            @PathVariable("projectId") Long projectId
+    ) {
+        List<ProjectTeamMember> teamMembers = projectQueryService.handle(
+                new GetAllTeamMembersByProjectIdQuery(projectId)
+        );
 
-        List<ProjectTeamMember> projectMembers =
-                projectQueryService.handle(new GetAllProjectsByTeamMemberPersonIdQuery(personId));
-
-        List<ProjectTeamMemberResource> resources = projectMembers.stream()
+        List<ProjectTeamMemberResource> resources = teamMembers.stream()
                 .map(ProjectTeamMemberResourceFromEntityAssembler::toResourceFromEntity)
                 .toList();
 
-        return new ResponseEntity<>(resources, HttpStatus.OK);
+        return ResponseEntity.ok(resources);
     }
 
+    /**
+     * Removes a team member from a project.
+     *
+     * @param teamMemberId the ID of the team member to remove
+     * @return ResponseEntity with success message
+     */
+    @Operation(
+            summary = "Remove team member by ID",
+            description = "Removes a team member from their assigned project"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Team member removed successfully"),
+            @ApiResponse(responseCode = "404", description = "Team member not found")
+    })
+    @DeleteMapping("/team-members/{teamMemberId}")
+    public ResponseEntity<String> deleteTeamMemberById(
+            @Parameter(description = "ID of the team member to remove", required = true)
+            @PathVariable Long teamMemberId
+    ) {
+        projectCommandService.handle(new DeleteProjectTeamMemberCommand(teamMemberId));
+        return ResponseEntity.noContent().build();
+    }
 }

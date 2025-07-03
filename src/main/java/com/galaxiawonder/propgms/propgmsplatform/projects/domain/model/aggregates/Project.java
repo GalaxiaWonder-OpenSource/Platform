@@ -1,5 +1,6 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates;
 
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMember;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.ProjectStatus;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.events.ProjectCreatedEvent;
@@ -14,7 +15,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Project
@@ -68,6 +71,10 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "status_id", nullable = false, unique = false)
     private ProjectStatus status;
+
+    @Getter
+    @OneToMany(mappedBy = "projectId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ProjectTeamMember> teamMembers = new ArrayList<>();
 
     /** Default constructor required by JPA. */
     public Project() {}
@@ -162,6 +169,15 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
                 this.getOrganizationId(),
                 new ProjectId(this.getId()))
         );
+    }
+
+    public void removeTeamMemberById(Long teamMemberId) {
+        ProjectTeamMember teamMember = teamMembers.stream()
+                .filter(tm -> tm.getId().equals(teamMemberId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No team member found with ID: " + teamMemberId));
+
+        teamMembers.remove(teamMember);
     }
 }
 

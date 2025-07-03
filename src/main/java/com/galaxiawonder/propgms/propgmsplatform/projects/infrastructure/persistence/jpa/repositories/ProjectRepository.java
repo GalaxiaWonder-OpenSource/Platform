@@ -1,6 +1,7 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.infrastructure.persistence.jpa.repositories;
 
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Project;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.ProjectTeamMember;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -36,4 +37,21 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     WHERE ptm.personId.personId = :personId
 """)
     Optional<List<Project>> findAllProjectsByTeamMemberPersonId(@Param("personId") Long personId);
+    @Query("""
+    SELECT ptm
+    FROM ProjectTeamMember ptm
+    WHERE ptm.projectId.projectId = :projectId
+    """)
+    Optional<List<ProjectTeamMember>> findAllTeamMembersByProjectId(@Param("projectId") Long projectId);
+
+    /**
+     * Finds a project by team member ID
+     */
+    @Query("""
+    SELECT p
+    FROM Project p
+    JOIN ProjectTeamMember ptm ON ptm.projectId.projectId = p.id
+    WHERE ptm.id = :teamMemberId
+    """)
+    Optional<Project> findProjectByTeamMemberId(@Param("teamMemberId") Long teamMemberId);
 }
