@@ -1,5 +1,6 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates;
 
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.ProjectTeamMemberType;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.Specialty;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.*;
@@ -22,6 +23,7 @@ import lombok.NoArgsConstructor;
  * Galaxia Wonder Development Team
  * @since 1.0
  */
+@Getter
 @NoArgsConstructor
 @Entity
 public class ProjectTeamMember extends AuditableAbstractAggregateRoot<ProjectTeamMember> {
@@ -63,29 +65,36 @@ public class ProjectTeamMember extends AuditableAbstractAggregateRoot<ProjectTea
     private EmailAddress email;
 
     /**
+     * Current type of project team member (COORDINATOR / SPECIALIST)
+     */
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "member_type_id", nullable = false)
+    @Getter
+    private ProjectTeamMemberType memberType;
+
+    /**
      * Creates a new {@link ProjectTeamMember} with the given identifiers and personal information.
      *
      * @param projectId the project to which the member is assigned
      * @param specialty the specialty or role of the member in the project
      * @param organizationMemberId the ID of the organization member
      * @param personId the unique identifier of the person
-     * @param name the full name of the member
-     * @param email the email address of the member
+     * @param profileDetails contains name and email
      */
     public ProjectTeamMember(
             ProjectId projectId,
             PersonId personId,
             OrganizationMemberId organizationMemberId,
-            PersonName name,
-            EmailAddress email,
+            ProfileDetails profileDetails,
             Specialty specialty
+
     ) {
         this.projectId = projectId;
         this.specialty = specialty;
         this.organizationMemberId = organizationMemberId;
         this.personId = personId;
-        this.name = name;
-        this.email = email;
+        this.name = profileDetails.name();
+        this.email = profileDetails.email();
     }
 }
 

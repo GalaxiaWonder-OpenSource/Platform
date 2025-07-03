@@ -26,4 +26,5 @@ public interface ProjectQueryService {
      * @since 1.0
      */
     List<Project> handle(GetAllProjectsByTeamMemberPersonIdQuery query);
+
 }

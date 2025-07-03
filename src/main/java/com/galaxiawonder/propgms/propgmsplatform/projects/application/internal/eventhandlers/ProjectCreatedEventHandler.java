@@ -52,10 +52,10 @@ public class ProjectCreatedEventHandler {
 
         this.projectTeamMemberCommandService.handle(
                 new CreateProjectTeamMemberCommand(
-                        event.getProjectId().projectId(),
-                        personId,
                         memberId,
-                        "NON_APPLICABLE"
+                        event.getProjectId().projectId(),
+                        "NON_APPLICABLE",
+                        personId
                 )
         );
     }

@@ -1,11 +1,17 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.controllers;
 
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationCommandService;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationQueryService;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.resources.CreateOrganizationResource;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.resources.OrganizationResource;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMember;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllMembersByOrganizationIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.assemblers.OrganizationMemberResourceFromEntityAssembler;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.resources.OrganizationMemberResource;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Project;
-import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectCommand;
+
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.ProjectTeamMember;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetAllTeamMembersByProjectIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectCommandService;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectQueryService;
+import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.ProjectTeamMemberResourceFromEntityAssembler;
+import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.*;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.UpdateProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetAllProjectsByTeamMemberPersonIdQuery;
@@ -15,18 +21,20 @@ import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemb
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.ProjectResourceFromEntityAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.CreateProjectResource;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.ProjectResource;
-import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.UpdateProjectResource;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -146,4 +154,34 @@ public class ProjectController {
         projectCommandService.handle(command);
         return ResponseEntity.ok("Project with given ID successfully updated");
     }
+
+    /**
+     * Retrieves all members associated with a specific project.
+     *
+     * @param projectId the ID of the project
+     * @return a list of {@link OrganizationMemberResource} objects
+     */
+    @Operation(
+            summary = "Get all members by project ID",
+            description = "Retrieves all active members associated with the given project ID"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Members retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Project not found")
+    })
+    @GetMapping("/{projectId}/members")
+    public ResponseEntity<List<ProjectTeamMemberResource>> getAllMembersByProjectId(
+            @Parameter(description = "ID of the project", required = true)
+            @PathVariable Long projectId) {
+
+        List<ProjectTeamMember> projectMembers =
+                projectQueryService.handle(new GetAllProjectsByTeamMemberPersonIdQuery(personId));
+
+        List<ProjectTeamMemberResource> resources = projectMembers.stream()
+                .map(ProjectTeamMemberResourceFromEntityAssembler::toResourceFromEntity)
+                .toList();
+
+        return new ResponseEntity<>(resources, HttpStatus.OK);
+    }
+
 }

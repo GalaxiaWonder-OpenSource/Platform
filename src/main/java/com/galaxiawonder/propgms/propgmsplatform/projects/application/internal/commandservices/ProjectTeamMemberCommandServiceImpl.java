@@ -4,7 +4,9 @@ import com.galaxiawonder.propgms.propgmsplatform.iam.interfaces.acl.IAMContextFa
 import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.acl.OrganizationContextFacade;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.ProjectTeamMember;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectTeamMemberCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.ProjectTeamMemberType;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.Specialty;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.ProjectTeamMemberTypes;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.Specialties;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectTeamMemberCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.infrastructure.persistence.jpa.repositories.ProjectTeamMemberRepository;
@@ -66,8 +68,7 @@ public class ProjectTeamMemberCommandServiceImpl implements ProjectTeamMemberCom
                 new ProjectId(command.projectId()),
                 new PersonId(command.personId()),
                 new OrganizationMemberId(command.organizationMemberId()),
-                profileDetails.name(),
-                profileDetails.email(),
+                profileDetails,
                 getSpecialty
         );
 
