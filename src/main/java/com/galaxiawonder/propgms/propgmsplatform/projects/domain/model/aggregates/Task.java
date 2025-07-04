@@ -7,8 +7,22 @@ import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+/**
+ * Task
+ *
+ * @summary
+ * Aggregate root that represents a task within the system.
+ *
+ * @author
+ * Galaxia Wonder Development Team
+ * @since 1.0
+ */
 
 @Entity
+@Table(name = "tasks")
+@EntityListeners(AuditingEntityListener.class)
 public class Task extends MilestoneItem {
     @Getter
     @ManyToOne(fetch = FetchType.EAGER, optional = false)

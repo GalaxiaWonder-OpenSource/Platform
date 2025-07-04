@@ -6,6 +6,7 @@ import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobject
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * ProjectTeamMember
@@ -24,6 +25,7 @@ import lombok.NoArgsConstructor;
  */
 @NoArgsConstructor
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class ProjectTeamMember extends AuditableAbstractAggregateRoot<ProjectTeamMember> {
 
     /** Identifier of the project to which this member is assigned. */
