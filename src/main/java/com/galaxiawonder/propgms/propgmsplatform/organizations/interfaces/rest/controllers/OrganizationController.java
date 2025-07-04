@@ -10,6 +10,7 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.O
 import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.assemblers.*;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.resources.*;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
+import com.galaxiawonder.propgms.propgmsplatform.shared.interfaces.rest.resources.GenericMessageResource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -108,12 +109,12 @@ public class OrganizationController {
             @ApiResponse(responseCode = "404", description = "Organization not found")
     })
     @DeleteMapping("{ruc}")
-    public ResponseEntity<?> deleteOrganization(
+    public ResponseEntity<GenericMessageResource> deleteOrganization(
             @Parameter(description = "RUC")
             @PathVariable String ruc) {
         var deleteOrganizationCommand = new DeleteOrganizationCommand(ruc);
         organizationCommandService.handle(deleteOrganizationCommand);
-        return ResponseEntity.ok("Organization with given RUC successfully deleted");
+        return ResponseEntity.ok(new GenericMessageResource("Organization with given RUC successfully deleted"));
     }
     @PatchMapping("{id}")
     public ResponseEntity<?> updateOrganization(
