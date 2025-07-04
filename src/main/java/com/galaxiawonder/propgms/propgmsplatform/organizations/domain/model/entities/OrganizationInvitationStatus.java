@@ -36,14 +36,14 @@ public class OrganizationInvitationStatus {
     private Long id;
 
     /**
-     * Enum value representing the classification of the invitation status.
+     * Enum description representing the classification of the invitation status.
      */
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private OrganizationInvitationStatuses name;
 
     /**
-     * Constructs an {@code OrganizationInvitationStatus} with a specified {@link OrganizationInvitationStatuses} value.
+     * Constructs an {@code OrganizationInvitationStatus} with a specified {@link OrganizationInvitationStatuses} description.
      *
      * @param name the predefined invitation status
      */
@@ -61,11 +61,11 @@ public class OrganizationInvitationStatus {
     }
 
     /**
-     * Converts a string representation of the invitation status name to an {@link OrganizationInvitationStatus} instance.
+     * Converts a string representation of the invitation status projectName to an {@link OrganizationInvitationStatus} instance.
      *
-     * @param name the string value of the enum constant
-     * @return a new {@code OrganizationInvitationStatus} instance with the corresponding enum value
-     * @throws IllegalArgumentException if the name does not match any enum constant
+     * @param name the string description of the enum constant
+     * @return a new {@code OrganizationInvitationStatus} instance with the corresponding enum description
+     * @throws IllegalArgumentException if the projectName does not match any enum constant
      */
     public static OrganizationInvitationStatus toOrganizationInvitationStatusFromName(String name) {
         return new OrganizationInvitationStatus(OrganizationInvitationStatuses.valueOf(name));
@@ -86,7 +86,7 @@ public class OrganizationInvitationStatus {
     /**
      * Returns the string representation of the enum-based invitation status.
      *
-     * @return the name of the invitation status as a string
+     * @return the projectName of the invitation status as a string
      */
     public String getStringName() {
         return name.name();

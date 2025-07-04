@@ -14,7 +14,7 @@ public record CommercialName(String commercialName) {
      * @param commercialName Legal Name
      */
     public CommercialName {
-        Objects.requireNonNull(commercialName, "Commercial name cannot be null");
+        Objects.requireNonNull(commercialName, "Commercial projectName cannot be null");
     }
     /**
      * Commercial Name Getter

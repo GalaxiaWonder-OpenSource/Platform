@@ -14,7 +14,7 @@ public record LegalName(String legalName) {
      * @param legalName Legal Name
      */
     public LegalName {
-        Objects.requireNonNull(legalName, "Legal name cannot be null");
+        Objects.requireNonNull(legalName, "Legal projectName cannot be null");
     }
 
     /**

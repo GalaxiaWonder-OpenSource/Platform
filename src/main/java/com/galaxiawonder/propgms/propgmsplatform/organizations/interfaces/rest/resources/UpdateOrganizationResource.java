@@ -1,4 +1,9 @@
 package com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.resources;
 
-public record UpdateOrganizationResource(String commercialName) {}
+import jakarta.annotation.Nullable;
+
+public record UpdateOrganizationResource(
+        @Nullable String commercialName,
+        @Nullable String legalName
+) {}
 

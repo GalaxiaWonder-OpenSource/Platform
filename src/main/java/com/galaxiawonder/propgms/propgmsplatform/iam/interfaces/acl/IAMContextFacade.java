@@ -28,7 +28,7 @@ public interface IAMContextFacade {
      * Retrieves basic information of a person using their unique identifier.
      *
      * @param personId the identifier of the person
-     * @return a {@link ProfileDetails} object containing name and email
+     * @return a {@link ProfileDetails} object containing projectName and email
      */
     ProfileDetails getProfileDetailsByPersonId(Long personId);
 
@@ -36,7 +36,7 @@ public interface IAMContextFacade {
      * Retrieves basic information of a person using their email address.
      *
      * @param email the email address of the person
-     * @return a {@link ProfileDetails} object containing name and email
+     * @return a {@link ProfileDetails} object containing projectName and email
      */
     ProfileDetails getProfileDetailsByEmail(String email);
 
@@ -44,7 +44,7 @@ public interface IAMContextFacade {
      * Retrieves detailed profile information of a person given their internal system ID.
      *
      * <p>This method is commonly used to fetch personal data associated with a person,
-     * such as name, email, or role, typically for display or reference in other modules
+     * such as projectName, email, or role, typically for display or reference in other modules
      * (e.g., invitations, dashboards, reports).</p>
      *
      * @param id the internal ID of the person

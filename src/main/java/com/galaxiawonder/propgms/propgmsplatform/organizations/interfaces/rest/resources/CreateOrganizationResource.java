@@ -2,8 +2,8 @@ package com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.
 
 /**
  *
- * @param legalName The legal name of the organization.
- * @param commercialName The commercial name of the organization.
+ * @param legalName The legal projectName of the organization.
+ * @param commercialName The commercial projectName of the organization.
  * @param ruc The RUC of the organization.
  * @param createdBy The creator of the organization entity.
  *

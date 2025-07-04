@@ -1,7 +1,7 @@
 package com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persistence.jpa.repositories;
 
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates.Person;
-import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.EmailAddress;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.EmailAddress;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.PhoneNumber;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -41,7 +41,7 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
     /**
      * Finds a person entity by their email address.
      *
-     * @param emailAddress the {@link EmailAddress} value object representing the person's email
+     * @param emailAddress the {@link EmailAddress} description object representing the person's email
      * @return an {@link Optional} containing the {@link Person} if found, or {@link Optional#empty()} if no match exists
      *
      * @since 1.0

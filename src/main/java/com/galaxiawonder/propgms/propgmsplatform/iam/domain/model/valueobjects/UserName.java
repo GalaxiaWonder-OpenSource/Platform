@@ -9,7 +9,7 @@ import jakarta.persistence.Embeddable;
  * Represents a system username used for authentication and identification.
  * Enforces format and length constraints to ensure consistency and prevent conflicts.
  *
- * Internally wraps a {@code String} value.
+ * Internally wraps a {@code String} description.
  *
  * @param username the string representation of the username
  *
@@ -28,7 +28,7 @@ public record UserName(String username) {
     }
 
     /**
-     * Constructs a new {@link UserName} instance after validating the provided value.
+     * Constructs a new {@link UserName} instance after validating the provided description.
      *
      * @param username the username string to be validated
      * @throws IllegalArgumentException if the username is null, blank, or violates length constraints

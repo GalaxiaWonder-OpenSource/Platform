@@ -36,14 +36,14 @@ public class OrganizationMemberType {
     private Long id;
 
     /**
-     * Enum value representing the classification of the organization member type.
+     * Enum description representing the classification of the organization member type.
      */
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private OrganizationMemberTypes name;
 
     /**
-     * Constructs an {@code OrganizationMemberType} with a specified {@link OrganizationMemberTypes} value.
+     * Constructs an {@code OrganizationMemberType} with a specified {@link OrganizationMemberTypes} description.
      *
      * @param name the predefined member type classification
      */
@@ -61,11 +61,11 @@ public class OrganizationMemberType {
     }
 
     /**
-     * Converts a string representation of the member type name to an {@link OrganizationMemberType} instance.
+     * Converts a string representation of the member type projectName to an {@link OrganizationMemberType} instance.
      *
-     * @param name the string value of the enum constant
-     * @return a new {@code OrganizationMemberType} instance with the corresponding enum value
-     * @throws IllegalArgumentException if the name does not match any enum constant
+     * @param name the string description of the enum constant
+     * @return a new {@code OrganizationMemberType} instance with the corresponding enum description
+     * @throws IllegalArgumentException if the projectName does not match any enum constant
      */
     public static OrganizationMemberType toOrganizationMemberTypeFromName(String name) {
         return new OrganizationMemberType(OrganizationMemberTypes.valueOf(name));
@@ -86,7 +86,7 @@ public class OrganizationMemberType {
     /**
      * Returns the string representation of the enum-based organization member type.
      *
-     * @return the name of the organization member type as a string
+     * @return the projectName of the organization member type as a string
      */
     public String getStringName() {
         return name.name();

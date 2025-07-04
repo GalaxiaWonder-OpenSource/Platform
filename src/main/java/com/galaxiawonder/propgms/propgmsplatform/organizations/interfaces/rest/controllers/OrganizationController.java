@@ -4,10 +4,7 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggr
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.*;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitation;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMember;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllInvitationsByOrganizationIdQuery;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllMembersByOrganizationIdQuery;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllOrganizationsByMemberPersonIdQuery;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetOrganizationByIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.*;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationQueryService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.assemblers.*;
@@ -26,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -121,7 +119,12 @@ public class OrganizationController {
             @PathVariable Long id,
             @RequestBody UpdateOrganizationResource resource) {
 
-        var command = new UpdateOrganizationCommand(id, resource.commercialName());
+        var command = new UpdateOrganizationCommand(
+                id,
+                resource.commercialName() != null ? resource.commercialName() : "",
+                resource.legalName() != null ? resource.legalName() : ""
+        );
+
         organizationCommandService.handle(command);
         return ResponseEntity.ok("Organization with given ID successfully updated");
     }
@@ -212,7 +215,7 @@ public class OrganizationController {
             @ApiResponse(responseCode = "404", description = "Organization not found")
     })
     @GetMapping("/{organizationId}/invitations")
-    public ResponseEntity<List<OrganizationInvitationResource>> getAllInvitationsByPersonId(
+    public ResponseEntity<List<OrganizationInvitationResource>> getAllInvitationsByOrganizationId(
             @Parameter(description = "ID of the organization", required = true)
             @PathVariable Long organizationId) {
 
@@ -225,6 +228,37 @@ public class OrganizationController {
 
         return new ResponseEntity<>(resources, HttpStatus.OK);
     }
+
+    /**
+     * Retrieves all invitations associated with a specific person.
+     *
+     * @param personId the ID of the person
+     * @return a list of {@link OrganizationInvitationResource} objects
+     */
+    @Operation(
+            summary = "Get all invitations by person ID",
+            description = "Retrieves all organization invitations with PENDING status associated with the given person ID"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Invitations retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "No invitations found for the given person ID")
+    })
+    @GetMapping("/invitations/by-person-id/{personId}")
+    public ResponseEntity<List<OrganizationInvitationResource>> getAllInvitationsByPersonId(
+            @Parameter(description = "ID of the person", required = true)
+            @PathVariable Long personId) {
+
+        List<Triple<Organization, OrganizationInvitation, ProfileDetails>> organizationInvitations =
+                organizationQueryService.handle(new GetAllInvitationsByPersonIdQuery(personId));
+
+        List<OrganizationInvitationResource> resources = organizationInvitations.stream()
+                .map(OrganizationInvitationResourceFromEntityAssembler::toResourceFromEntity)
+                .filter(Objects::nonNull)
+                .toList();
+
+        return new ResponseEntity<>(resources, HttpStatus.OK);
+    }
+
 
 
     /**
@@ -246,11 +280,11 @@ public class OrganizationController {
             @Parameter(description = "ID of the organization", required = true)
             @PathVariable Long organizationId) {
 
-        List<ImmutablePair<OrganizationMember, ProfileDetails>> organizationMembers =
+        List<OrganizationMember> organizationMembers =
                 organizationQueryService.handle(new GetAllMembersByOrganizationIdQuery(organizationId));
 
         List<OrganizationMemberResource> resources = organizationMembers.stream()
-                .map(OrganizationMemberResourceFromEntityAssembler::toResourceFromPair)
+                .map(OrganizationMemberResourceFromEntityAssembler::toResourceFromEntity)
                 .toList();
 
         return new ResponseEntity<>(resources, HttpStatus.OK);

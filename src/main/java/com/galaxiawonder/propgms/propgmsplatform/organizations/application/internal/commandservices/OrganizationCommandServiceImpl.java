@@ -86,7 +86,9 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
 
         OrganizationMemberType contractorType = getOrganizationMemberType(OrganizationMemberTypes.CONTRACTOR);
 
-        var organization = new Organization(command, status, contractorType);
+        var contractorProfileDetails = iamContextFacade.getProfileDetailsById(command.createdBy());
+
+        var organization = new Organization(command, status, contractorType, contractorProfileDetails);
 
         var createdOrganization = organizationRepository.save(organization);
         return Optional.of(createdOrganization);
@@ -115,7 +117,7 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
             throw new IllegalArgumentException("Organization doesn't exist");
         var organizationToUpdate = result.get();
         try{
-            var updatedOrganization = organizationRepository.save(organizationToUpdate.updateInformation(command.commercialName()));
+            var updatedOrganization = organizationRepository.save(organizationToUpdate.updateInformation(command.commercialName(), command.legalName()));
             return Optional.of(updatedOrganization);
         } catch (Exception e){
             throw new IllegalArgumentException("Error while updating organization: %s".formatted(e.getMessage()));
@@ -160,11 +162,15 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
         OrganizationInvitationStatus acceptedStatus = getOrganizationInvitationStatus(OrganizationInvitationStatuses.ACCEPTED);
         OrganizationMemberType workerType = getOrganizationMemberType(OrganizationMemberTypes.WORKER);
 
-        OrganizationInvitation invitation = organization.acceptInvitation(command.invitationId(), acceptedStatus, workerType);
+        OrganizationInvitation invitation = organization.selectInvitationFromId(command.invitationId());
+
+        var profileDetails = iamContextFacade.getProfileDetailsById(invitation.getInvitedPersonId().personId());
+
+        OrganizationInvitation acceptInvitation = organization.acceptInvitation(command.invitationId(), acceptedStatus, workerType, profileDetails);
 
         saveOrganization(organization);
 
-        return returnInvitationTripleResult(organization, invitation);
+        return returnInvitationTripleResult(organization, acceptInvitation);
     }
 
     /**
@@ -199,7 +205,7 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
     }
 
     /**
-     * Retrieves the {@link OrganizationStatus} entity matching the given enum value.
+     * Retrieves the {@link OrganizationStatus} entity matching the given enum description.
      *
      * @param status the {@link OrganizationStatuses} enum representing the desired status
      * @return the corresponding {@link OrganizationStatus} entity
@@ -211,7 +217,7 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
     }
 
     /**
-     * Retrieves the {@link OrganizationInvitationStatus} entity matching the given enum value.
+     * Retrieves the {@link OrganizationInvitationStatus} entity matching the given enum description.
      *
      * @param status the {@link OrganizationInvitationStatuses} enum representing the invitation status
      * @return the corresponding {@link OrganizationInvitationStatus} entity
@@ -223,7 +229,7 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
     }
 
     /**
-     * Retrieves the {@link OrganizationMemberType} entity matching the given enum value.
+     * Retrieves the {@link OrganizationMemberType} entity matching the given enum description.
      *
      * @param status the {@link OrganizationMemberTypes} enum representing the member type
      * @return the corresponding {@link OrganizationMemberType} entity

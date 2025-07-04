@@ -4,14 +4,12 @@ import com.galaxiawonder.propgms.propgmsplatform.iam.interfaces.acl.IAMContextFa
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitation;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMember;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllInvitationsByOrganizationIdQuery;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllMembersByOrganizationIdQuery;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllOrganizationsByMemberPersonIdQuery;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetOrganizationByIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.*;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationQueryService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.repositories.OrganizationRepository;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -75,21 +73,11 @@ public class OrganizationQueryServiceImpl implements OrganizationQueryService {
      * {@inheritDoc}
      */
     @Override
-    public List<ImmutablePair<OrganizationMember, ProfileDetails>> handle(GetAllMembersByOrganizationIdQuery query) {
+    public List<OrganizationMember> handle(GetAllMembersByOrganizationIdQuery query) {
         Organization organization = organizationRepository.findById(query.organizationId())
                 .orElseThrow(() -> new IllegalArgumentException("No organization found by the given ID: " + query.organizationId()));
 
-        List<OrganizationMember> organizationMembers = organization.getMembers();
-
-        return organizationMembers.stream()
-                .map(member -> {
-                    ProfileDetails profileDetails = iamContextFacade
-                            .getProfileDetailsById(
-                                    member.getPersonId().personId()
-                            );
-                    return ImmutablePair.of(member, profileDetails);
-                })
-                .toList();
+        return organization.getMembers();
     }
 
     /**
@@ -102,4 +90,25 @@ public class OrganizationQueryServiceImpl implements OrganizationQueryService {
                 .orElseThrow(()-> new IllegalArgumentException("The person with the ID " + query.personId() + " does not belong to any organization"));
     }
 
+    /**
+     *
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Triple<Organization, OrganizationInvitation, ProfileDetails>> handle(GetAllInvitationsByPersonIdQuery query) {
+        Long personId = query.personId();
+
+        List<Organization> organizations = organizationRepository.findAll();
+
+        return organizations.stream()
+                .flatMap(org -> org.getInvitations().stream()
+                        .filter(invitation ->
+                                invitation.getInvitedPersonId().personId().equals(personId)
+                                        && invitation.isPending())
+                        .map(invitation -> {
+                            ProfileDetails profile = iamContextFacade.getProfileDetailsById(org.getCreatedBy().personId());
+                            return Triple.of(org, invitation, profile);
+                        }))
+                .toList();
+    }
 }
