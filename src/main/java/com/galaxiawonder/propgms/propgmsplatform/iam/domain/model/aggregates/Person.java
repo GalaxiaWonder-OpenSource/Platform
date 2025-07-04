@@ -83,6 +83,10 @@ public class Person extends AuditableAbstractAggregateRoot<Person> {
         if (command.phone() != null) {
             this.phone = new PhoneNumber(command.phone());
         }
+
+        if(command.professionalId() != null) {
+            this.professionalId = new ProfessionalId(command.professionalId());
+        }
     }
 
     /**

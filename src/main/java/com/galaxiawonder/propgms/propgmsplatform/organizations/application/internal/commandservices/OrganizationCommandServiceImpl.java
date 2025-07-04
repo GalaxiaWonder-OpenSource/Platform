@@ -3,10 +3,7 @@ package com.galaxiawonder.propgms.propgmsplatform.organizations.application.inte
 import com.galaxiawonder.propgms.propgmsplatform.iam.interfaces.acl.IAMContextFacade;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.commands.*;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitation;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitationStatus;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMemberType;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationStatus;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.*;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationInvitationStatuses;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationMemberTypes;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationStatuses;
@@ -20,6 +17,7 @@ import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -193,9 +191,19 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
     @Override
     public void handle(DeleteOrganizationMemberCommand command) {
         Organization organization = organizationRepository.findOrganizationByMemberId(command.organizationMemberId())
-                .orElseThrow(()-> new IllegalArgumentException("No organization found for the given organization member ID: " + command.organizationMemberId()));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No organization found for the given organization member ID: " + command.organizationMemberId()));
+
+        // Find the member and get their PersonId
+        PersonId removedPersonId = organization.getMembers().stream()
+                .filter(member -> member.getId().equals(command.organizationMemberId()))
+                .findFirst()
+                .map(OrganizationMember::getPersonId)
+                .orElseThrow(() -> new IllegalStateException("Member not found in the organization"));
 
         organization.removeMemberById(command.organizationMemberId());
+
+        organization.removeInvitationsByPersonId(removedPersonId);
 
         saveOrganization(organization);
     }

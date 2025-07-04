@@ -7,13 +7,14 @@ import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.enti
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.*;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationQueryService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.infrastructure.persistence.jpa.repositories.OrganizationRepository;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * OrganizationQueryService Implementation
@@ -56,15 +57,23 @@ public class OrganizationQueryServiceImpl implements OrganizationQueryService {
         Organization organization = organizationRepository.findById(query.organizationId())
                 .orElseThrow(() -> new IllegalArgumentException("No organization found by the given ID: " + query.organizationId()));
 
-        List<OrganizationInvitation> organizationInvitations = organization.getInvitations();
+        List<OrganizationInvitation> invitations = new ArrayList<>(organization.getInvitations());
 
-        return organizationInvitations.stream()
-                .map(invitation -> {
-                    ProfileDetails profileDetails = iamContextFacade
-                            .getProfileDetailsById(
-                                    invitation.getInvitedPersonId().personId()
-                            );
-                    return ImmutablePair.of(invitation, profileDetails);
+        // Get set of personIds that are already members
+        Set<PersonId> members = organization.getMembers().stream()
+                .map(OrganizationMember::getPersonId)
+                .collect(Collectors.toSet());
+
+        Collections.reverse(invitations); // newest to oldest
+
+        Set<PersonId> seen = new HashSet<>();
+
+        return invitations.stream()
+                .filter(inv -> !members.contains(inv.getInvitedPersonId()))
+                .filter(inv -> seen.add(inv.getInvitedPersonId()))
+                .map(inv -> {
+                    ProfileDetails profileDetails = iamContextFacade.getProfileDetailsById(inv.getInvitedPersonId().personId());
+                    return ImmutablePair.of(inv, profileDetails);
                 })
                 .toList();
     }

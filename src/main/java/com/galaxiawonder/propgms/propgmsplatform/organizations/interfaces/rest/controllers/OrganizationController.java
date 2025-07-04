@@ -305,7 +305,7 @@ public class OrganizationController {
             @ApiResponse(responseCode = "400", description = "Business rule violation (e.g. trying to delete a CONTRACTOR)"),
             @ApiResponse(responseCode = "404", description = "Member or organization not found")
     })
-    @DeleteMapping("/organization-members/{memberId}")
+    @DeleteMapping("/members/{memberId}")
     public ResponseEntity<Void> deleteMemberById(
             @Parameter(description = "ID of the organization member", required = true)
             @PathVariable Long memberId
