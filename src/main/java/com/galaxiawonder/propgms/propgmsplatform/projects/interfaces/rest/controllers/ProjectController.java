@@ -1,8 +1,5 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.controllers;
 
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMember;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllMembersByOrganizationIdQuery;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.assemblers.OrganizationMemberResourceFromEntityAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.rest.resources.OrganizationMemberResource;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Project;
 
@@ -17,26 +14,21 @@ import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resour
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.UpdateProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetAllProjectsByTeamMemberPersonIdQuery;
-import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectCommandService;
-import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectQueryService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.CreateProjectCommandFromResourceAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.ProjectResourceFromEntityAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.CreateProjectResource;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.ProjectResource;
-import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -103,7 +95,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "404", description = "Person not found or is not assigned to any projects")
     })
     @GetMapping("/by-person-id/{id}")
-    public ResponseEntity<List<ProjectResource>> getProjectsByPersonId(
+    public ResponseEntity<List<ProjectResource>> getAllProjectsByTeamMemberPersonId(
             @Parameter(description = "ID of the person", required = true)
             @PathVariable("id") Long personId
     ) {

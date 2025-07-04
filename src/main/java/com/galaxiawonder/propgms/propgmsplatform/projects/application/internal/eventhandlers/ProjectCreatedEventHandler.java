@@ -7,6 +7,8 @@ import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.Projec
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import static com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.Specialties.NON_APPLICABLE;
+
 /**
  * ProjectCreatedEventHandler
  *
@@ -53,7 +55,9 @@ public class ProjectCreatedEventHandler {
         this.projectTeamMemberCommandService.handle(
                 new CreateProjectTeamMemberCommand(
                         memberId,
-                        event.getProjectId().projectId()
+                        event.getProjectId().projectId(),
+                        personId,
+                        NON_APPLICABLE
                 )
         );
     }

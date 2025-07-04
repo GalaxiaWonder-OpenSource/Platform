@@ -34,11 +34,8 @@ public class ProjectTeamMemberType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /**
-     * Enum description representing the classification of the project team member type.
-     */
     @Enumerated(EnumType.STRING)
-    @Column(length = 20)
+    @Column(length = 20, unique = true, nullable = false)
     private ProjectTeamMemberTypes name;
 
     /**

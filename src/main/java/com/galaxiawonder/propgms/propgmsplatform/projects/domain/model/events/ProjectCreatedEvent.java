@@ -14,5 +14,6 @@ public class ProjectCreatedEvent extends ApplicationEvent {
         super(source);
         this.organizationId = organizationId;
         this.projectId = projectId;
+
     }
 }
