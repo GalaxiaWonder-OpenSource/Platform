@@ -8,6 +8,6 @@ public record UpdateProjectResource(
     @Nullable String name,
     @Nullable String description,
     @Nullable String status,
-    Date endingDate
+    @Nullable Date endingDate
 ){
 }

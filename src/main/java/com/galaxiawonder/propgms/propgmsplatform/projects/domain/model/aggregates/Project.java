@@ -1,12 +1,14 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates;
 
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMember;
+import com.galaxiawonder.propgms.propgmsplatform.projects.application.internal.eventhandlers.ProjectCreatedEventHandler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.ProjectStatus;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.events.ProjectCreatedEvent;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.DateRange;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.Description;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.ProjectName;
+import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.UpdateProjectCommandFromResourceAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.OrganizationId;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
@@ -15,9 +17,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Project
@@ -72,10 +72,6 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     @JoinColumn(name = "status_id", nullable = false, unique = false)
     private ProjectStatus status;
 
-    @Getter
-    @OneToMany(mappedBy = "projectId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<ProjectTeamMember> teamMembers = new ArrayList<>();
-
     /** Default constructor required by JPA. */
     public Project() {}
 
@@ -101,41 +97,16 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
      * @param description     the new description of the project (optional, ignored if null or blank)
      * @param newStatus       the new status of the project (optional)
      * @param newEndingDate   the new ending date of the project (optional)
-     * @return                the updated project instance
      */
-    public Project updateInformation(String projectName, String description, ProjectStatus newStatus, Date newEndingDate) {
+    public void updateInformation(String projectName, String description, ProjectStatus newStatus, Date newEndingDate) {
         if (!projectName.isBlank()) this.projectName = new ProjectName(projectName);
-        if (!description.isBlank()) this.description = new Description(description);
+        if (!(description.isBlank())) this.description = new Description(description);
         if (newStatus != null) this.status = newStatus;
-        if (newEndingDate != null) this.dateRange = new DateRange(this.dateRange.startDate(), newEndingDate);
-
-        return this;
-    }
-
-    /**
-     * Updates the project's projectName.
-     *
-     * @param newName the new projectName of the project
-     * @throws IllegalArgumentException if the new projectName is null
-     */
-    public void updateProjectName(ProjectName newName) {
-        if (newName == null) {
-            throw new IllegalArgumentException("Project projectName cannot be null");
+        if (!newEndingDate.equals(UpdateProjectCommandFromResourceAssembler.NO_UPDATE_DATE)) {
+            this.dateRange = new DateRange(
+                    this.getDateRange().startDate(), newEndingDate
+            );
         }
-        this.projectName = newName;
-    }
-
-    /**
-     * Updates the project's description.
-     *
-     * @param newDescription the new description of the project
-     * @throws IllegalArgumentException if the new description is null
-     */
-    public void updateDescription(Description newDescription) {
-        if (newDescription == null) {
-            throw new IllegalArgumentException("Project description cannot be null");
-        }
-        this.description = newDescription;
     }
 
     /**
@@ -161,7 +132,7 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
      * <p>The event is stored temporarily and will be dispatched by the application event publisher
      * at the appropriate time in the transaction lifecycle.</p>
      *
-     * @see com.galaxiawonder.propgms.propgmsplatform.projects.application.internal.eventhandlers.ProjectCreatedEventHandler
+     * @see ProjectCreatedEventHandler
      */
     public void projectCreated() {
         this.registerEvent(new ProjectCreatedEvent(
@@ -171,13 +142,6 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
         );
     }
 
-    public void removeTeamMemberById(Long teamMemberId) {
-        ProjectTeamMember teamMember = teamMembers.stream()
-                .filter(tm -> tm.getId().equals(teamMemberId))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No team member found with ID: " + teamMemberId));
-
-        teamMembers.remove(teamMember);
-    }
+    public static final Date NO_UPDATE_DATE = new GregorianCalendar(9999, Calendar.DECEMBER, 31).getTime();
 }
 

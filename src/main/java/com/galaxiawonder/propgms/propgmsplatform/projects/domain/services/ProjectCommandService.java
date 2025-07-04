@@ -39,29 +39,4 @@ public interface ProjectCommandService {
      * @see DeleteProjectCommand
      */
     void handle(DeleteProjectCommand command);
-    /**
-     * Handles the create project team member command.
-     * @param command The create project team member command containing the organization member ID and project ID.
-     * @return The created project team member.
-     *
-     * @throws IllegalArgumentException If any required field in the command is null.
-     * @throws EntityNotFoundException If the associated project or organization member is not found.
-     * @see CreateProjectTeamMemberCommand
-     */
-    Optional<ProjectTeamMember> handle(CreateProjectTeamMemberCommand command);
-    /**
-     * Handles the command to delete an organization member by their unique ID.
-     *
-     * <p>
-     * This method performs validation and removes the corresponding {@link OrganizationMember}
-     * entity from the system. It may also trigger additional domain events or cleanup operations
-     * depending on business rules.
-     * </p>
-     *
-     * @param command the {@link DeleteProjectTeamMemberCommand} containing the ID of the team member to delete
-     * @throws IllegalArgumentException if the member does not exist or cannot be deleted due to business constraints
-     *
-     * @since 1.0
-     */
-    void handle(DeleteProjectTeamMemberCommand command);
 }

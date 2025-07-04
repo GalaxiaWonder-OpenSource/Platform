@@ -8,16 +8,14 @@ import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetAllTeamMembersByProjectIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectQueryService;
-import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.CreateProjectTeamMemberCommandFromResourceAssembler;
-import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.ProjectTeamMemberResourceFromEntityAssembler;
+import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.*;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.*;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.UpdateProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetAllProjectsByTeamMemberPersonIdQuery;
-import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.CreateProjectCommandFromResourceAssembler;
-import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.ProjectResourceFromEntityAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.CreateProjectResource;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.ProjectResource;
+import com.galaxiawonder.propgms.propgmsplatform.shared.interfaces.rest.resources.GenericMessageResource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -110,6 +108,11 @@ public class ProjectController {
         return new ResponseEntity<>(resources, HttpStatus.OK);
     }
 
+
+
+
+
+
     @DeleteMapping("{id}")
     @Operation(
             summary = "Delete project by ID",
@@ -119,11 +122,14 @@ public class ProjectController {
             @ApiResponse(responseCode = "204", description = "Project deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Project not found")
     })
-    public ResponseEntity<?> deleteProject(@PathVariable Long id) {
+    public ResponseEntity<GenericMessageResource> deleteProject(@PathVariable Long id) {
         var deleteProjectCommand = new DeleteProjectCommand(id);
         projectCommandService.handle(deleteProjectCommand);
-        return ResponseEntity.ok("Project successfully deleted");
+        return ResponseEntity.ok(new GenericMessageResource("Project successfully deleted"));
     }
+
+
+
     @PatchMapping("{id}")
     @Operation(
             summary = "Update project by ID",
@@ -134,101 +140,11 @@ public class ProjectController {
             @ApiResponse(responseCode = "400", description = "Invalid request"),
             @ApiResponse(responseCode = "404", description = "Project not found")
     })
-    public ResponseEntity<?> updateProject(
+    public ResponseEntity<GenericMessageResource> updateProject(
             @PathVariable Long id,
             @RequestBody UpdateProjectResource resource
     ) {
-        var command = new UpdateProjectCommand(
-                id,
-                resource.name(),
-                resource.description(),
-                resource.status(),
-                resource.endingDate()
-        );
-        projectCommandService.handle(command);
-        return ResponseEntity.ok("Project with given ID successfully updated");
-    }
-
-    /**
-     * Adds a new team member to a project.
-     *
-     * @param resource AddProjectTeamMemberResource containing orgMemberId and projectId
-     * @return ResponseEntity with the created team member resource
-     */
-    @Operation(
-            summary = "Add team member to project",
-            description = "Adds a new team member to the specified project"
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Team member added successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid request or member already exists in project"),
-            @ApiResponse(responseCode = "404", description = "Project or organization member not found")
-    })
-    @PostMapping("/{projectId}/team-members")
-    public ResponseEntity<ProjectTeamMemberResource> createTeamMemberToProject(
-            @RequestBody CreateProjectTeamMemberResource resource
-    ) {
-        Optional<ProjectTeamMember> teamMember = projectCommandService
-                .handle(CreateProjectTeamMemberCommandFromResourceAssembler.toCommandFromResource(resource));
-
-        return teamMember
-                .map(source -> new ResponseEntity<>(
-                        ProjectTeamMemberResourceFromEntityAssembler.toResourceFromEntity(source),
-                        HttpStatus.CREATED))
-                .orElseGet(() -> ResponseEntity.badRequest().build());
-    }
-
-    /**
-     * Retrieves all team members associated with a specific project.
-     *
-     * @param projectId the ID of the project
-     * @return a list of {@link OrganizationMemberResource} objects
-     */
-    @Operation(
-            summary = "Get all members by project ID",
-            description = "Retrieves all active members associated with the given project ID"
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Members retrieved successfully"),
-            @ApiResponse(responseCode = "404", description = "Project not found")
-    })
-
-    @GetMapping("/{projectId}/team-members")
-    public ResponseEntity<List<ProjectTeamMemberResource>> getTeamMembersByProjectId(
-            @Parameter(description = "ID of the project", required = true)
-            @PathVariable("projectId") Long projectId
-    ) {
-        List<ProjectTeamMember> teamMembers = projectQueryService.handle(
-                new GetAllTeamMembersByProjectIdQuery(projectId)
-        );
-
-        List<ProjectTeamMemberResource> resources = teamMembers.stream()
-                .map(ProjectTeamMemberResourceFromEntityAssembler::toResourceFromEntity)
-                .toList();
-
-        return ResponseEntity.ok(resources);
-    }
-
-    /**
-     * Removes a team member from a project.
-     *
-     * @param teamMemberId the ID of the team member to remove
-     * @return ResponseEntity with success message
-     */
-    @Operation(
-            summary = "Remove team member by ID",
-            description = "Removes a team member from their assigned project"
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Team member removed successfully"),
-            @ApiResponse(responseCode = "404", description = "Team member not found")
-    })
-    @DeleteMapping("/team-members/{teamMemberId}")
-    public ResponseEntity<String> deleteTeamMemberById(
-            @Parameter(description = "ID of the team member to remove", required = true)
-            @PathVariable Long teamMemberId
-    ) {
-        projectCommandService.handle(new DeleteProjectTeamMemberCommand(teamMemberId));
-        return ResponseEntity.noContent().build();
+        projectCommandService.handle(UpdateProjectCommandFromResourceAssembler.toCommandFromResource(id, resource));
+        return ResponseEntity.ok(new GenericMessageResource("Project with given ID successfully updated"));
     }
 }

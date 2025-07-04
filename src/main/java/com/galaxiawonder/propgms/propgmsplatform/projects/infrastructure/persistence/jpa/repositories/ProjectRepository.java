@@ -37,21 +37,4 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     WHERE ptm.personId.personId = :personId
 """)
     Optional<List<Project>> findAllProjectsByTeamMemberPersonId(@Param("personId") Long personId);
-    @Query("""
-    SELECT ptm
-    FROM ProjectTeamMember ptm
-    WHERE ptm.projectId.projectId = :projectId
-    """)
-    Optional<List<ProjectTeamMember>> findAllTeamMembersByProjectId(@Param("projectId") Long projectId);
-
-    /**
-     * Finds a project by team member ID
-     */
-    @Query("""
-    SELECT p
-    FROM Project p
-    JOIN ProjectTeamMember ptm ON ptm.projectId.projectId = p.id
-    WHERE ptm.id = :teamMemberId
-    """)
-    Optional<Project> findProjectByTeamMemberId(@Param("teamMemberId") Long teamMemberId);
 }

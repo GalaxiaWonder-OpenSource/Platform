@@ -53,10 +53,7 @@ public class ProjectCommandServiceImpl implements ProjectCommandService {
     /** Publisher used to dispatch domain events such as {@link ProjectCreatedEvent}. */
     private final ApplicationEventPublisher eventPublisher;
 
-    /** Repository interface for managing and retrieving {@link ProjectTeamMember} entities. */
-    private final ProjectTeamMemberRepository projectTeamMemberRepository;
-
-    /** Facade for accessing organization context and member information. */
+    /** Facade for accessing organization context and organization member information. */
     private final OrganizationContextFacade organizationContextFacade;
 
     /**
@@ -71,13 +68,11 @@ public class ProjectCommandServiceImpl implements ProjectCommandService {
                                      IAMContextFacade iamContextFacade,
                                      ProjectStatusRepository projectStatusRepository,
                                      ApplicationEventPublisher eventPublisher,
-                                     ProjectTeamMemberRepository projectTeamMemberRepository,
                                      OrganizationContextFacade organizationContextFacade) {
         this.projectRepository = projectRepository;
         this.iamContextFacade = iamContextFacade;
         this.projectStatusRepository = projectStatusRepository;
         this.eventPublisher = eventPublisher;
-        this.projectTeamMemberRepository = projectTeamMemberRepository;
         this.organizationContextFacade = organizationContextFacade;
     }
 
@@ -122,57 +117,33 @@ public class ProjectCommandServiceImpl implements ProjectCommandService {
 
         projectRepository.delete(project);
     }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public Optional<Project> handle(UpdateProjectCommand command) {
         var result = projectRepository.findById(command.projectId());
-        if (result.isEmpty())
-            throw new IllegalArgumentException("Project doesn't exist");
+        if (result.isEmpty()) throw new IllegalArgumentException("Project doesn't exist");
+
         var projectToUpdate = result.get();
-        try {
-            ProjectStatus newStatus = projectToUpdate.getStatus(); // Mantener el status actual por defecto
 
-            if (command.status() != null) {
-                ProjectStatuses statusEnum = ProjectStatuses.valueOf(command.status().toUpperCase());
-                newStatus = getProjectStatus(statusEnum);
-            }
-            var updatedProject = projectRepository.save(
-                    projectToUpdate.updateInformation(
-                            command.name(),
-                            command.description(),
-                            newStatus,
-                            command.endingDate()
-                    )
-            );
-            return Optional.of(updatedProject);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Error while updating project: %s".formatted(e.getMessage()));
-        }
-    }
+        ProjectStatus newStatus = projectToUpdate.getStatus();
 
-    @Override
-    public Optional<ProjectTeamMember> handle(CreateProjectTeamMemberCommand command) {
-        if (command == null) {
-            throw new IllegalArgumentException("CreateProjectTeamMemberCommand must not be null");
+        if (!command.status().isBlank()) {
+            ProjectStatuses statusEnum = ProjectStatuses.valueOf(command.status().toUpperCase());
+            newStatus = getProjectStatus(statusEnum);
         }
 
-        var teamMember = new ProjectTeamMember(command.organizationMemberId(), command.projectId());
-        var createdTeamMember = projectTeamMemberRepository.save(teamMember);
+        projectToUpdate.updateInformation(
+                command.name(),
+                command.description(),
+                newStatus,
+                command.endingDate()
+        );
 
-        return Optional.of(createdTeamMember);
+        projectRepository.save(projectToUpdate);
+
+        return Optional.of(projectToUpdate);
     }
-
-    @Override
-    public void handle(DeleteProjectTeamMemberCommand command) {
-        Project project = projectRepository.findProjectByTeamMemberId(command.teamMemberId())
-                .orElseThrow(() -> new IllegalArgumentException("No project found for the given team member ID: " + command.teamMemberId()));
-
-        project.removeTeamMemberById(command.teamMemberId());
-
-        saveProject(project);
-    }
-
-    private void saveProject(Project project) { projectRepository.save(project);}
 }

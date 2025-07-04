@@ -28,11 +28,4 @@ public class ProjectQueryServiceImpl implements ProjectQueryService {
                 .orElseThrow(() -> new IllegalArgumentException(
                         "The person with the ID " + query.personId() + " is not part of any project team"));
     }
-    @Override
-    public List<ProjectTeamMember> handle(GetAllTeamMembersByProjectIdQuery query) {
-        return projectRepository.findAllTeamMembersByProjectId(query.projectId())
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "The project with the ID " + query.projectId() + " has no team members"));
-    }
-
 }

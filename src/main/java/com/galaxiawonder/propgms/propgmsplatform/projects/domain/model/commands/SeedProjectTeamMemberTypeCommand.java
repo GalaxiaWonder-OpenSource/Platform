@@ -19,5 +19,5 @@ package com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands
  * Galaxia Wonder Development Team
  * @since 1.0
  */
-public class SeedProjectTeamMemberTypeCommand {
+public record SeedProjectTeamMemberTypeCommand() {
 }
