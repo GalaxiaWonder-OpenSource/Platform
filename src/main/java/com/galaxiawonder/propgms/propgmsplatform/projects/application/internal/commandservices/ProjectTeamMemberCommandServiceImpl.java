@@ -61,6 +61,10 @@ public class ProjectTeamMemberCommandServiceImpl implements ProjectTeamMemberCom
     @Override
     public Optional<ProjectTeamMember> handle(CreateProjectTeamMemberCommand command) {
         var teamMember = new ProjectTeamMember(command.organizationMemberId(), command.projectId());
+        teamMember.assignSpecialty(
+                getSpecialty(Specialties.valueOf(command.specialty()))
+        );
+
         var createdTeamMember = projectTeamMemberRepository.save(teamMember);
         return Optional.of(createdTeamMember);
     }

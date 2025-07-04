@@ -5,6 +5,5 @@ public record CreateProjectTeamMemberResource(
         Long projectId,
         Long personId,
         String Specialty
-
 ) {
 }

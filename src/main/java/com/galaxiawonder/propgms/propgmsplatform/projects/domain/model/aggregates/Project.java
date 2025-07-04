@@ -10,9 +10,7 @@ import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobje
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.ProjectName;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.UpdateProjectCommandFromResourceAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
-import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.OrganizationId;
-import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
-import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProjectId;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -60,11 +58,22 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     @Embedded
     private OrganizationId organizationId;
 
-    /** Identifier of the person or entity in charge of contracting. */
+    /** Identifier of the person or entity who requested the project. */
     @Column(nullable = false)
     @Getter
     @Embedded
     private PersonId contractingEntityId;
+
+    /** Name of the contracting entity. */
+    @Getter
+    @Embedded
+    private PersonName name;
+
+    @Getter
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "address", column = @Column(name = "email"))})
+    private EmailAddress email;
 
     /** Current status of the project, represented as an entity. */
     @Getter
@@ -81,13 +90,15 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
      * @param status The current status of the project
      * @param contractingEntityId The ID of the contracting person or entity
      */
-    public Project(CreateProjectCommand command, ProjectStatus status, PersonId contractingEntityId) {
+    public Project(CreateProjectCommand command, ProjectStatus status, PersonId contractingEntityId, PersonName name, EmailAddress email) {
         this.projectName = new ProjectName(command.projectName());
         this.description = new Description(command.description());
         this.status = status;
         this.dateRange = new DateRange(command.startDate(), command.endDate());
         this.organizationId = new OrganizationId(command.organizationId());
         this.contractingEntityId = contractingEntityId;
+        this.name = name;
+        this.email = email;
     }
 
     /**

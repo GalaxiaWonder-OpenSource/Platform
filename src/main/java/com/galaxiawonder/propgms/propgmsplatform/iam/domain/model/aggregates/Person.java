@@ -1,6 +1,7 @@
 package com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates;
 
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.commands.SignUpCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.Specialty;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.EmailAddress;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonName;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.valueobjects.PhoneNumber;
@@ -49,6 +50,11 @@ public class Person extends AuditableAbstractAggregateRoot<Person> {
     @Getter
     private ProfessionalId professionalId;
 
+    @Getter
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "specialty_id", nullable = true, unique = false)
+    private Specialty specialty;
+
     /**
      * Protected constructor required by JPA.
      * Should not be used directly in application code.
@@ -87,6 +93,11 @@ public class Person extends AuditableAbstractAggregateRoot<Person> {
         if(command.professionalId() != null) {
             this.professionalId = new ProfessionalId(command.professionalId());
         }
+    }
+
+
+    public void assignSpecialty(Specialty specialty) {
+        this.specialty = specialty;
     }
 
     /**

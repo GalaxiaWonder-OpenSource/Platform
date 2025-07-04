@@ -1,6 +1,6 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands;
 
-public record CreateProjectTeamMemberCommand(Long organizationMemberId, Long projectId, Long personId, com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.Specialties specialty) {
+public record CreateProjectTeamMemberCommand(Long organizationMemberId, Long projectId, Long personId, String specialty) {
     /**
      * @throws IllegalArgumentException if organizationMemberId is null
      * @throws IllegalArgumentException if projectId is null or zero

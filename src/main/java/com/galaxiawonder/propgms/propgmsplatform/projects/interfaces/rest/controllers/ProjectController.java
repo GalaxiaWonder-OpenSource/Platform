@@ -92,7 +92,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "200", description = "Projects retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "Person not found or is not assigned to any projects")
     })
-    @GetMapping("/by-person-id/{id}")
+    @GetMapping("/by-team-member-person-id/{id}")
     public ResponseEntity<List<ProjectResource>> getAllProjectsByTeamMemberPersonId(
             @Parameter(description = "ID of the person", required = true)
             @PathVariable("id") Long personId

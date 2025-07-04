@@ -7,6 +7,6 @@ import static com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.va
 
 public class CreateProjectTeamMemberCommandFromResourceAssembler {
     public static CreateProjectTeamMemberCommand toCommandFromResource(CreateProjectTeamMemberResource resource) {
-        return new CreateProjectTeamMemberCommand(resource.projectId(), resource.orgMemberId(), resource.personId(), NON_APPLICABLE);
+        return new CreateProjectTeamMemberCommand(resource.projectId(), resource.orgMemberId(), resource.personId(), resource.Specialty());
     }
 }

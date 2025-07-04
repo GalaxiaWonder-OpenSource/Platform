@@ -113,6 +113,9 @@ public class ProjectTeamMember extends AuditableAbstractAggregateRoot<ProjectTea
         this.email = profileDetails.email();
     }
 
+    public void assignSpecialty(Specialty specialty) {
+        this.specialty = specialty;
+    }
 }
 
 

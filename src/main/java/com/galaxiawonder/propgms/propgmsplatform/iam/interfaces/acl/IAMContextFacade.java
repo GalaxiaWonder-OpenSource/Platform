@@ -1,5 +1,6 @@
 package com.galaxiawonder.propgms.propgmsplatform.iam.interfaces.acl;
 
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.Specialty;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
 
 /**
@@ -66,5 +67,7 @@ public interface IAMContextFacade {
      * @since 1.0
      */
     Long getPersonIdFromEmail(String email);
+
+    Specialty getSpecialtyFromPersonId(Long id);
 }
 
