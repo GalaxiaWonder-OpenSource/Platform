@@ -2,6 +2,7 @@ package com.galaxiawonder.propgms.propgmsplatform.projects.infrastructure.persis
 
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.ProjectTeamMember;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 /**
  * Repository interface for performing CRUD operations on {@link ProjectTeamMember} entities.
@@ -16,6 +17,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * Galaxia Wonder Development Team
  * @since 1.0
  */
+@Repository
 public interface ProjectTeamMemberRepository extends JpaRepository<ProjectTeamMember, Long> {
 
 }
