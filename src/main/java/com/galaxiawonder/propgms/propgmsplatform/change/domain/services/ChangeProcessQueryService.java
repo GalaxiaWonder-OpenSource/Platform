@@ -4,7 +4,8 @@ import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.aggregates.
 import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.queries.GetChangeProcessByProjectIdQuery;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ChangeProcessQueryService {
-    List<ChangeProcess> handle(GetChangeProcessByProjectIdQuery query);
+    Optional<ChangeProcess> handle(GetChangeProcessByProjectIdQuery query);
 }
