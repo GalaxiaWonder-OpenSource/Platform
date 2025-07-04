@@ -16,14 +16,14 @@ import java.util.Date;
  *   <li><strong>EndDate</strong>: The end date of the milestone. Must not be null.</li>
  * </ul>
  *
- * @param Name the name of the milestone
- * @param Description the description of the milestone with purpose and objectives
- * @param ProjectId the unique identifier of the project this milestone belongs to
- * @param StartDate the start date of the milestone
- * @param EndDate the end date of the milestone
+ * @param name the name of the milestone
+ * @param description the description of the milestone with purpose and objectives
+ * @param projectId the unique identifier of the project this milestone belongs to
+ * @param startDate the start date of the milestone
+ * @param endDate the end date of the milestone
  *
  * @since 1.0
  */
 
-public record CreateMilestoneResource(String Name, String Description, Long ProjectId, Date StartDate, Date EndDate) {
+public record CreateMilestoneResource(String name, String description, Long projectId, Date startDate, Date endDate) {
 }
