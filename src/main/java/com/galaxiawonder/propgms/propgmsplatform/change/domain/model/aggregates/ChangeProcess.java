@@ -1,5 +1,6 @@
 package com.galaxiawonder.propgms.propgmsplatform.change.domain.model.aggregates;
 
+import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.commands.CreateChangeProcessCommand;
 import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.entities.ChangeOrigin;
 import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.entities.ChangeProcessStatus;
 import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.valueobjects.ChangeOrderId;
@@ -49,14 +50,6 @@ public class ChangeProcess extends AuditableAbstractAggregateRoot<ChangeProcess>
     private Justification justification;
 
     /**
-     * Identifier of the change order for the change process.
-     */
-    @Getter
-    @Embedded
-    @AttributeOverride(name = "changeOrderId", column = @Column(name = "change_order_id", nullable = true))
-    private ChangeOrderId changeOrderId;
-
-    /**
      * Identifier of the change response for the change process.
      */
     @Getter
@@ -76,26 +69,25 @@ public class ChangeProcess extends AuditableAbstractAggregateRoot<ChangeProcess>
     public ChangeProcess() {}
 
     /**
-     * Construct a project with the required fields.
-     *
-     * @param origin the origin of the change process
-     * @param status the current status of the change process
-     * @param justification the justification of the change process
-     * @param projectId the ID of the project linked to the change process
+     * Initializes a new instance of the Change process class with the specific command.
+     * @param command the command containing the necessary information to create a change process.
      */
-    public ChangeProcess(ChangeOrigin origin, ChangeProcessStatus status, Justification justification, ProjectId projectId){
-        this.origin = origin;
-        this.status = status;
-        this.justification = justification;
-        this.projectId = projectId;
+    public ChangeProcess(CreateChangeProcessCommand command){
+        this.justification = command.justification();
+        this.projectId = command.projectId();
     }
 
     /**
-     * Verify if the status of the chang process is {@code PENDING}
-     * @return true if status is pending, false if not.
+     * Sets the origin and status of the change process
+     * @param origin the origin of the change process
+     * @param status the status of the change process
      */
-    public boolean isPending() {
-        return ChangeProcessStatuses.PENDING.equals(this.status.getName());
+    public void SetInformation(ChangeOrigin origin, ChangeProcessStatus status){
+        if (origin != null && status != null){
+           throw new IllegalArgumentException("Origin and status cannot be null.");
+        }
+        this.origin = origin;
+        this.status = status;
     }
 
     /**
@@ -106,36 +98,10 @@ public class ChangeProcess extends AuditableAbstractAggregateRoot<ChangeProcess>
      * @throws IllegalArgumentException if the change process is not pending
      */
     public void respondToChange(ChangeProcessStatus status, ChangeResponse response) {
-        if (!isPending()) {
-            throw new IllegalStateException("Only pending changes can be approved or rejected.");
+        if (response.response() != null){
+            throw new IllegalArgumentException("Change process response has already been set.");
         }
         this.status = status;
         this.response = response;
     }
-
-    /**
-     * Reassigns the {@link ChangeOrder} linked to the change process.
-     *
-     * @param changeOrderId the new {@link ChangeOrderId} to be assigned
-     */
-    public void setChangeOrder(ChangeOrderId changeOrderId) {
-        this.changeOrderId = changeOrderId;
-    }
-
-    /**
-     * Verify if change process has an order
-     * @return false if change process has a null change order id, true if not.
-     */
-    public boolean hasOrder() {
-        return this.changeOrderId != null;
-    }
-
-    /**
-     * Verify if change process has a response
-     * @return false if change process has a null change response id, true if not.
-     */
-    public boolean hasResponse() {
-        return this.response != null;
-    }
-
 }

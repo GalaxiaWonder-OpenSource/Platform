@@ -10,5 +10,5 @@ public interface ChangeProcessCommandService {
 
     Optional<ChangeProcess> handle(CreateChangeProcessCommand command);
 
-    Optional<ChangeProcess> handle(Long changeProcessId, RespondToChangeCommand command);
+    Optional<ChangeProcess> handle(RespondToChangeCommand command);
 }
