@@ -15,9 +15,22 @@ import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobje
  * <p>Validation is expected to ensure all required fields meet the defined constraints and business rules.</p>
  *
  * @param id the unique identifier of the milestone
- * @param MilestoneName the new official name for the milestone
+ * @param milestoneName the new official name for the milestone
  *
  * @since 1.0
  */
-public record UpdateMilestoneNameCommand(Long id, MilestoneName MilestoneName) {
+public record UpdateMilestoneNameCommand(Long id, MilestoneName milestoneName) {
+    /**
+     * Compact constructor to enforce validation rules.
+     *
+     * @throws IllegalArgumentException if any field is null or invalid
+     */
+    public UpdateMilestoneNameCommand {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("id cannot be null or less than 1");
+        }
+        if (milestoneName == null) {
+            throw new IllegalArgumentException("name cannot be null");
+        }
+    }
 }

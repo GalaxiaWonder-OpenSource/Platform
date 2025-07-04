@@ -22,13 +22,33 @@ import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobject
  *
  * <p>Validation is applied to ensure all required fields meet the defined constraints and business rules.</p>
  *
- * @param Name the name of the milestone
- * @param Description a short descriptive summary of the milestone
- * @param ProjectId the ID of the parent project
- * @param DateRange the scheduled start and end dates for the milestone
+ * @param name the name of the milestone
+ * @param description a short descriptive summary of the milestone
+ * @param projectId the ID of the parent project
+ * @param dateRange the scheduled start and end dates for the milestone
  *
  * @since 1.0
  */
 
-public record CreateMilestoneCommand(MilestoneName Name, Description Description, ProjectId ProjectId, DateRange DateRange) {
+public record CreateMilestoneCommand(MilestoneName name, Description description, ProjectId projectId, DateRange dateRange) {
+    /**
+     * Compact constructor to enforce validation rules.
+     *
+     * @throws IllegalArgumentException if any field is null or invalid
+     */
+    public CreateMilestoneCommand {
+        if (name == null) {
+            throw new IllegalArgumentException("Milestone name cannot be null");
+        }
+        if (description == null) {
+            throw new IllegalArgumentException("Description cannot be null");
+        }
+        if (projectId == null) {
+            throw new IllegalArgumentException("ProjectId cannot be null");
+        }
+        if (dateRange == null || dateRange.startDate() == null || dateRange.endDate() == null) {
+            throw new IllegalArgumentException("DateRange and its start and end dates cannot be null");
+        }
+    }
+
 }

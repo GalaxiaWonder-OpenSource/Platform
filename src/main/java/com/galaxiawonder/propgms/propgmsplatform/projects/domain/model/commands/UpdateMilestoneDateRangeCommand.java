@@ -15,9 +15,28 @@ import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobje
  * <p>Validation is expected to ensure all required fields meet the defined constraints and business rules.</p>
  *
  * @param id the unique identifier of the milestone
- * @param DateRange the new date range, containing the start and end dates for the milestone
+ * @param dateRange the new date range, containing the start and end dates for the milestone
  *
  * @since 1.0
  */
-public record UpdateMilestoneDateRangeCommand(Long id, DateRange DateRange) {
+public record UpdateMilestoneDateRangeCommand(Long id, DateRange dateRange) {
+    /**
+     * Compact constructor to enforce validation rules.
+     *
+     * @throws IllegalArgumentException if any field is null or invalid
+     */
+    public UpdateMilestoneDateRangeCommand {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("id cannot be null or less than 1");
+        }
+        if (dateRange == null) {
+            throw new IllegalArgumentException("dateRange cannot be null");
+        }
+        if (dateRange.startDate() == null) {
+            throw new IllegalArgumentException("dateRange startDate cannot be null");
+        }
+        if (dateRange.endDate() == null) {
+            throw new IllegalArgumentException("dateRange endDate cannot be null");
+        }
+    }
 }
