@@ -13,6 +13,11 @@ import com.galaxiawonder.propgms.propgmsplatform.change.domain.services.ChangePr
 import com.galaxiawonder.propgms.propgmsplatform.change.infrastructure.persistence.jpa.repositories.ChangeOriginRepository;
 import com.galaxiawonder.propgms.propgmsplatform.change.infrastructure.persistence.jpa.repositories.ChangeProcessRepository;
 import com.galaxiawonder.propgms.propgmsplatform.change.infrastructure.persistence.jpa.repositories.ChangeProcessStatusRepository;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.ProjectInfo;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.ProjectStatuses;
+import com.galaxiawonder.propgms.propgmsplatform.projects.infrastructure.persistence.jpa.repositories.ProjectRepository;
+import com.galaxiawonder.propgms.propgmsplatform.projects.infrastructure.persistence.jpa.repositories.ProjectStatusRepository;
+import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.acl.ProjectContextFacade;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProjectId;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -25,47 +30,80 @@ public class ChangeProcessCommandServiceImpl implements ChangeProcessCommandServ
     private final ChangeProcessRepository changeProcessRepository;
     private final ChangeOriginRepository changeOriginRepository;
     private final ChangeProcessStatusRepository changeProcessStatusRepository;
+    private final ProjectStatusRepository projectStatusRepository;
+    private final ProjectRepository projectRepository;
+    private final ProjectContextFacade projectContextFacade;
 
     public ChangeProcessCommandServiceImpl(
             ChangeProcessRepository changeProcessRepository,
             ChangeOriginRepository changeOriginRepository,
-            ChangeProcessStatusRepository changeProcessStatusRepository) {
+            ChangeProcessStatusRepository changeProcessStatusRepository,
+            ProjectStatusRepository projectStatusRepository,
+            ProjectRepository projectRepository,
+            ProjectContextFacade projectContextFacade) {
         this.changeProcessRepository = changeProcessRepository;
         this.changeOriginRepository = changeOriginRepository;
         this.changeProcessStatusRepository = changeProcessStatusRepository;
+        this.projectStatusRepository = projectStatusRepository;
+        this.projectRepository = projectRepository;
+        this.projectContextFacade = projectContextFacade;
     }
 
     @Transactional
     public Optional<ChangeProcess> handle(CreateChangeProcessCommand command) {
-        ChangeOrigin origin = changeOriginRepository.findByName(ChangeOrigins.valueOf(command.origin()))
-                .orElseThrow(() -> new IllegalArgumentException("Invalid origin ID"));
+        var changeProcess = new ChangeProcess(command);
+        var project = projectRepository.findById(command.projectId().projectId())
+                .orElseThrow(() -> new IllegalArgumentException("Project with id " + command.projectId().projectId() + " does not exist"));
 
-        ChangeProcessStatus status = command.status() != null
-                ? changeProcessStatusRepository.findByName(ChangeProcessStatuses.valueOf(command.status()))
-                .orElseThrow(() -> new IllegalArgumentException("Invalid status enum"))
-                : changeProcessStatusRepository.findByName(ChangeProcessStatuses.valueOf("PENDING"))
-                .orElseThrow(() -> new IllegalStateException("Default status PENDING not found"));
+        var existingChangeProcess = changeProcessRepository.findByProjectId(command.projectId());
+        if (existingChangeProcess.isPresent()){
+            throw new IllegalArgumentException("Change Process already exists for project with id " + command.projectId().projectId());
+        }
+        var originName = project.getStatus().getName().name().equals("APPROVED")
+                ? "TECHNICAL_QUERY"
+                : "CHANGE_REQUEST";
 
-        var justification = new Justification(command.justification());
-        var projectId = new ProjectId(command.projectId());
+        var origin = changeOriginRepository.findByName(ChangeOrigins.valueOf(originName))
+                .orElseThrow(() -> new IllegalArgumentException("Change Origin with name " + originName + " does not exist"));
 
-        var changeProcess = new ChangeProcess(origin, status, justification, projectId);
+        var status = changeProcessStatusRepository.findByName(ChangeProcessStatuses.PENDING)
+                .orElseThrow(() -> new IllegalArgumentException("Change Process Status with name " + ChangeProcessStatuses.PENDING + " does not exist"));
+
+        changeProcess.SetInformation(origin, status);
         changeProcessRepository.save(changeProcess);
+
+        var projectStatus = projectStatusRepository.findByName(ProjectStatuses.CHANGE_REQUESTED)
+                .orElseThrow(() -> new IllegalArgumentException("Project Status with name " + ProjectStatuses.CHANGE_REQUESTED + " does not exist"));
+
+        project.reassignStatus(projectStatus);
+        projectRepository.save(project);
 
         return Optional.of(changeProcess);
     }
 
     @Transactional
-    public Optional<ChangeProcess> handle(Long changeProcessId, RespondToChangeCommand command) {
-        ChangeProcess changeProcess = changeProcessRepository.findById(changeProcessId)
-                .orElseThrow(() -> new IllegalArgumentException("ChangeProcess not found"));
+    public Optional<ChangeProcess> handle(RespondToChangeCommand command) {
+        if (command.id() <= 0){
+            throw new IllegalArgumentException("Invalid Change Process Id");
+        }
+        var changeProcess = changeProcessRepository.findById(command.id())
+                .orElseThrow(() -> new IllegalArgumentException("Change Process with id " + command.id() + " does not exist"));
 
-        ChangeProcessStatus newStatus = changeProcessStatusRepository.findByName(command.status())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid status enum"));
+        var project = projectRepository.findById(changeProcess.getProjectId().projectId())
+                .orElseThrow(() -> new IllegalArgumentException("Project with id " + changeProcess.getProjectId().projectId() + " does not exist"));
 
-        var response = new ChangeResponse(command.notes());
-        changeProcess.respondToChange(newStatus, response);
+        var newStatus = command.status().name();
+        var status = changeProcessStatusRepository.findByName(ChangeProcessStatuses.valueOf(newStatus))
+                .orElseThrow(() -> new IllegalArgumentException("Change Process Status with name " + newStatus + " does not exist"));
+        changeProcess.respondToChange(status, command.response());
 
+        var newProjectStatus = command.status().name().equals("APPROVED")
+                ? "CHANGE_PENDING"
+                : "APPROVED";
+        var projectStatus = projectStatusRepository.findByName(ProjectStatuses.valueOf(newProjectStatus))
+                .orElseThrow(() -> new IllegalArgumentException("Project Status with name " + newProjectStatus + " does not exist"));
+        project.reassignStatus(projectStatus);
+        projectRepository.save(project);
         changeProcessRepository.save(changeProcess);
 
         return Optional.of(changeProcess);

@@ -83,8 +83,8 @@ public class ChangeProcess extends AuditableAbstractAggregateRoot<ChangeProcess>
      * @param status the status of the change process
      */
     public void SetInformation(ChangeOrigin origin, ChangeProcessStatus status){
-        if (origin != null && status != null){
-           throw new IllegalArgumentException("Origin and status cannot be null.");
+        if (origin == null || status == null){
+            throw new IllegalArgumentException("Origin and status cannot be null.");
         }
         this.origin = origin;
         this.status = status;

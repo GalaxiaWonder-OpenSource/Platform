@@ -3,8 +3,11 @@ package com.galaxiawonder.propgms.propgmsplatform.projects.domain.services;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Project;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.ProjectTeamMember;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetAllProjectsByTeamMemberPersonIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetProjectByProjectIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.ProjectInfo;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProjectQueryService {
     /**
@@ -26,4 +29,6 @@ public interface ProjectQueryService {
      * @since 1.0
      */
     List<Project> handle(GetAllProjectsByTeamMemberPersonIdQuery query);
+
+    Optional<ProjectInfo> handle(GetProjectByProjectIdQuery query);
 }
