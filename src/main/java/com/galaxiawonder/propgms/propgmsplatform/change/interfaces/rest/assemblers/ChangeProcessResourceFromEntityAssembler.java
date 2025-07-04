@@ -10,7 +10,7 @@ public class ChangeProcessResourceFromEntityAssembler {
                 entity.getOrigin().getStringName(),
                 entity.getStatus().getStringName(),
                 entity.getJustification().justification(),
-                entity.getResponse() != null ? entity.getResponse().toString() : null,
+                entity.getResponse() != null ? entity.getResponse().response() : null,
                 entity.getProjectId().projectId()
         );
     }

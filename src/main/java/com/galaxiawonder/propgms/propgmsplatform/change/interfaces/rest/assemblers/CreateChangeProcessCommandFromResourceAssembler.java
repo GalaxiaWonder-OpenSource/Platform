@@ -6,7 +6,7 @@ import com.galaxiawonder.propgms.propgmsplatform.change.interfaces.rest.resource
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProjectId;
 
 public class CreateChangeProcessCommandFromResourceAssembler {
-    public static CreateChangeProcessCommand toCommandFromResource(CreateChangeProcessResource resource){
-        return new CreateChangeProcessCommand(new Justification(resource.justification()), new ProjectId(resource.projectId()));
+    public static CreateChangeProcessCommand toCommandFromResource(long Id, CreateChangeProcessResource resource){
+        return new CreateChangeProcessCommand(new Justification(resource.justification()), new ProjectId(Id));
     }
 }

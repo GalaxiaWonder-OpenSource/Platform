@@ -98,7 +98,7 @@ public class ChangeProcess extends AuditableAbstractAggregateRoot<ChangeProcess>
      * @throws IllegalArgumentException if the change process is not pending
      */
     public void respondToChange(ChangeProcessStatus status, ChangeResponse response) {
-        if (response.response() != null){
+        if (this.response != null){
             throw new IllegalArgumentException("Change process response has already been set.");
         }
         this.status = status;
