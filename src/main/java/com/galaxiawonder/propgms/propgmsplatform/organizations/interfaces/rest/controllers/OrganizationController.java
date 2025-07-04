@@ -117,7 +117,7 @@ public class OrganizationController {
         return ResponseEntity.ok(new GenericMessageResource("Organization with given RUC successfully deleted"));
     }
     @PatchMapping("{id}")
-    public ResponseEntity<?> updateOrganization(
+    public ResponseEntity<GenericMessageResource> updateOrganization(
             @PathVariable Long id,
             @RequestBody UpdateOrganizationResource resource) {
 
@@ -128,7 +128,7 @@ public class OrganizationController {
         );
 
         organizationCommandService.handle(command);
-        return ResponseEntity.ok("Organization with given ID successfully updated");
+        return ResponseEntity.ok(new GenericMessageResource("Organization with given ID successfully updated"));
     }
 
     @Operation(

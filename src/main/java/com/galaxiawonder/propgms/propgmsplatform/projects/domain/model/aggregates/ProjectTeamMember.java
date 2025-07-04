@@ -116,6 +116,10 @@ public class ProjectTeamMember extends AuditableAbstractAggregateRoot<ProjectTea
     public void assignSpecialty(Specialty specialty) {
         this.specialty = specialty;
     }
+
+    public void assignTeamMemberType(ProjectTeamMemberType memberType) {
+        this.memberType = memberType;
+    }
 }
 
 

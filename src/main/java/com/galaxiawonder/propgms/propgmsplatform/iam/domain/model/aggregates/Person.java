@@ -51,7 +51,7 @@ public class Person extends AuditableAbstractAggregateRoot<Person> {
     private ProfessionalId professionalId;
 
     @Getter
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "specialty_id", nullable = true, unique = false)
     private Specialty specialty;
 

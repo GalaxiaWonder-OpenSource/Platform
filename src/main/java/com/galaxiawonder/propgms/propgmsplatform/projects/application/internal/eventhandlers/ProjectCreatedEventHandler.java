@@ -57,7 +57,8 @@ public class ProjectCreatedEventHandler {
                         memberId,
                         event.getProjectId().projectId(),
                         personId,
-                        "NON_APPLICABLE"
+                        "NON_APPLICABLE",
+                        "COORDINATOR"
                 )
         );
     }
