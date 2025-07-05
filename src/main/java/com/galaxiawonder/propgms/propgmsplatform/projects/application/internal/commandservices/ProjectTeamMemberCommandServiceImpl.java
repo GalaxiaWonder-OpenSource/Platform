@@ -4,10 +4,13 @@ import com.galaxiawonder.propgms.propgmsplatform.iam.interfaces.acl.IAMContextFa
 import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.acl.OrganizationContextFacade;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.ProjectTeamMember;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectTeamMemberCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.ProjectTeamMemberType;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.Specialty;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.ProjectTeamMemberTypes;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.Specialties;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectTeamMemberCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.infrastructure.persistence.jpa.repositories.ProjectTeamMemberRepository;
+import com.galaxiawonder.propgms.propgmsplatform.projects.infrastructure.persistence.jpa.repositories.ProjectTeamMemberTypeRepository;
 import com.galaxiawonder.propgms.propgmsplatform.projects.infrastructure.persistence.jpa.repositories.SpecialtyRepository;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.*;
 import org.springframework.stereotype.Service;
@@ -36,21 +39,23 @@ public class ProjectTeamMemberCommandServiceImpl implements ProjectTeamMemberCom
     /** Repository interface for retrieving {@link Specialty} domain entities. */
     private final SpecialtyRepository specialtyRepository;
 
+    private final ProjectTeamMemberTypeRepository projectTeamMemberTypeRepository;
+
     /**
      * Constructs a {@link ProjectTeamMemberCommandServiceImpl} with required dependencies.
      *
      * @param projectTeamMemberRepository repository for persisting project team members
      * @param iamContextFacade IAM context facade for accessing user profile information
-     * @param organizationContextFacade unused in this implementation (can be removed)
      * @param specialtyRepository repository for looking up specialty definitions
      */
     public ProjectTeamMemberCommandServiceImpl(ProjectTeamMemberRepository projectTeamMemberRepository,
                                                IAMContextFacade iamContextFacade,
-                                               OrganizationContextFacade organizationContextFacade,
-                                               SpecialtyRepository specialtyRepository) {
+                                               SpecialtyRepository specialtyRepository,
+                                               ProjectTeamMemberTypeRepository projectTeamMemberTypeRepository) {
         this.projectTeamMemberRepository = projectTeamMemberRepository;
         this.iamContextFacade = iamContextFacade;
         this.specialtyRepository = specialtyRepository;
+        this.projectTeamMemberTypeRepository = projectTeamMemberTypeRepository;
     }
 
     /**
@@ -58,22 +63,16 @@ public class ProjectTeamMemberCommandServiceImpl implements ProjectTeamMemberCom
      */
     @Override
     public Optional<ProjectTeamMember> handle(CreateProjectTeamMemberCommand command) {
-        Specialty getSpecialty = getSpecialty(Specialties.valueOf(command.specialty()));
-
-        ProfileDetails profileDetails = this.iamContextFacade.getProfileDetailsById(command.personId());
-
-        ProjectTeamMember projectTeamMember = new ProjectTeamMember(
-                new ProjectId(command.projectId()),
-                new PersonId(command.personId()),
-                new OrganizationMemberId(command.organizationMemberId()),
-                profileDetails.name(),
-                profileDetails.email(),
-                getSpecialty
+        var teamMember = new ProjectTeamMember(command.organizationMemberId(), command.projectId());
+        teamMember.assignSpecialty(
+                getSpecialty(Specialties.valueOf(command.specialty()))
+        );
+        teamMember.assignTeamMemberType(
+                getProjectTeamMemberType(ProjectTeamMemberTypes.valueOf(command.memberType()))
         );
 
-        this.projectTeamMemberRepository.save(projectTeamMember);
-
-        return Optional.of(projectTeamMember);
+        var createdTeamMember = projectTeamMemberRepository.save(teamMember);
+        return Optional.of(createdTeamMember);
     }
 
     /**
@@ -87,5 +86,18 @@ public class ProjectTeamMemberCommandServiceImpl implements ProjectTeamMemberCom
         return this.specialtyRepository.findByName(name)
                 .orElseThrow(() -> new IllegalArgumentException("Specialty not found"));
     }
+
+    /**
+     * Retrieves a {@link ProjectTeamMemberType} by its name.
+     *
+     * @param name the name of the project team member type (as enum)
+     * @return the corresponding {@link ProjectTeamMemberType} entity
+     * @throws IllegalArgumentException if the type is not found
+     */
+    private ProjectTeamMemberType getProjectTeamMemberType(ProjectTeamMemberTypes name) {
+        return this.projectTeamMemberTypeRepository.findByName(name)
+                .orElseThrow(() -> new IllegalArgumentException("Project team member type not found"));
+    }
+
 }
 

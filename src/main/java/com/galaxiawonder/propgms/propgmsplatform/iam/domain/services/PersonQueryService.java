@@ -4,6 +4,8 @@ import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates.Per
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.queries.GetPersonByEmailQuery;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.queries.GetPersonByIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.queries.GetPersonIdByEmailQuery;
+import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.queries.GetSpecialtyByPersonIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.Specialty;
 
 import java.util.Optional;
 
@@ -54,5 +56,7 @@ public interface PersonQueryService {
      * @since 1.0
      */
     Long handle(GetPersonIdByEmailQuery query);
+
+    Specialty handle(GetSpecialtyByPersonIdQuery query);
 }
 

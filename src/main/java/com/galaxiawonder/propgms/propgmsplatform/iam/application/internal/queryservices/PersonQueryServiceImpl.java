@@ -4,6 +4,8 @@ import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates.Per
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.queries.GetPersonByEmailQuery;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.queries.GetPersonByIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.queries.GetPersonIdByEmailQuery;
+import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.queries.GetSpecialtyByPersonIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.Specialty;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.EmailAddress;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.services.PersonQueryService;
 import com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persistence.jpa.repositories.PersonRepository;
@@ -77,5 +79,13 @@ public class PersonQueryServiceImpl implements PersonQueryService {
         return this.personRepository.findByEmail(new EmailAddress(query.email()))
                 .map(AuditableAbstractAggregateRoot::getId)
                 .orElseThrow(() -> new EntityNotFoundException("Person not found with email: " + query.email()));
+    }
+
+    @Override
+    public Specialty handle(GetSpecialtyByPersonIdQuery query) {
+        Person person = this.personRepository.findById(query.personId())
+                .orElseThrow(() -> new IllegalArgumentException("Person does not exist"));
+
+        return person.getSpecialty();
     }
 }

@@ -1,31 +1,20 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.application.internal.commandservices;
 
-import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates.Person;
 import com.galaxiawonder.propgms.propgmsplatform.iam.interfaces.acl.IAMContextFacade;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationInvitationStatus;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationStatus;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationInvitationStatuses;
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.valueobjects.OrganizationStatuses;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.acl.OrganizationContextFacade;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Project;
-import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectCommand;
-import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectCommand;
-import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.UpdateProjectCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.*;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.ProjectStatus;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.events.ProjectCreatedEvent;
-import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.DateRange;
-import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.Description;
-import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.ProjectName;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.ProjectStatuses;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectCommandService;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectTeamMemberCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.infrastructure.persistence.jpa.repositories.ProjectRepository;
 import com.galaxiawonder.propgms.propgmsplatform.projects.infrastructure.persistence.jpa.repositories.ProjectStatusRepository;
-import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.OrganizationId;
-import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
-import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProjectId;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.*;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -47,7 +36,10 @@ public class ProjectCommandServiceImpl implements ProjectCommandService {
     private final ProjectStatusRepository projectStatusRepository;
 
     /** Publisher used to dispatch domain events such as {@link ProjectCreatedEvent}. */
-    private final ApplicationEventPublisher eventPublisher;
+    private final ProjectTeamMemberCommandService projectTeamMemberCommandService;
+
+    /** Facade for accessing organization context and organization member information. */
+    private final OrganizationContextFacade organizationContextFacade;
 
     /**
      * Constructs the service implementation with required dependencies.
@@ -55,16 +47,18 @@ public class ProjectCommandServiceImpl implements ProjectCommandService {
      * @param projectRepository repository for persisting and retrieving projects
      * @param iamContextFacade facade for accessing identity and profile data
      * @param projectStatusRepository repository for accessing project status definitions
-     * @param eventPublisher publisher for propagating domain events to the application context
+     * @param projectTeamMemberCommandService publisher for propagating domain events to the application context
      */
     public ProjectCommandServiceImpl(ProjectRepository projectRepository,
                                      IAMContextFacade iamContextFacade,
                                      ProjectStatusRepository projectStatusRepository,
-                                     ApplicationEventPublisher eventPublisher) {
+                                     ProjectTeamMemberCommandService projectTeamMemberCommandService,
+                                     OrganizationContextFacade organizationContextFacade) {
         this.projectRepository = projectRepository;
         this.iamContextFacade = iamContextFacade;
         this.projectStatusRepository = projectStatusRepository;
-        this.eventPublisher = eventPublisher;
+        this.projectTeamMemberCommandService = projectTeamMemberCommandService;
+        this.organizationContextFacade = organizationContextFacade;
     }
 
     /**
@@ -77,11 +71,35 @@ public class ProjectCommandServiceImpl implements ProjectCommandService {
         }
 
         Long contractingEntityId = iamContextFacade.getPersonIdFromEmail(command.contractingEntityEmail());
+        ProfileDetails details = iamContextFacade.getProfileDetailsById(contractingEntityId);
 
         ProjectStatus initialStatus = getProjectStatus(ProjectStatuses.BASIC_STUDIES);
 
-        var project = new Project(command, initialStatus, new PersonId(contractingEntityId));
+        var project = new Project(
+                command,
+                initialStatus,
+                new PersonId(contractingEntityId),
+                details.name(),
+                details.email()
+        );
+
         var createdProject = projectRepository.save(project);
+
+        var contractorPersonId = organizationContextFacade.getContractorIdFromOrganizationId(command.organizationId());
+
+        var contractorOrganizationMemberId = organizationContextFacade.getOrganizationMemberIdFromPersonAndOrganizationId(contractorPersonId, command.organizationId());
+
+        var specialty = iamContextFacade.getSpecialtyFromPersonId(contractorPersonId);
+
+        projectTeamMemberCommandService.handle(
+                new CreateProjectTeamMemberCommand(
+                        contractorOrganizationMemberId,
+                        createdProject.getId(),
+                        contractorPersonId,
+                        specialty.getStringName(),
+                        "COORDINATOR"
+                )
+        );
 
         return Optional.of(createdProject);
     }
@@ -108,33 +126,33 @@ public class ProjectCommandServiceImpl implements ProjectCommandService {
 
         projectRepository.delete(project);
     }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public Optional<Project> handle(UpdateProjectCommand command) {
         var result = projectRepository.findById(command.projectId());
-        if (result.isEmpty())
-            throw new IllegalArgumentException("Project doesn't exist");
-        var projectToUpdate = result.get();
-        try {
-            ProjectStatus newStatus = projectToUpdate.getStatus(); // Mantener el status actual por defecto
+        if (result.isEmpty()) throw new IllegalArgumentException("Project doesn't exist");
 
-            if (command.status() != null) {
-                ProjectStatuses statusEnum = ProjectStatuses.valueOf(command.status().toUpperCase());
-                newStatus = getProjectStatus(statusEnum);
-            }
-            var updatedProject = projectRepository.save(
-                    projectToUpdate.updateInformation(
-                            command.name(),
-                            command.description(),
-                            newStatus,
-                            command.endingDate()
-                    )
-            );
-            return Optional.of(updatedProject);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Error while updating project: %s".formatted(e.getMessage()));
+        var projectToUpdate = result.get();
+
+        ProjectStatus newStatus = projectToUpdate.getStatus();
+
+        if (!command.status().isBlank()) {
+            ProjectStatuses statusEnum = ProjectStatuses.valueOf(command.status().toUpperCase());
+            newStatus = getProjectStatus(statusEnum);
         }
+
+        projectToUpdate.updateInformation(
+                command.name(),
+                command.description(),
+                newStatus,
+                command.endingDate()
+        );
+
+        projectRepository.save(projectToUpdate);
+
+        return Optional.of(projectToUpdate);
     }
 }
