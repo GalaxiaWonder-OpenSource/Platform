@@ -8,6 +8,7 @@ import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregate
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.UpdateProjectCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetAllProjectsByContractingEntityIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetAllProjectsByTeamMemberPersonIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetProjectByProjectIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectCommandService;
@@ -93,6 +94,27 @@ public class ProjectController {
         Optional<Project> project = projectQueryService.handle(query);
         return project.map(source -> new ResponseEntity<>(ProjectResourceFromEntityAssembler.toResourceFromEntity(source), HttpStatus.OK))
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @Operation(
+            summary = "Get project by contracting entity Id",
+            description = "Retrieves a project by a contracting entity Id"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Projects retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Projects not found")
+    })
+    @GetMapping("by-contracting-entity-id/{contractingEntityId}")
+    public ResponseEntity<List<ProjectResource>> getProjectsByContractingEntityId(@PathVariable Long contractingEntityId) {
+        var query = new GetAllProjectsByContractingEntityIdQuery(contractingEntityId);
+        Optional<List<Project>> projects = projectQueryService.handle(query);
+
+        List<ProjectResource> resources = projects.map(source -> source.stream()
+                .map(ProjectResourceFromEntityAssembler::toResourceFromEntity)
+                .toList())
+                .orElseGet(List::of);
+
+        return new ResponseEntity<>(resources, HttpStatus.OK);
     }
 
     /**

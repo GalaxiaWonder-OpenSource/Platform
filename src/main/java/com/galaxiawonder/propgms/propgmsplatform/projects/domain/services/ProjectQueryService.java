@@ -2,6 +2,7 @@ package com.galaxiawonder.propgms.propgmsplatform.projects.domain.services;
 
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Project;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.ProjectTeamMember;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetAllProjectsByContractingEntityIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetAllProjectsByTeamMemberPersonIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetProjectByProjectIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetProjectInfoByProjectIdQuery;
@@ -34,4 +35,6 @@ public interface ProjectQueryService {
     Optional<ProjectInfo> handle(GetProjectInfoByProjectIdQuery query);
 
     Optional<Project> handle(GetProjectByProjectIdQuery query);
+
+    Optional<List<Project>> handle(GetAllProjectsByContractingEntityIdQuery query);
 }

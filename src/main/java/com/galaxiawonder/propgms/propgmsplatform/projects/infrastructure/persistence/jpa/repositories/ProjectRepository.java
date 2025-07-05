@@ -1,6 +1,7 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.infrastructure.persistence.jpa.repositories;
 
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Project;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -36,4 +37,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     WHERE ptm.personId.personId = :personId
 """)
     Optional<List<Project>> findAllProjectsByTeamMemberPersonId(@Param("personId") Long personId);
+
+    Optional<List<Project>> findAllProjectsByContractingEntityId(PersonId contractingEntityId);
 }
