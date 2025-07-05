@@ -2,5 +2,5 @@ package com.galaxiawonder.propgms.propgmsplatform.change.interfaces.rest.resourc
 
 import jakarta.annotation.Nullable;
 
-public record ChangeProcessResource(String origin, String status, String justification, @Nullable String response, Long projectId) {
+public record ChangeProcessResource(Long id, String origin, String status, String justification, @Nullable String response, Long projectId) {
 }

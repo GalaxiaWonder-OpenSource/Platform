@@ -7,6 +7,7 @@ import jakarta.annotation.Nullable;
 public class ChangeProcessResourceFromEntityAssembler {
     public static ChangeProcessResource toResourceFromEntity(ChangeProcess entity){
         return new ChangeProcessResource(
+                entity.getId(),
                 entity.getOrigin().getStringName(),
                 entity.getStatus().getStringName(),
                 entity.getJustification().justification(),
