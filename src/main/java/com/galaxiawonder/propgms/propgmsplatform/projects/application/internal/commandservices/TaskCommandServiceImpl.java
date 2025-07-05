@@ -3,6 +3,7 @@ package com.galaxiawonder.propgms.propgmsplatform.projects.application.internal.
 import com.galaxiawonder.propgms.propgmsplatform.iam.interfaces.acl.IAMContextFacade;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Task;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateTaskCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteTaskCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.UpdateTaskCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.*;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.TaskCommandService;
@@ -127,5 +128,16 @@ public class TaskCommandServiceImpl implements TaskCommandService {
 
         var updatedTask = taskRepository.save(task);
         return Optional.of(updatedTask);
+    }
+
+    public void handle(DeleteTaskCommand command){
+        if (command == null){
+            throw new IllegalArgumentException("Delete Task Command cannot be null");
+        }
+        var task = taskRepository.findById(command.taskId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "The task with the id " + command.taskId() + "does not exists"
+                ));
+        taskRepository.delete(task);
     }
 }

@@ -1,6 +1,7 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.controllers;
 
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Task;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteTaskCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.TaskCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.CreateTaskCommandFromResourceAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.TaskResourceFromEntityAssembler;
@@ -8,6 +9,7 @@ import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemb
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.CreateTaskResource;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.TaskResource;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.UpdateTaskResource;
+import com.galaxiawonder.propgms.propgmsplatform.shared.interfaces.rest.resources.GenericMessageResource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -62,5 +64,20 @@ public class TaskController {
         return task
                 .map(source -> new ResponseEntity<>(TaskResourceFromEntityAssembler.toResourceFromEntity(source), HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    }
+
+    @Operation(
+            summary = "Delete a task with a given Id",
+            description = "Delete a task based on the provided information"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Task deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Task not found")
+    })
+    @DeleteMapping("{taskId}")
+    public ResponseEntity<GenericMessageResource> deleteTask(@PathVariable Long taskId){
+        var deleteTaskCommand = new DeleteTaskCommand(taskId);
+        taskCommandService.handle(deleteTaskCommand);
+        return ResponseEntity.ok(new GenericMessageResource("Task successfully deleted"));
     }
 }
