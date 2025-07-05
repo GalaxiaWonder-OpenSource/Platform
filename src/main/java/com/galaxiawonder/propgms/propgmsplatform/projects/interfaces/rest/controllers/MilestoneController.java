@@ -2,7 +2,9 @@ package com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.contr
 
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Milestone;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteMilestoneCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetAllMilestonesByProjectIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.MilestoneCommandService;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.MilestoneQueryService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.CreateMilestoneCommandFromResourceAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.MilestoneResourceFromEntityAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.UpdateMilestoneCommandFromResourceAssembler;
@@ -19,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -26,9 +29,11 @@ import java.util.Optional;
 @Tag(name = "Milestones", description = "Endpoints for Milestones")
 public class MilestoneController {
     private final MilestoneCommandService milestoneCommandService;
+    private final MilestoneQueryService milestoneQueryService;
 
-    public MilestoneController(MilestoneCommandService milestoneCommandService) {
+    public MilestoneController(MilestoneCommandService milestoneCommandService, MilestoneQueryService milestoneQueryService) {
         this.milestoneCommandService = milestoneCommandService;
+        this.milestoneQueryService = milestoneQueryService;
     }
 
     @Operation(
@@ -46,6 +51,27 @@ public class MilestoneController {
         return milestone
                 .map(source -> new ResponseEntity<>(MilestoneResourceFromEntityAssembler.toResourceFromEntity(source), HttpStatus.CREATED))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    }
+
+    @Operation(
+            summary = "Get all milestones by project ID",
+            description = "Retrieves all milestones associated with a specific project"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Milestones retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "No milestones found for the project")
+    })
+    @GetMapping("/by-project-id/{projectId}")
+    public ResponseEntity<List<MilestoneResource>> getAllMilestonesByProjectId(@PathVariable Long projectId) {
+        Optional<List<Milestone>> milestones = milestoneQueryService
+                .handle(new GetAllMilestonesByProjectIdQuery(projectId));
+
+        List<MilestoneResource> resources = milestones.map(source -> source.stream()
+                        .map(MilestoneResourceFromEntityAssembler::toResourceFromEntity)
+                        .toList())
+                .orElseGet(List::of);
+
+        return new ResponseEntity<>(resources, HttpStatus.OK);
     }
 
     @Operation(
