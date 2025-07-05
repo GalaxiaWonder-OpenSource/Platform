@@ -2,7 +2,10 @@ package com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.contr
 
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Task;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteTaskCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetAllTasksByMilestoneIdAndPersonIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetAllTasksByMilestoneIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.TaskCommandService;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.TaskQueryService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.CreateTaskCommandFromResourceAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.TaskResourceFromEntityAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.UpdateTaskCommandFromResourceAssembler;
@@ -19,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -27,9 +31,12 @@ import java.util.Optional;
 @Tag(name = "Tasks", description = "Endpoints for Tasks")
 public class TaskController {
     private final TaskCommandService taskCommandService;
+    private final TaskQueryService taskQueryService;
 
-    public TaskController(TaskCommandService taskCommandService) {
+    public TaskController(TaskCommandService taskCommandService,
+                          TaskQueryService taskQueryService) {
         this.taskCommandService = taskCommandService;
+        this.taskQueryService = taskQueryService;
     }
 
     @Operation(
@@ -64,6 +71,44 @@ public class TaskController {
         return task
                 .map(source -> new ResponseEntity<>(TaskResourceFromEntityAssembler.toResourceFromEntity(source), HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    }
+
+    @Operation(
+            summary = "Get all tasks by milestone Id",
+            description = "Retrieves all tasks associated with a specific milestone"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Tasks retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "No tasks found for the milestone")
+    })
+    @GetMapping("/by-milestone-id/{milestoneId}")
+    public ResponseEntity<List<TaskResource>> getAllTasksByMilestoneId(@PathVariable Long milestoneId){
+        Optional<List<Task>> tasks = taskQueryService
+                .handle(new GetAllTasksByMilestoneIdQuery(milestoneId));
+        List<TaskResource> resources = tasks.map(source -> source.stream()
+                        .map(TaskResourceFromEntityAssembler::toResourceFromEntity)
+                        .toList())
+                .orElseGet(List::of);
+        return new ResponseEntity<>(resources, HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Get all tasks by milestone Id and person Id",
+            description = "Retrieves all tasks associated with a specific milestone and person"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Tasks retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "No tasks found for the milestone and person")
+    })
+    @GetMapping("/by-milestone-id/{milestoneId}/by-person-id/{personId}")
+    public ResponseEntity<List<TaskResource>> getAllTasksByMilestoneIdAndPersonId(@PathVariable Long milestoneId, @PathVariable Long personId){
+        Optional<List<Task>> tasks = taskQueryService
+                .handle(new GetAllTasksByMilestoneIdAndPersonIdQuery(milestoneId, personId));
+        List<TaskResource> resources = tasks.map(source -> source.stream()
+                        .map(TaskResourceFromEntityAssembler::toResourceFromEntity)
+                        .toList())
+                .orElseGet(List::of);
+        return new ResponseEntity<>(resources, HttpStatus.OK);
     }
 
     @Operation(
