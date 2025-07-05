@@ -20,7 +20,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping(value="/api/v1/", produces = APPLICATION_JSON_VALUE)
+@RequestMapping(value="/api/v1/change-process", produces = APPLICATION_JSON_VALUE)
 @Tag(name="Change Process", description = "Endpoints for Change Process")
 public class ChangeProcessController {
     private final ChangeProcessCommandService changeProcessCommandService;
@@ -31,16 +31,16 @@ public class ChangeProcessController {
         this.changeProcessQueryService = changeProcessQueryService;
     }
 
-    @PostMapping("projects/{projectId}/change-process")
+    @PostMapping
     public ResponseEntity<ChangeProcessResource>
-    createChangeProcess(@PathVariable Long projectId , @RequestBody CreateChangeProcessResource resource) {
+    createChangeProcess(@RequestBody CreateChangeProcessResource resource) {
         Optional<ChangeProcess> changeProcess = changeProcessCommandService
-                .handle(CreateChangeProcessCommandFromResourceAssembler.toCommandFromResource(projectId, resource));
+                .handle(CreateChangeProcessCommandFromResourceAssembler.toCommandFromResource(resource));
         return changeProcess.map(source -> new ResponseEntity<>(ChangeProcessResourceFromEntityAssembler.toResourceFromEntity(source), CREATED))
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
-    @PatchMapping("change-process/{changeProcessId}")
+    @PatchMapping("/{changeProcessId}")
     public ResponseEntity<ChangeProcessResource>
     respondToChangeProcess(@PathVariable long changeProcessId, @RequestBody RespondToChangeProcessResource resource) {
         Optional<ChangeProcess> changeProcess = changeProcessCommandService
@@ -49,7 +49,7 @@ public class ChangeProcessController {
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
-    @GetMapping("projects/{projectId}/change-process")
+    @GetMapping("by-project-id/{projectId}")
     public ResponseEntity<ChangeProcessResource>
     getChangesByProjectId(@PathVariable long projectId) {
         var changeProcess = changeProcessQueryService.handle(new com.galaxiawonder.propgms.propgmsplatform.change.domain.model.queries.GetChangeProcessByProjectIdQuery(projectId));
