@@ -1,6 +1,5 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates;
 
-import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.entities.OrganizationMember;
 import com.galaxiawonder.propgms.propgmsplatform.projects.application.internal.eventhandlers.ProjectCreatedEventHandler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.ProjectStatus;
@@ -81,6 +80,9 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     @JoinColumn(name = "status_id", nullable = false, unique = false)
     private ProjectStatus status;
 
+    @Getter
+    private String previousStatusName;
+
     /** Default constructor required by JPA. */
     public Project() {}
 
@@ -127,6 +129,7 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
      * @throws IllegalArgumentException if the new status is null
      */
     public void reassignStatus(ProjectStatus newStatus) {
+        this.recordPreviousStatus();
         if (newStatus == null) {
             throw new IllegalArgumentException("Project status cannot be null");
         }
@@ -152,7 +155,11 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
                 new ProjectId(this.getId()))
         );
     }
-
+    
+    void recordPreviousStatus() {
+        this.previousStatusName = this.status.getName().name();
+    }
+    
     public static final Date NO_UPDATE_DATE = new GregorianCalendar(9999, Calendar.DECEMBER, 31).getTime();
 }
 

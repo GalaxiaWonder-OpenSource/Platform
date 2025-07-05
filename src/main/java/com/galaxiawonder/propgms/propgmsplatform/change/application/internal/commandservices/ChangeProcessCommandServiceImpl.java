@@ -99,10 +99,12 @@ public class ChangeProcessCommandServiceImpl implements ChangeProcessCommandServ
 
         var newProjectStatus = command.status().name().equals("APPROVED")
                 ? "CHANGE_PENDING"
-                : "APPROVED";
-        var projectStatus = projectStatusRepository.findByName(ProjectStatuses.valueOf(newProjectStatus))
-                .orElseThrow(() -> new IllegalArgumentException("Project Status with name " + newProjectStatus + " does not exist"));
-        project.reassignStatus(projectStatus);
+                : project.getPreviousStatusName();
+        if(!newProjectStatus.isBlank()) {
+            var projectStatus = projectStatusRepository.findByName(ProjectStatuses.valueOf(newProjectStatus))
+                    .orElseThrow(() -> new IllegalArgumentException("Project Status with name " + newProjectStatus + " does not exist"));
+            project.reassignStatus(projectStatus);
+        }
         projectRepository.save(project);
         changeProcessRepository.save(changeProcess);
 
