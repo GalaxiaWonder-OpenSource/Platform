@@ -2,6 +2,7 @@ package com.galaxiawonder.propgms.propgmsplatform.projects.application.internal.
 
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Milestone;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateMilestoneCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.UpdateMilestoneCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.MilestoneCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.infrastructure.persistence.jpa.repositories.MilestoneRepository;
 import com.galaxiawonder.propgms.propgmsplatform.projects.infrastructure.persistence.jpa.repositories.ProjectRepository;
@@ -38,5 +39,35 @@ public class MilestoneCommandServiceImpl implements MilestoneCommandService {
         var createdMilestone = milestoneRepository.save(milestone);
 
         return Optional.of(createdMilestone);
+    }
+
+    @Override
+    public Optional<Milestone> handle(UpdateMilestoneCommand command){
+        if (command == null){
+            throw new IllegalArgumentException("UpdateMilestoneCommand cannot be null");
+        }
+        var milestone = milestoneRepository.findById(command.milestoneId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "The milestone with the id " + command.milestoneId() + "does not exists"
+                ));
+
+        var milestoneName = command.name();
+        if (milestoneName != null){
+            milestone.reassignName(milestoneName);
+        }
+
+        var milestoneDescription = command.description();
+        if (milestoneDescription != null){
+            milestone.reassignDescription(milestoneDescription);
+        }
+
+        var milestoneDateRange = command.dateRange();
+        if (milestoneDateRange != null){
+            milestone.validateDateRange(milestoneDateRange);
+            milestone.reassignDateRange(milestoneDateRange);
+        }
+
+        var updatedMilestone = milestoneRepository.save(milestone);
+        return Optional.of(updatedMilestone);
     }
 }

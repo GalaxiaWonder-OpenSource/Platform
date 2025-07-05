@@ -4,8 +4,10 @@ import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregate
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.MilestoneCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.CreateMilestoneCommandFromResourceAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.MilestoneResourceFromEntityAssembler;
+import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.UpdateMilestoneCommandFromResourceAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.CreateMilestoneResource;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.MilestoneResource;
+import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.UpdateMilestoneResource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -13,10 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -44,6 +43,24 @@ public class MilestoneController {
                 .handle(CreateMilestoneCommandFromResourceAssembler.toCommandFromResource(resource));
         return milestone
                 .map(source -> new ResponseEntity<>(MilestoneResourceFromEntityAssembler.toResourceFromEntity(source), HttpStatus.CREATED))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    }
+
+    @Operation(
+            summary = "Update milestone by ID",
+            description = "Updates a milestone by a milestone ID with new information"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Milestone updated"),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+    })
+    @PatchMapping("{milestoneId}")
+    public ResponseEntity<MilestoneResource> updateMilestone(@PathVariable Long milestoneId,
+                                                             UpdateMilestoneResource resource){
+        Optional<Milestone> milestoneUpdated = milestoneCommandService
+                .handle(UpdateMilestoneCommandFromResourceAssembler.toCommandFromResource(milestoneId, resource));
+        return milestoneUpdated
+                .map(source -> new ResponseEntity<>(MilestoneResourceFromEntityAssembler.toResourceFromEntity(source), HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 }
