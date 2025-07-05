@@ -1,6 +1,7 @@
 package com.galaxiawonder.propgms.propgmsplatform.change.interfaces.rest.controllers;
 
 import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.aggregates.ChangeProcess;
+import com.galaxiawonder.propgms.propgmsplatform.change.domain.model.queries.GetChangeProcessesByProjectIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.change.domain.services.ChangeProcessCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.change.domain.services.ChangeProcessQueryService;
 import com.galaxiawonder.propgms.propgmsplatform.change.interfaces.rest.assemblers.ChangeProcessResourceFromEntityAssembler;
@@ -50,10 +51,13 @@ public class ChangeProcessController {
     }
 
     @GetMapping("projects/{projectId}/change-process")
-    public ResponseEntity<ChangeProcessResource>
+    public ResponseEntity<List<ChangeProcessResource>>
     getChangesByProjectId(@PathVariable long projectId) {
-        var changeProcess = changeProcessQueryService.handle(new com.galaxiawonder.propgms.propgmsplatform.change.domain.model.queries.GetChangeProcessByProjectIdQuery(projectId));
-         return changeProcess.map(source -> new ResponseEntity<>(ChangeProcessResourceFromEntityAssembler.toResourceFromEntity(source), CREATED))
-                 .orElseGet(() -> ResponseEntity.badRequest().build());
+        var changeProcesses = changeProcessQueryService.handle(new GetChangeProcessesByProjectIdQuery(projectId));
+        if (changeProcesses.isEmpty()) return ResponseEntity.notFound().build();
+        var resources = changeProcesses.stream()
+                .map(ChangeProcessResourceFromEntityAssembler::toResourceFromEntity)
+                .toList();
+        return ResponseEntity.ok(resources);
     }
 }

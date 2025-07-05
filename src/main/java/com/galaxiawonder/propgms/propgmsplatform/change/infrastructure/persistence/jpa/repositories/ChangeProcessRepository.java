@@ -5,6 +5,7 @@ import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobject
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -23,5 +24,5 @@ public interface ChangeProcessRepository extends JpaRepository<ChangeProcess, Lo
 
     Optional<ChangeProcess> findFirstByProjectIdOrderByCreatedAtDesc(ProjectId projectId);
 
-    Optional<ChangeProcess> findByProjectId(ProjectId projectId);
+    List<ChangeProcess> findTop2ByProjectIdOrderByCreatedAtDesc(ProjectId projectId);
 }
