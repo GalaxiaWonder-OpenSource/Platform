@@ -21,5 +21,7 @@ import java.util.Optional;
 @Repository
 public interface ChangeProcessRepository extends JpaRepository<ChangeProcess, Long> {
 
+    Optional<ChangeProcess> findFirstByProjectIdOrderByCreatedAtDesc(ProjectId projectId);
+
     Optional<ChangeProcess> findByProjectId(ProjectId projectId);
 }

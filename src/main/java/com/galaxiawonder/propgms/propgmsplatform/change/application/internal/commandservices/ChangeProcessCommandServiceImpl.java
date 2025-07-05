@@ -55,9 +55,9 @@ public class ChangeProcessCommandServiceImpl implements ChangeProcessCommandServ
         var project = projectRepository.findById(command.projectId().projectId())
                 .orElseThrow(() -> new IllegalArgumentException("Project with id " + command.projectId().projectId() + " does not exist"));
 
-        var existingChangeProcess = changeProcessRepository.findByProjectId(command.projectId());
-        if (existingChangeProcess.isPresent()){
-            throw new IllegalArgumentException("Change Process already exists for project with id " + command.projectId().projectId());
+        var existingChangeProcess = changeProcessRepository.findFirstByProjectIdOrderByCreatedAtDesc(command.projectId());
+        if (existingChangeProcess.isPresent() && existingChangeProcess.get().getStatus().getId() != 3){
+            throw new IllegalArgumentException("Project with given Id is not in a valid state to create a change process");
         }
         var originName = project.getStatus().getName().name().equals("APPROVED")
                 ? "TECHNICAL_QUERY"
