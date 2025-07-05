@@ -50,6 +50,7 @@ public abstract class MilestoneItem extends AuditableAbstractAggregateRoot<Miles
     private Description description;
 
     @Getter
+    @Setter
     @Embedded
     private DateRange range;
 
@@ -57,6 +58,8 @@ public abstract class MilestoneItem extends AuditableAbstractAggregateRoot<Miles
      * The identifier of the milestone this item belongs to.
      * Establishes the association between this item and its parent milestone.
      */
+    @Getter
+    @Setter
     @Embedded
     private MilestoneId milestoneId;
 }
