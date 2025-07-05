@@ -3,8 +3,8 @@ package com.galaxiawonder.propgms.propgmsplatform.projects.application.internal.
 import com.galaxiawonder.propgms.propgmsplatform.iam.interfaces.acl.IAMContextFacade;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Task;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateTaskCommand;
-import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.Specialties;
-import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.TaskStatuses;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.UpdateTaskCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.*;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.TaskCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.infrastructure.persistence.jpa.repositories.MilestoneRepository;
 import com.galaxiawonder.propgms.propgmsplatform.projects.infrastructure.persistence.jpa.repositories.SpecialtyRepository;
@@ -77,5 +77,55 @@ public class TaskCommandServiceImpl implements TaskCommandService {
         }
         var createdTask = taskRepository.save(task);
         return Optional.of(createdTask);
+    }
+
+    public Optional<Task> handle(UpdateTaskCommand command){
+        if (command == null){
+            throw new IllegalArgumentException("Update Task Command cannot be null");
+        }
+
+        var task = taskRepository.findById(command.id())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "The task with the id " + command.id() + "does not exists"
+                ));
+
+        if (command.name() != null){
+            task.reassignName(new MilestoneItemName(command.name()));
+        }
+
+        if (command.description() != null){
+            task.reassignDescription(new Description(command.description()));
+        }
+
+        if (command.status() != null){
+            var status = taskStatusRepository.findByName(TaskStatuses.valueOf(command.status()))
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "The task status with the name " + command.status() + "does not exists"
+                    ));
+            task.reassignStatus(status);
+        }
+
+        if (command.startDate() != null && command.endDate() != null){
+            var newRangeDate = new DateRange(command.startDate(), command.endDate());
+            task.validateDateRange(newRangeDate);
+            task.reassignDateRange(newRangeDate);
+        }
+
+        if(command.removePerson()){
+            var reassignedStatus = taskStatusRepository.findByName(TaskStatuses.DRAFT)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "The task status with the name " + TaskStatuses.DRAFT + "does not exists"
+                    ));
+            task.toDraft(reassignedStatus);
+        } else if (command.personId() != null) {
+            var personId = iamContextFacade.getProfileDetailsById(command.personId());
+            if (personId == null){
+                throw new IllegalArgumentException("The person with the id " + command.personId() + "does not exists");
+            }
+            task.reassignPerson(new PersonId(command.personId()));
+        }
+
+        var updatedTask = taskRepository.save(task);
+        return Optional.of(updatedTask);
     }
 }

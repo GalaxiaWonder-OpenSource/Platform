@@ -4,8 +4,10 @@ import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregate
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.TaskCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.CreateTaskCommandFromResourceAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.TaskResourceFromEntityAssembler;
+import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.UpdateTaskCommandFromResourceAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.CreateTaskResource;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.TaskResource;
+import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.UpdateTaskResource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -13,10 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -45,6 +44,23 @@ public class TaskController {
                 .handle(CreateTaskCommandFromResourceAssembler.toCommandFromResource(resource));
         return task
                 .map(source -> new ResponseEntity<>(TaskResourceFromEntityAssembler.toResourceFromEntity(source), HttpStatus.CREATED))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    }
+
+    @Operation(
+            summary = "Update a task with a given Id",
+            description = "Update a task based on the provided information"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Task updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request")
+    })
+    @PatchMapping("{taskId}")
+    public ResponseEntity<TaskResource> updateTask(@PathVariable Long taskId, @RequestBody UpdateTaskResource resource){
+        Optional<Task> task = taskCommandService
+                .handle(UpdateTaskCommandFromResourceAssembler.toCommandFromResource(taskId, resource));
+        return task
+                .map(source -> new ResponseEntity<>(TaskResourceFromEntityAssembler.toResourceFromEntity(source), HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 }
