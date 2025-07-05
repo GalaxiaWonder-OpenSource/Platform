@@ -35,7 +35,7 @@ public record MilestoneName(String milestoneName) {
         if (milestoneName == null || milestoneName.isBlank()) {
             throw new IllegalArgumentException("Milestone projectName must not be null or blank");
         }
-        if (milestoneName.length() > 20) {
+        if (milestoneName.length() > 100) {
             throw new IllegalArgumentException("Milestone projectName must not exceed 100 characters");
         }
     }
