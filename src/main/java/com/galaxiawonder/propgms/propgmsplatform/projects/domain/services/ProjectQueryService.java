@@ -4,6 +4,7 @@ import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregate
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.ProjectTeamMember;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetAllProjectsByTeamMemberPersonIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetProjectByProjectIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetProjectInfoByProjectIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.ProjectInfo;
 
 import java.util.List;
@@ -30,5 +31,7 @@ public interface ProjectQueryService {
      */
     List<Project> handle(GetAllProjectsByTeamMemberPersonIdQuery query);
 
-    Optional<ProjectInfo> handle(GetProjectByProjectIdQuery query);
+    Optional<ProjectInfo> handle(GetProjectInfoByProjectIdQuery query);
+
+    Optional<Project> handle(GetProjectByProjectIdQuery query);
 }

@@ -9,6 +9,7 @@ import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.UpdateProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetAllProjectsByTeamMemberPersonIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetProjectByProjectIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectQueryService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.CreateProjectCommandFromResourceAssembler;
@@ -76,6 +77,22 @@ public class ProjectController {
         return project
                 .map(source -> new ResponseEntity<>(ProjectResourceFromEntityAssembler.toResourceFromEntity(source), HttpStatus.CREATED))
                 .orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @Operation(
+            summary = "Get project by ID",
+            description = "Retrieves a project by a id"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Project retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Project not found")
+    })
+    @GetMapping("/{projectId}")
+    public ResponseEntity<ProjectResource> getProjectById(@PathVariable Long projectId) {
+        var query = new GetProjectByProjectIdQuery(projectId);
+        Optional<Project> project = projectQueryService.handle(query);
+        return project.map(source -> new ResponseEntity<>(ProjectResourceFromEntityAssembler.toResourceFromEntity(source), HttpStatus.OK))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**

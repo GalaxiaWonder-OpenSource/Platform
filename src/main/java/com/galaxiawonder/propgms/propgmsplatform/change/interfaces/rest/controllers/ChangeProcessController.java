@@ -49,7 +49,7 @@ public class ChangeProcessController {
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
-    @GetMapping("projects/{projectId}")
+    @GetMapping("projects/{projectId}/change-process")
     public ResponseEntity<ChangeProcessResource>
     getChangesByProjectId(@PathVariable long projectId) {
         var changeProcess = changeProcessQueryService.handle(new com.galaxiawonder.propgms.propgmsplatform.change.domain.model.queries.GetChangeProcessByProjectIdQuery(projectId));

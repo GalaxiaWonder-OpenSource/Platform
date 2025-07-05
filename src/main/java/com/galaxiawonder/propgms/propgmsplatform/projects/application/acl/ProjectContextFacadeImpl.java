@@ -1,6 +1,6 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.application.acl;
 
-import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetProjectByProjectIdQuery;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetProjectInfoByProjectIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.ProjectInfo;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectQueryService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.acl.ProjectContextFacade;
@@ -17,6 +17,6 @@ public class ProjectContextFacadeImpl implements ProjectContextFacade {
     }
 
     public Optional<ProjectInfo> getProjectInformationByProjectId(Long projectId){
-        return projectQueryService.handle(new GetProjectByProjectIdQuery(projectId));
+        return projectQueryService.handle(new GetProjectInfoByProjectIdQuery(projectId));
     }
 }
