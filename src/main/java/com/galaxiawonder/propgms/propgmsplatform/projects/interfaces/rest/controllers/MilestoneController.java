@@ -1,6 +1,7 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.controllers;
 
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Milestone;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteMilestoneCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.MilestoneCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.CreateMilestoneCommandFromResourceAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.MilestoneResourceFromEntityAssembler;
@@ -8,6 +9,7 @@ import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemb
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.CreateMilestoneResource;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.MilestoneResource;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.UpdateMilestoneResource;
+import com.galaxiawonder.propgms.propgmsplatform.shared.interfaces.rest.resources.GenericMessageResource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -62,5 +64,20 @@ public class MilestoneController {
         return milestoneUpdated
                 .map(source -> new ResponseEntity<>(MilestoneResourceFromEntityAssembler.toResourceFromEntity(source), HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    }
+
+    @Operation(
+            summary = "Delete milestone by Id",
+            description = "Deletes a milestone with the given Id"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Milestone deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Milestone not found")
+    })
+    @DeleteMapping("{id}")
+    public ResponseEntity<GenericMessageResource> deleteMilestone(@PathVariable Long id){
+        var deleteMilestoneCommand = new DeleteMilestoneCommand(id);
+        milestoneCommandService.handle(deleteMilestoneCommand);
+        return ResponseEntity.ok(new GenericMessageResource("Milestone successfully deleted"));
     }
 }

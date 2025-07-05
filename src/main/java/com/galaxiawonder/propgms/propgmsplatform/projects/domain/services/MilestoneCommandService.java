@@ -2,6 +2,7 @@ package com.galaxiawonder.propgms.propgmsplatform.projects.domain.services;
 
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Milestone;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateMilestoneCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteMilestoneCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.UpdateMilestoneCommand;
 import org.springframework.stereotype.Service;
 
@@ -22,4 +23,10 @@ public interface MilestoneCommandService {
      * @return The updated milestone
      */
     Optional<Milestone> handle(UpdateMilestoneCommand command);
+
+    /**
+     * Handles the delete milestone
+     * @param command The delete command contains the milestone Id.
+     */
+    void handle(DeleteMilestoneCommand command);
 }

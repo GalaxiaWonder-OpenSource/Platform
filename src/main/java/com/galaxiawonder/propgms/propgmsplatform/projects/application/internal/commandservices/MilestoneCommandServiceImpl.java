@@ -2,6 +2,7 @@ package com.galaxiawonder.propgms.propgmsplatform.projects.application.internal.
 
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Milestone;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateMilestoneCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteMilestoneCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.UpdateMilestoneCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.MilestoneCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.infrastructure.persistence.jpa.repositories.MilestoneRepository;
@@ -69,5 +70,17 @@ public class MilestoneCommandServiceImpl implements MilestoneCommandService {
 
         var updatedMilestone = milestoneRepository.save(milestone);
         return Optional.of(updatedMilestone);
+    }
+
+    @Override
+    public void handle(DeleteMilestoneCommand command){
+        if (command == null){
+            throw new IllegalArgumentException("DeleteMilestoneCommand cannot be null");
+        }
+        var milestone = milestoneRepository.findById(command.milestoneId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "The milestone with the id " + command.milestoneId() + "does not exists"
+                ));
+        milestoneRepository.delete(milestone);
     }
 }

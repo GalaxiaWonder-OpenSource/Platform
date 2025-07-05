@@ -142,11 +142,6 @@ public class ProjectController {
         return new ResponseEntity<>(resources, HttpStatus.OK);
     }
 
-
-
-
-
-
     @DeleteMapping("{id}")
     @Operation(
             summary = "Delete project by ID",
@@ -161,8 +156,6 @@ public class ProjectController {
         projectCommandService.handle(deleteProjectCommand);
         return ResponseEntity.ok(new GenericMessageResource("Project successfully deleted"));
     }
-
-
 
     @PatchMapping("{id}")
     @Operation(
