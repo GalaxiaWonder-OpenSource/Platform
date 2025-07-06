@@ -2,21 +2,21 @@ package com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.contr
 
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.ProjectTeamMember;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectTeamMemberCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectTeamMemberCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectTeamMemberCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.CreateProjectTeamMemberCommandFromResourceAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.ProjectTeamMemberResourceFromEntityAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.CreateProjectTeamMemberResource;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.ProjectTeamMemberResource;
+import com.galaxiawonder.propgms.propgmsplatform.shared.interfaces.rest.resources.GenericMessageResource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -45,5 +45,20 @@ public class ProjectTeamMemberController {
         return projectTeamMember
                 .map(source -> new ResponseEntity<>(ProjectTeamMemberResourceFromEntityAssembler.toResourceFromEntity(source), HttpStatus.CREATED))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    }
+
+    @Operation(
+            summary = "Delete a project team member by Id",
+            description = "Deletes a project team member with the given Id"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Project team member deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Project team member not found")
+    })
+    @DeleteMapping("{id}")
+    public ResponseEntity<GenericMessageResource> deleteProjectTeamMember(@PathVariable Long id){
+        var deleteProjectTeamMember = new DeleteProjectTeamMemberCommand(id);
+        projectTeamMemberCommandService.handle(deleteProjectTeamMember);
+        return ResponseEntity.ok(new GenericMessageResource("Project team member successfully deleted"));
     }
 }

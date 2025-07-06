@@ -2,8 +2,10 @@ package com.galaxiawonder.propgms.propgmsplatform.projects.application.internal.
 
 import com.galaxiawonder.propgms.propgmsplatform.iam.interfaces.acl.IAMContextFacade;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.acl.OrganizationContextFacade;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.Project;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.ProjectTeamMember;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectTeamMemberCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectTeamMemberCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.ProjectTeamMemberType;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.Specialty;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.ProjectTeamMemberTypes;
@@ -116,5 +118,13 @@ public class ProjectTeamMemberCommandServiceImpl implements ProjectTeamMemberCom
                 .orElseThrow(() -> new IllegalArgumentException("Project team member type not found"));
     }
 
+    public void handle(DeleteProjectTeamMemberCommand command) {
+        if (command == null) {
+            throw new IllegalArgumentException("DeleteProjectTeamMemberCommand must not be null");
+        }
+        var projectTeamMember = projectTeamMemberRepository.findById(command.teamMemberId())
+                .orElseThrow(() -> new IllegalArgumentException("Project team member not found with ID: " + command.teamMemberId()));
+        projectTeamMemberRepository.delete(projectTeamMember);
+    }
 }
 

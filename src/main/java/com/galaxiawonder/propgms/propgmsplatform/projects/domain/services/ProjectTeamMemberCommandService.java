@@ -2,6 +2,7 @@ package com.galaxiawonder.propgms.propgmsplatform.projects.domain.services;
 
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.ProjectTeamMember;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectTeamMemberCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectTeamMemberCommand;
 
 import java.util.Optional;
 
@@ -13,4 +14,6 @@ public interface ProjectTeamMemberCommandService {
      * @return an {@link Optional} containing the created {@link ProjectTeamMember} if successful
      */
     Optional<ProjectTeamMember> handle(CreateProjectTeamMemberCommand command);
+
+    void handle(DeleteProjectTeamMemberCommand command);
 }
