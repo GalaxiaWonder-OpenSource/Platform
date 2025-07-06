@@ -5,6 +5,7 @@ import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobject
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProjectId;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -22,5 +23,6 @@ import java.util.Optional;
  */
 public interface ProjectTeamMemberRepository extends JpaRepository<ProjectTeamMember, Long> {
     Optional<ProjectTeamMember> findByOrganizationMemberIdAndProjectId(OrganizationMemberId organizationMemberId, ProjectId projectId);
+    Optional<List<ProjectTeamMember>> findAllByProjectId(ProjectId projectId);
 }
 

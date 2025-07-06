@@ -3,7 +3,9 @@ package com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.contr
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates.ProjectTeamMember;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectTeamMemberCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.DeleteProjectTeamMemberCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.queries.GetAllTeamMembersByProjectIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectTeamMemberCommandService;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectTeamMemberQueryService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.CreateProjectTeamMemberCommandFromResourceAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.ProjectTeamMemberResourceFromEntityAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources.CreateProjectTeamMemberResource;
@@ -18,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -25,9 +28,12 @@ import java.util.Optional;
 @Tag(name = "Project Team Members", description = "Endpoints for Project Team Members")
 public class ProjectTeamMemberController {
     private final ProjectTeamMemberCommandService projectTeamMemberCommandService;
+    private final ProjectTeamMemberQueryService projectTeamMemberQueryService;
 
-    public ProjectTeamMemberController(ProjectTeamMemberCommandService projectTeamMemberCommandService) {
+    public ProjectTeamMemberController(ProjectTeamMemberCommandService projectTeamMemberCommandService,
+                                       ProjectTeamMemberQueryService projectTeamMemberQueryService) {
         this.projectTeamMemberCommandService = projectTeamMemberCommandService;
+        this.projectTeamMemberQueryService = projectTeamMemberQueryService;
     }
 
     @Operation(
@@ -45,6 +51,25 @@ public class ProjectTeamMemberController {
         return projectTeamMember
                 .map(source -> new ResponseEntity<>(ProjectTeamMemberResourceFromEntityAssembler.toResourceFromEntity(source), HttpStatus.CREATED))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    }
+
+    @Operation(
+            summary = "Get all project team members by project Id",
+            description = "Retrieves all project team members associated with a specific project"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Project team members retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "No project team members found for the project")
+    })
+    @GetMapping("/by-project-id/{projectId}")
+    public ResponseEntity<List<ProjectTeamMemberResource>> getAllProjectTeamMembersByProjectId(@PathVariable Long projectId){
+        Optional<List<ProjectTeamMember>> projectTeamMembers = projectTeamMemberQueryService
+                .handle(new GetAllTeamMembersByProjectIdQuery(projectId));
+        List<ProjectTeamMemberResource> resources = projectTeamMembers.map(source -> source.stream()
+                .map(ProjectTeamMemberResourceFromEntityAssembler::toResourceFromEntity)
+                .toList())
+                .orElseGet(List::of);
+        return new ResponseEntity<>(resources, HttpStatus.OK);
     }
 
     @Operation(

@@ -39,4 +39,5 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     Optional<List<Project>> findAllProjectsByTeamMemberPersonId(@Param("personId") Long personId);
 
     Optional<List<Project>> findAllProjectsByContractingEntityId(PersonId contractingEntityId);
+
 }
