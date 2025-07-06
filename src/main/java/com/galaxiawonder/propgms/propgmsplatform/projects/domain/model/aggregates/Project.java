@@ -1,16 +1,20 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.aggregates;
 
+import com.galaxiawonder.propgms.propgmsplatform.projects.application.internal.eventhandlers.ProjectCreatedEventHandler;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.CreateProjectCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.ProjectStatus;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.events.ProjectCreatedEvent;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.DateRange;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.Description;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.ProjectName;
+import com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.assemblers.UpdateProjectCommandFromResourceAssembler;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
-import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.OrganizationId;
-import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
-import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProjectId;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.*;
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.util.*;
 
 /**
  * Project
@@ -25,32 +29,50 @@ import lombok.Getter;
  * @since 1.0
  */
 @Entity
+@Table(name = "projects")
+@EntityListeners(AuditingEntityListener.class)
 public class Project extends AuditableAbstractAggregateRoot<Project> {
 
     /** Name of the project, encapsulated in a description object. */
+    @Column(nullable = false)
     @Getter
     @Embedded
     private ProjectName projectName;
 
     /** Description of the project, encapsulated in a description object. */
+    @Column
     @Getter
     @Embedded
     private Description description;
 
     /** Range of dates within the project will be done. */
+    @Column(nullable = false)
     @Getter
     @Embedded
     private DateRange dateRange;
 
     /** Identifier of the organization responsible for the project. */
+    @Column(nullable = false)
     @Getter
     @Embedded
     private OrganizationId organizationId;
 
-    /** Identifier of the person or entity in charge of contracting. */
+    /** Identifier of the person or entity who requested the project. */
+    @Column(nullable = false)
     @Getter
     @Embedded
     private PersonId contractingEntityId;
+
+    /** Name of the contracting entity. */
+    @Getter
+    @Embedded
+    private PersonName name;
+
+    @Getter
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "address", column = @Column(name = "email"))})
+    private EmailAddress email;
 
     /** Current status of the project, represented as an entity. */
     @Getter
@@ -58,52 +80,46 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     @JoinColumn(name = "status_id", nullable = false, unique = false)
     private ProjectStatus status;
 
+    @Getter
+    private String previousStatusName;
+
     /** Default constructor required by JPA. */
     public Project() {}
 
     /**
      * Constructs a project with the required fields.
-     *
-     * @param projectName the projectName of the project
-     * @param description the project's description
-     * @param status the current status of the project
-     * @param dateRange the range within the project activities will be done
-     * @param organizationId the ID of the organization in charge of the project.
-     * @param contractingEntityId the ID of the person who
+     * @param command Contains projectName (max 30 characters), description (max 200 characters), and dateRange (startDate cannot be after endDate)
+     * @param status The current status of the project
+     * @param contractingEntityId The ID of the contracting person or entity
      */
-    public Project(ProjectName projectName, Description description, ProjectStatus status, DateRange dateRange, OrganizationId organizationId, PersonId contractingEntityId) {
-        this.projectName = projectName;
-        this.description = description;
+    public Project(CreateProjectCommand command, ProjectStatus status, PersonId contractingEntityId, PersonName name, EmailAddress email) {
+        this.projectName = new ProjectName(command.projectName());
+        this.description = new Description(command.description());
         this.status = status;
-        this.dateRange = dateRange;
-        this.organizationId = organizationId;
+        this.dateRange = new DateRange(command.startDate(), command.endDate());
+        this.organizationId = new OrganizationId(command.organizationId());
         this.contractingEntityId = contractingEntityId;
+        this.name = name;
+        this.email = email;
     }
 
     /**
-     * Updates the project's projectName.
+     * Updates editable fields of the project in a partial and atomic operation.
      *
-     * @param newName the new projectName of the project
-     * @throws IllegalArgumentException if the new projectName is null
+     * @param projectName     the new name of the project (optional, ignored if null or blank)
+     * @param description     the new description of the project (optional, ignored if null or blank)
+     * @param newStatus       the new status of the project (optional)
+     * @param newEndingDate   the new ending date of the project (optional)
      */
-    public void updateProjectName(ProjectName newName) {
-        if (newName == null) {
-            throw new IllegalArgumentException("Project projectName cannot be null");
+    public void updateInformation(String projectName, String description, ProjectStatus newStatus, Date newEndingDate) {
+        if (!projectName.isBlank()) this.projectName = new ProjectName(projectName);
+        if (!(description.isBlank())) this.description = new Description(description);
+        if (newStatus != null) this.status = newStatus;
+        if (!newEndingDate.equals(UpdateProjectCommandFromResourceAssembler.NO_UPDATE_DATE)) {
+            this.dateRange = new DateRange(
+                    this.getDateRange().startDate(), newEndingDate
+            );
         }
-        this.projectName = newName;
-    }
-
-    /**
-     * Updates the project's description.
-     *
-     * @param newDescription the new description of the project
-     * @throws IllegalArgumentException if the new description is null
-     */
-    public void updateDescription(Description newDescription) {
-        if (newDescription == null) {
-            throw new IllegalArgumentException("Project description cannot be null");
-        }
-        this.description = newDescription;
     }
 
     /**
@@ -113,6 +129,7 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
      * @throws IllegalArgumentException if the new status is null
      */
     public void reassignStatus(ProjectStatus newStatus) {
+        this.recordPreviousStatus();
         if (newStatus == null) {
             throw new IllegalArgumentException("Project status cannot be null");
         }
@@ -129,7 +146,7 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
      * <p>The event is stored temporarily and will be dispatched by the application event publisher
      * at the appropriate time in the transaction lifecycle.</p>
      *
-     * @see com.galaxiawonder.propgms.propgmsplatform.projects.application.internal.eventhandlers.ProjectCreatedEventHandler
+     * @see ProjectCreatedEventHandler
      */
     public void projectCreated() {
         this.registerEvent(new ProjectCreatedEvent(
@@ -138,5 +155,11 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
                 new ProjectId(this.getId()))
         );
     }
+    
+    void recordPreviousStatus() {
+        this.previousStatusName = this.status.getName().name();
+    }
+    
+    public static final Date NO_UPDATE_DATE = new GregorianCalendar(9999, Calendar.DECEMBER, 31).getTime();
 }
 

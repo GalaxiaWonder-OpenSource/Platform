@@ -1,0 +1,350 @@
+version 2
+JvmtiExport can_access_local_variables 0
+JvmtiExport can_hotswap_or_post_breakpoint 1
+JvmtiExport can_post_on_exceptions 0
+# 222 ciObject found
+instanceKlass java/net/Socket
+ciInstanceKlass java/lang/Cloneable 1 0 7 100 1 100 1 1 1
+# instanceKlass java/lang/invoke/LambdaForm$MH+0x00000217901c0c00
+# instanceKlass java/lang/invoke/LambdaForm$MH+0x00000217901c0800
+instanceKlass  @bci com/mysql/cj/jdbc/ConnectionImpl realClose (ZZZLjava/lang/Throwable;)V 241 <appendix> argL0 ; # com/mysql/cj/jdbc/ConnectionImpl$$Lambda+0x00000217901aaac8
+instanceKlass  @bci com/mysql/cj/protocol/ExportControlled <clinit> ()V 169 <appendix> argL0 ; # com/mysql/cj/protocol/ExportControlled$$Lambda+0x00000217901aa888
+instanceKlass  @bci com/mysql/cj/protocol/ExportControlled <clinit> ()V 145 <appendix> argL0 ; # com/mysql/cj/protocol/ExportControlled$$Lambda+0x00000217901aa648
+instanceKlass  @bci com/mysql/cj/protocol/ExportControlled <clinit> ()V 121 <appendix> argL0 ; # com/mysql/cj/protocol/ExportControlled$$Lambda+0x00000217901aa408
+instanceKlass  @bci com/mysql/cj/protocol/ExportControlled <clinit> ()V 97 <appendix> argL0 ; # com/mysql/cj/protocol/ExportControlled$$Lambda+0x00000217901aa1c8
+instanceKlass com/mysql/cj/protocol/ExportControlled
+instanceKlass java/util/IdentityHashMap$IdentityHashMapIterator
+# instanceKlass sun/rmi/transport/Target$$Lambda+0x0000021790151148
+# instanceKlass sun/rmi/transport/Target$$Lambda+0x0000021790150f10
+# instanceKlass sun/rmi/transport/Target$$Lambda+0x0000021790150aa0
+instanceKlass  @bci sun/rmi/transport/Target lambda$refSetRemove$1 (Ljava/rmi/server/Unreferenced;)V 11 <appendix> member <vmtarget> ; # sun/rmi/transport/Target$$Lambda+0x0000021790150cd8
+instanceKlass  @bci sun/rmi/transport/Target refSetRemove (Ljava/rmi/dgc/VMID;)V 82 <appendix> member <vmtarget> ; # sun/rmi/transport/Target$$Lambda+0x0000021790150660
+instanceKlass com/intellij/database/remote/jdbc/LobInfo
+instanceKlass com/intellij/database/remote/jdbc/impl/UnparsedValue
+instanceKlass java/util/Formattable
+instanceKlass java/io/Console
+instanceKlass  @bci java/util/regex/Pattern and (Ljava/util/regex/Pattern$CharPredicate;Ljava/util/regex/Pattern$CharPredicate;Z)Ljava/util/regex/Pattern$CharPredicate; 14 <appendix> member <vmtarget> ; # java/util/regex/Pattern$$Lambda+0x0000021790150168
+instanceKlass  @bci java/util/regex/CharPredicates ctype (I)Ljava/util/regex/Pattern$CharPredicate; 1 <appendix> member <vmtarget> ; # java/util/regex/CharPredicates$$Lambda+0x000002179014fec8
+instanceKlass com/mysql/cj/util/TimeUtil
+instanceKlass com/mysql/cj/protocol/InternalTime
+instanceKlass sun/util/resources/Bundles$2
+instanceKlass java/util/ArrayList$SubList$1
+instanceKlass sun/util/resources/LocaleData$LocaleDataResourceBundleProvider
+instanceKlass java/util/spi/ResourceBundleProvider
+instanceKlass  @bci sun/util/locale/provider/JRELocaleProviderAdapter getDecimalFormatSymbolsProvider ()Ljava/text/spi/DecimalFormatSymbolsProvider; 8 <appendix> member <vmtarget> ; # sun/util/locale/provider/JRELocaleProviderAdapter$$Lambda+0x800000066
+instanceKlass java/text/DecimalFormatSymbols
+instanceKlass java/util/Formatter$FixedString
+instanceKlass java/util/Formatter$Flags
+instanceKlass java/util/Formatter$FormatSpecifier
+instanceKlass java/util/Formatter$FormatString
+instanceKlass java/util/Formatter$Conversion
+instanceKlass  @bci java/util/regex/Pattern Range (II)Ljava/util/regex/Pattern$CharPredicate; 23 <appendix> member <vmtarget> ; # java/util/regex/Pattern$$Lambda+0x80000002a
+instanceKlass java/util/Formatter
+instanceKlass java/util/DualPivotQuicksort
+# instanceKlass java/lang/invoke/LambdaForm$MH+0x00000217901bec00
+# instanceKlass java/lang/invoke/LambdaForm$DMH+0x00000217901bdc00
+# instanceKlass java/lang/invoke/LambdaForm$DMH+0x00000217901bd800
+instanceKlass java/util/Vector$1
+instanceKlass com/mysql/cj/jdbc/result/ResultSetImpl$1
+# instanceKlass java/lang/invoke/LambdaForm$MH+0x00000217901bd400
+instanceKlass com/mysql/cj/jdbc/result/ResultSetMetaData$1
+# instanceKlass java/lang/invoke/LambdaForm$MH+0x00000217901bcc00
+# instanceKlass java/lang/invoke/LambdaForm$MH+0x00000217901bc000
+# instanceKlass java/lang/invoke/LambdaForm$DMH+0x00000217901bb800
+instanceKlass java/sql/Ref
+instanceKlass com/intellij/database/remote/jdbc/RemoteClob
+instanceKlass com/intellij/database/remote/jdbc/RemoteBlob
+instanceKlass com/intellij/database/remote/jdbc/RemoteResultSetMetaData
+instanceKlass java/sql/Array
+instanceKlass com/intellij/database/remote/jdbc/RemoteArray
+instanceKlass com/intellij/database/remote/jdbc/RemoteRef
+# instanceKlass java/lang/invoke/LambdaForm$MH+0x00000217901bac00
+instanceKlass  @cpi com/mysql/cj/jdbc/ConnectionImpl 1524 form vmentry <vmtarget> ; # java/lang/invoke/LambdaForm$DMH+0x00000217901ba800
+# instanceKlass java/lang/invoke/LambdaForm$MH+0x00000217901ba400
+instanceKlass java/util/function/UnaryOperator
+# instanceKlass java/lang/invoke/LambdaForm$MH+0x00000217901b9000
+# instanceKlass java/lang/invoke/LambdaForm$DMH+0x00000217901b8000
+# instanceKlass java/lang/invoke/LambdaForm$MH+0x00000217901b3c00
+# instanceKlass java/lang/invoke/LambdaForm$MH+0x00000217901b3000
+# instanceKlass java/lang/invoke/LambdaForm$DMH+0x00000217901b2c00
+instanceKlass java/lang/invoke/ClassSpecializer$Factory$1Var
+# instanceKlass java/lang/invoke/LambdaForm$DMH+0x00000217901b2800
+instanceKlass sun/invoke/util/ValueConversions$1
+# instanceKlass java/lang/invoke/LambdaForm$DMH+0x00000217901b2400
+# instanceKlass java/lang/invoke/LambdaForm$DMH+0x00000217901b1c00
+instanceKlass com/intellij/database/remote/jdbc/RemoteResultSet
+# instanceKlass java/lang/invoke/LambdaForm$MH+0x00000217901b1800
+# instanceKlass java/lang/invoke/LambdaForm$DMH+0x00000217901b1400
+# instanceKlass java/lang/invoke/LambdaForm$MH+0x00000217901b0c00
+instanceKlass  @bci jdk/internal/reflect/DirectMethodHandleAccessor invokeImpl (Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object; 72 <adapter> ; # java/lang/invoke/LambdaForm$MH+0x00000217901b0800
+# instanceKlass java/lang/invoke/LambdaForm$MH+0x00000217901b0400
+# instanceKlass java/lang/invoke/LambdaForm$DMH+0x00000217901ad800
+# instanceKlass java/lang/invoke/LambdaForm$DMH+0x00000217901ad400
+instanceKlass com/mysql/cj/jdbc/CommentClientInfoProvider
+instanceKlass com/mysql/cj/jdbc/ClientInfoProvider
+# instanceKlass java/lang/invoke/LambdaForm$MH+0x00000217901ad000
+# instanceKlass java/lang/invoke/LambdaForm$DMH+0x00000217901ac800
+instanceKlass com/intellij/database/remote/jdbc/impl/RemoteBatchPreparedStatementImpl$Configuration
+instanceKlass com/intellij/database/remote/jdbc/RemoteCallableStatement
+instanceKlass com/intellij/database/remote/jdbc/RemoteDatabaseMetaData
+instanceKlass com/intellij/database/remote/jdba/RemoteFacade
+instanceKlass com/intellij/database/remote/jdbc/RemoteBatchPreparedStatement
+instanceKlass com/intellij/database/remote/jdbc/RemoteSavepoint
+instanceKlass com/intellij/execution/rmi/CastableArgument
+instanceKlass  @bci com/intellij/database/remote/jdbc/helpers/JdbcHelperImpl computeJdbcCatalogIsSchema ()Z 63 <appendix> member <vmtarget> ; # com/intellij/database/remote/jdbc/helpers/JdbcHelperImpl$$Lambda+0x000002179019d158
+instanceKlass  @bci com/intellij/database/remote/jdbc/helpers/JdbcHelperImpl computeJdbcCatalogIsSchema ()Z 42 <appendix> member <vmtarget> ; # com/intellij/database/remote/jdbc/helpers/JdbcHelperImpl$$Lambda+0x000002179019cf20
+instanceKlass  @bci com/intellij/database/remote/jdbc/helpers/JdbcHelperImpl computeJdbcCatalogIsSchema ()Z 18 <appendix> member <vmtarget> ; # com/intellij/database/remote/jdbc/helpers/JdbcHelperImpl$$Lambda+0x000002179019cce8
+instanceKlass com/intellij/openapi/util/ThrowableComputable
+instanceKlass  @bci com/intellij/database/remote/jdbc/helpers/JdbcNativeUtil getString (Ljava/sql/Connection;Ljava/lang/String;I)Ljava/lang/String; 26 <appendix> form vmentry <vmtarget> ; # java/lang/invoke/LambdaForm$DMH+0x00000217901ac000
+instanceKlass  @bci com/intellij/database/remote/jdbc/helpers/JdbcNativeUtil getString (Ljava/sql/Connection;Ljava/lang/String;I)Ljava/lang/String; 26 <appendix> member <vmtarget> ; # com/intellij/database/remote/jdbc/helpers/JdbcNativeUtil$$Lambda+0x000002179019c8a0
+instanceKlass com/mysql/cj/jdbc/result/ResultSetMetaData
+instanceKlass sun/util/calendar/CalendarUtils
+instanceKlass sun/util/calendar/CalendarDate
+instanceKlass sun/util/resources/Bundles$CacheKeyReference
+instanceKlass  @bci java/util/ResourceBundle$ResourceBundleProviderHelper newResourceBundle (Ljava/lang/Class;)Ljava/util/ResourceBundle; 22 <appendix> member <vmtarget> ; # java/util/ResourceBundle$ResourceBundleProviderHelper$$Lambda+0x800000010
+instanceKlass java/util/ResourceBundle$ResourceBundleProviderHelper
+instanceKlass  @bci sun/util/cldr/CLDRLocaleProviderAdapter applyAliases (Ljava/util/Locale;)Ljava/util/Locale; 4 <appendix> argL0 ; # sun/util/cldr/CLDRLocaleProviderAdapter$$Lambda+0x80000005f
+instanceKlass sun/util/resources/Bundles$CacheKey
+instanceKlass sun/util/resources/LocaleData$LocaleDataStrategy
+instanceKlass sun/util/resources/Bundles$Strategy
+instanceKlass sun/util/resources/LocaleData$1
+instanceKlass sun/util/resources/LocaleData
+instanceKlass sun/util/locale/provider/LocaleResources
+instanceKlass  @bci sun/util/locale/provider/LocaleProviderAdapter toLocaleArray (Ljava/util/Set;)[Ljava/util/Locale; 16 <appendix> argL0 ; # sun/util/locale/provider/LocaleProviderAdapter$$Lambda+0x800000069
+instanceKlass  @bci sun/util/locale/provider/LocaleProviderAdapter toLocaleArray (Ljava/util/Set;)[Ljava/util/Locale; 6 <appendix> argL0 ; # sun/util/locale/provider/LocaleProviderAdapter$$Lambda+0x800000068
+instanceKlass  @bci sun/util/cldr/CLDRLocaleProviderAdapter getCalendarDataProvider ()Ljava/util/spi/CalendarDataProvider; 8 <appendix> member <vmtarget> ; # sun/util/cldr/CLDRLocaleProviderAdapter$$Lambda+0x800000062
+instanceKlass sun/util/locale/provider/CalendarDataUtility$CalendarWeekParameterGetter
+instanceKlass sun/util/locale/provider/LocaleServiceProviderPool$LocalizedObjectGetter
+instanceKlass sun/util/locale/provider/LocaleServiceProviderPool
+instanceKlass java/util/Locale$Builder
+instanceKlass sun/util/locale/provider/CalendarDataUtility
+instanceKlass sun/util/calendar/CalendarSystem$GregorianHolder
+instanceKlass sun/util/calendar/CalendarSystem
+instanceKlass java/util/Calendar$Builder
+instanceKlass sun/util/locale/provider/AvailableLanguageTags
+instanceKlass  @bci sun/util/locale/provider/JRELocaleProviderAdapter getCalendarProvider ()Lsun/util/spi/CalendarProvider; 8 <appendix> member <vmtarget> ; # sun/util/locale/provider/JRELocaleProviderAdapter$$Lambda+0x800000063
+instanceKlass sun/util/resources/cldr/provider/CLDRLocaleDataMetaInfo
+instanceKlass  @bci sun/util/cldr/CLDRLocaleProviderAdapter <init> ()V 4 <appendix> argL0 ; # sun/util/cldr/CLDRLocaleProviderAdapter$$Lambda+0x800000061
+instanceKlass sun/util/locale/InternalLocaleBuilder$CaseInsensitiveChar
+instanceKlass sun/util/locale/InternalLocaleBuilder
+instanceKlass sun/util/locale/StringTokenIterator
+instanceKlass sun/util/locale/ParseStatus
+instanceKlass sun/util/locale/LanguageTag
+instanceKlass sun/util/cldr/CLDRBaseLocaleDataMetaInfo
+instanceKlass sun/util/locale/provider/LocaleDataMetaInfo
+instanceKlass sun/util/locale/provider/ResourceBundleBasedAdapter
+instanceKlass sun/util/locale/provider/LocaleProviderAdapter
+instanceKlass java/util/spi/LocaleServiceProvider
+instanceKlass com/mysql/cj/result/DefaultValueFactory
+instanceKlass  @bci com/mysql/cj/jdbc/ClientPreparedStatement initializeFromQueryInfo ()V 52 <appendix> argL0 ; # com/mysql/cj/jdbc/ClientPreparedStatement$$Lambda+0x00000217901a2ca8
+instanceKlass com/mysql/cj/NativeQueryBindValue
+instanceKlass com/mysql/cj/BindValue
+instanceKlass com/mysql/cj/NativeQueryBindings
+instanceKlass com/mysql/cj/QueryInfo
+instanceKlass com/mysql/cj/NativeQueryAttributesBindings
+instanceKlass com/mysql/cj/CancelQueryTask
+instanceKlass java/util/TimerTask
+instanceKlass com/mysql/cj/QueryAttributesBindings
+instanceKlass com/mysql/cj/AbstractQuery
+instanceKlass com/mysql/cj/PreparedQuery
+instanceKlass com/mysql/cj/QueryBindings
+instanceKlass com/mysql/cj/jdbc/ParameterBindings
+instanceKlass java/sql/ParameterMetaData
+instanceKlass com/mysql/cj/jdbc/EscapeProcessor
+instanceKlass  @bci com/intellij/database/remote/jdbc/helpers/JdbcNativeUtil consume (Ljava/sql/Connection;Ljava/lang/String;Lcom/intellij/util/ThrowableConsumer;)V 30 <appendix> member <vmtarget> ; # com/intellij/database/remote/jdbc/helpers/JdbcNativeUtil$$Lambda+0x000002179019c668
+instanceKlass  @bci com/intellij/database/remote/jdbc/helpers/JdbcNativeUtil getStrings (Ljava/sql/Connection;Ljava/lang/String;)[Ljava/lang/String; 25 <appendix> member <vmtarget> ; # com/intellij/database/remote/jdbc/helpers/JdbcNativeUtil$$Lambda+0x000002179019c430
+instanceKlass com/intellij/util/ThrowableConsumer
+instanceKlass com/intellij/openapi/util/Ref
+instanceKlass com/intellij/openapi/util/text/StringUtilRt
+instanceKlass com/mysql/cj/protocol/NetworkResources
+instanceKlass  @bci com/mysql/cj/jdbc/ConnectionImpl unSafeQueryInterceptors ()V 37 <appendix> argL0 ; # com/mysql/cj/jdbc/ConnectionImpl$$Lambda+0x000002179019af40
+instanceKlass  @bci com/mysql/cj/jdbc/ConnectionImpl unSafeQueryInterceptors ()V 27 <appendix> argL0 ; # com/mysql/cj/jdbc/ConnectionImpl$$Lambda+0x000002179019acf0
+instanceKlass  @bci com/mysql/cj/jdbc/ConnectionImpl unSafeQueryInterceptors ()V 17 <appendix> member <vmtarget> ; # com/mysql/cj/jdbc/ConnectionImpl$$Lambda+0x000002179019aa98
+instanceKlass java/time/zone/ZoneOffsetTransitionRule
+instanceKlass java/time/zone/ZoneRules
+instanceKlass  @bci java/time/ZoneOffset ofTotalSeconds (I)Ljava/time/ZoneOffset; 37 <appendix> argL0 ; # java/time/ZoneOffset$$Lambda+0x80000000c
+instanceKlass com/mysql/cj/LicenseConfiguration
+instanceKlass com/mysql/cj/protocol/InternalDate
+instanceKlass com/mysql/cj/result/StringValueFactory
+instanceKlass com/mysql/cj/protocol/a/result/AbstractResultsetRows
+instanceKlass com/mysql/cj/protocol/result/AbstractResultsetRow
+instanceKlass com/mysql/cj/result/DefaultColumnDefinition$1
+instanceKlass com/mysql/cj/protocol/a/MysqlTextValueDecoder
+instanceKlass com/mysql/cj/protocol/ValueDecoder
+instanceKlass com/mysql/cj/protocol/a/AbstractRowFactory
+instanceKlass com/mysql/cj/result/DefaultColumnDefinition
+instanceKlass com/mysql/cj/result/Field$1
+instanceKlass com/mysql/cj/protocol/a/ColumnDefinitionReader$1
+instanceKlass java/sql/SQLType
+instanceKlass com/mysql/cj/util/LazyString
+instanceKlass com/mysql/cj/result/Field
+instanceKlass com/mysql/cj/protocol/a/ColumnDefinitionFactory
+instanceKlass com/mysql/cj/protocol/a/ResultsetFactory
+instanceKlass com/mysql/cj/protocol/a/NativeMessageBuilder
+instanceKlass com/mysql/cj/protocol/a/MultiPacketReader
+instanceKlass com/mysql/cj/protocol/a/TimeTrackingPacketReader
+instanceKlass com/mysql/cj/protocol/a/TimeTrackingPacketSender
+instanceKlass com/mysql/cj/protocol/a/NativeServerSessionStateController$NativeServerSessionStateChanges
+instanceKlass com/mysql/cj/protocol/a/result/OkPacket
+instanceKlass com/mysql/cj/protocol/a/NativeUtils
+instanceKlass com/mysql/cj/protocol/a/PacketSplitter
+instanceKlass com/mysql/cj/protocol/Security
+instanceKlass com/mysql/cj/protocol/a/authentication/AuthenticationWebAuthnClient
+instanceKlass com/mysql/cj/protocol/a/authentication/AuthenticationFidoClient
+instanceKlass com/mysql/cj/protocol/a/authentication/AuthenticationOciClient
+instanceKlass  @bci com/mysql/cj/protocol/a/authentication/AuthenticationKerberosClient <init> ()V 43 <appendix> member <vmtarget> ; # com/mysql/cj/protocol/a/authentication/AuthenticationKerberosClient$$Lambda+0x0000021790193558
+instanceKlass com/mysql/cj/protocol/a/authentication/AuthenticationKerberosClient
+instanceKlass  @bci com/mysql/cj/protocol/a/authentication/AuthenticationLdapSaslClientPlugin <init> ()V 46 <appendix> member <vmtarget> ; # com/mysql/cj/protocol/a/authentication/AuthenticationLdapSaslClientPlugin$$Lambda+0x0000021790192df8
+instanceKlass sun/invoke/util/VerifyAccess$1
+instanceKlass javax/security/auth/callback/Callback
+instanceKlass javax/security/auth/callback/CallbackHandler
+instanceKlass javax/security/auth/login/Configuration
+instanceKlass com/mysql/cj/protocol/a/authentication/AuthenticationLdapSaslClientPlugin
+instanceKlass com/mysql/cj/protocol/a/authentication/MysqlOldPasswordPlugin
+instanceKlass com/mysql/cj/protocol/a/authentication/Sha256PasswordPlugin
+instanceKlass com/mysql/cj/protocol/a/authentication/MysqlClearPasswordPlugin
+instanceKlass com/mysql/cj/protocol/a/authentication/MysqlNativePasswordPlugin
+instanceKlass com/mysql/cj/protocol/AuthenticationPlugin
+instanceKlass com/mysql/cj/protocol/a/NativePacketPayload$1
+instanceKlass com/mysql/cj/protocol/a/NativeCapabilities
+instanceKlass com/mysql/cj/protocol/a/NativePacketHeader
+instanceKlass com/mysql/cj/Collation
+instanceKlass sun/nio/cs/ArrayEncoder
+instanceKlass sun/nio/cs/DelegatableDecoder
+instanceKlass jdk/internal/foreign/MemorySessionImpl
+instanceKlass java/lang/foreign/MemorySegment$Scope
+instanceKlass java/nio/charset/Charset$ExtendedProviderHolder$1
+instanceKlass java/nio/charset/Charset$ExtendedProviderHolder
+instanceKlass  @bci com/mysql/cj/MysqlCharset <init> (Ljava/lang/String;II[Ljava/lang/String;Lcom/mysql/cj/ServerVersion;)V 81 <appendix> member <vmtarget> ; # com/mysql/cj/MysqlCharset$$Lambda+0x000002179018b460
+instanceKlass com/mysql/cj/ServerVersion
+instanceKlass com/mysql/cj/MysqlCharset
+instanceKlass com/mysql/cj/CharsetMapping
+instanceKlass com/mysql/cj/protocol/a/NativeServerSessionStateController
+instanceKlass com/mysql/cj/protocol/ServerSessionStateController
+instanceKlass com/mysql/cj/protocol/a/NativeServerSession
+instanceKlass com/mysql/cj/protocol/a/BinaryResultsetReader
+instanceKlass com/mysql/cj/protocol/a/TextResultsetReader
+instanceKlass com/mysql/cj/protocol/a/ResultsetRowReader
+instanceKlass com/mysql/cj/protocol/ResultsetRow
+instanceKlass com/mysql/cj/protocol/a/ColumnDefinitionReader
+instanceKlass com/mysql/cj/protocol/ProtocolEntityReader
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeAuthenticationProvider <init> ()V 26 <appendix> member <vmtarget> ; # com/mysql/cj/protocol/a/NativeAuthenticationProvider$$Lambda+0x0000021790188f10
+instanceKlass com/mysql/cj/callback/MysqlCallback
+instanceKlass com/mysql/cj/callback/MysqlCallbackHandler
+instanceKlass com/mysql/cj/protocol/a/NativeAuthenticationProvider
+instanceKlass com/mysql/cj/protocol/a/SimplePacketReader
+instanceKlass com/mysql/cj/protocol/a/SimplePacketSender
+instanceKlass com/mysql/cj/protocol/a/NativePacketPayload
+instanceKlass com/mysql/cj/log/BaseMetricsHolder
+instanceKlass com/mysql/cj/protocol/AbstractProtocol$2
+instanceKlass com/mysql/cj/protocol/AbstractProtocol$1
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 504 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x00000217901875a0
+instanceKlass java/time/ZonedDateTime
+instanceKlass java/time/chrono/ChronoZonedDateTime
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 487 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x0000021790187068
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 470 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x0000021790186b30
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 453 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x00000217901865f8
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 436 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x00000217901860c0
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 419 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x0000021790185e90
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 402 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x0000021790185c60
+instanceKlass java/time/OffsetTime
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 385 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x0000021790185728
+instanceKlass java/time/OffsetDateTime
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 368 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x00000217901851f0
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 351 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x0000021790184fc0
+instanceKlass java/time/LocalTime
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 334 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x0000021790184a88
+instanceKlass java/time/LocalDateTime
+instanceKlass java/time/chrono/ChronoLocalDateTime
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 317 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x0000021790184550
+instanceKlass java/time/LocalDate
+instanceKlass java/time/chrono/ChronoLocalDate
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 300 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x0000021790184018
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 284 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x0000021790183de8
+instanceKlass java/time/Instant
+instanceKlass java/time/temporal/TemporalAdjuster
+instanceKlass java/time/temporal/Temporal
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 267 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x00000217901838b0
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 250 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x0000021790183680
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 233 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x0000021790183450
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 216 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x0000021790182f18
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 199 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x0000021790182ce8
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 182 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x00000217901827b0
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 165 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x0000021790182278
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 148 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x0000021790181a28
+instanceKlass java/util/Calendar
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 131 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x00000217901814f0
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 114 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x0000021790180fb8
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 97 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x0000021790180d88
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 81 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x0000021790180850
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 64 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x0000021790180000
+instanceKlass  @bci com/mysql/cj/protocol/a/NativeProtocol <clinit> ()V 47 <appendix> argL0 ; # com/mysql/cj/protocol/a/NativeProtocol$$Lambda+0x000002179013fd08
+instanceKlass com/mysql/cj/protocol/a/AbstractValueEncoder
+instanceKlass com/mysql/cj/protocol/ValueEncoder
+instanceKlass com/mysql/cj/protocol/MessageHeader
+instanceKlass com/mysql/cj/CharsetSettings
+instanceKlass com/mysql/cj/MessageBuilder
+instanceKlass com/mysql/cj/protocol/ServerSessionStateController$ServerSessionStateChanges
+instanceKlass com/mysql/cj/protocol/ServerCapabilities
+instanceKlass com/mysql/cj/protocol/AuthenticationProvider
+instanceKlass com/mysql/cj/protocol/ServerSession
+instanceKlass com/mysql/cj/protocol/MessageReader
+instanceKlass com/mysql/cj/protocol/MessageSender
+instanceKlass com/mysql/cj/protocol/PacketReceivedTimeHolder
+instanceKlass com/mysql/cj/protocol/AbstractProtocol
+instanceKlass com/mysql/cj/protocol/Protocol$ProtocolEventHandler
+instanceKlass com/mysql/cj/conf/RuntimeProperty$RuntimePropertyListener
+instanceKlass java/util/concurrent/atomic/Striped64$1
+instanceKlass jdk/internal/util/random/RandomSupport
+instanceKlass java/net/InetAddress$CachedLookup
+instanceKlass sun/net/InetAddressCachePolicy$1
+instanceKlass sun/net/InetAddressCachePolicy
+instanceKlass java/util/stream/Nodes$ArrayNode
+instanceKlass  @bci java/net/InetAddress getAddressesFromNameService (Ljava/lang/String;)[Ljava/net/InetAddress; 94 <appendix> argL0 ; # java/net/InetAddress$$Lambda+0x00000217901445a0
+instanceKlass  @bci java/net/InetAddress loadResolver ()Ljava/net/spi/InetAddressResolver; 8 <appendix> argL0 ; # java/net/InetAddress$$Lambda+0x0000021790144350
+instanceKlass java/net/spi/InetAddressResolverProvider
+instanceKlass java/net/InetAddress$NameServiceAddresses
+instanceKlass java/net/InetAddress$Addresses
+instanceKlass java/util/concurrent/ConcurrentSkipListMap$Iter
+instanceKlass com/mysql/cj/protocol/StandardSocketFactory
+instanceKlass com/mysql/cj/protocol/PacketSentTimeHolder
+instanceKlass com/mysql/cj/protocol/SocketFactory
+instanceKlass com/mysql/cj/protocol/SocketMetadata
+instanceKlass com/mysql/cj/protocol/AbstractSocketConnection
+instanceKlass  @bci com/mysql/cj/jdbc/ConnectionImpl initializeSafeQueryInterceptors ()V 45 <appendix> argL0 ; # com/mysql/cj/jdbc/ConnectionImpl$$Lambda+0x000002179013a370
+instanceKlass  @bci com/mysql/cj/jdbc/ConnectionImpl initializeSafeQueryInterceptors ()V 35 <appendix> member <vmtarget> ; # com/mysql/cj/jdbc/ConnectionImpl$$Lambda+0x000002179013a118
+instanceKlass com/mysql/cj/NoSubInterceptorWrapper
+instanceKlass java/util/LinkedList$LLSpliterator
+instanceKlass  @bci java/util/stream/Collectors toCollection (Ljava/util/function/Supplier;)Ljava/util/stream/Collector; 10 <appendix> argL0 ; # java/util/stream/Collectors$$Lambda+0x0000021790142690
+instanceKlass  @bci java/util/stream/Collectors toCollection (Ljava/util/function/Supplier;)Ljava/util/stream/Collector; 5 <appendix> argL0 ; # java/util/stream/Collectors$$Lambda+0x0000021790142450
+instanceKlass  @bci com/mysql/cj/util/Util loadClasses (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;Lcom/mysql/cj/exceptions/ExceptionInterceptor;)Ljava/util/List; 34 <appendix> argL0 ; # com/mysql/cj/util/Util$$Lambda+0x0000021790139c40
+instanceKlass  @bci com/mysql/cj/util/Util loadClasses (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;Lcom/mysql/cj/exceptions/ExceptionInterceptor;)Ljava/util/List; 24 <appendix> member <vmtarget> ; # com/mysql/cj/util/Util$$Lambda+0x00000217901399e8
+instanceKlass  @bci com/mysql/cj/util/Util loadClasses (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;Lcom/mysql/cj/exceptions/ExceptionInterceptor;)Ljava/util/List; 12 <appendix> argL0 ; # com/mysql/cj/util/Util$$Lambda+0x0000021790139788
+instanceKlass com/mysql/cj/interceptors/QueryInterceptor
+instanceKlass com/mysql/cj/result/Row
+instanceKlass com/mysql/cj/jdbc/DatabaseMetaData$IteratorWithCleanup
+instanceKlass com/mysql/cj/protocol/ResultsetRows
+instanceKlass com/mysql/cj/result/RowList
+instanceKlass com/mysql/cj/jdbc/DatabaseMetaData
+instanceKlass com/mysql/cj/log/LogFactory
+instanceKlass com/mysql/cj/log/NullLogger
+instanceKlass com/mysql/cj/result/ValueFactory
+instanceKlass com/mysql/cj/protocol/Message
+instanceKlass com/mysql/cj/protocol/Protocol
+instanceKlass com/mysql/cj/protocol/SocketConnection
+instanceKlass com/mysql/cj/DataStoreMetadata
+instanceKlass com/mysql/cj/CoreSession
+instanceKlass com/mysql/cj/protocol/a/result/NativeResultset
+instanceKlass com/mysql/cj/WarningListener
+instanceKlass com/mysql/cj/jdbc/result/ResultSetInternalMethods
+instanceKlass com/mysql/cj/protocol/Resultset
+instanceKlass com/mysql/cj/protocol/ResultsetRowsOwner
+instanceKlass com/mysql/cj/jdbc/result/ResultSetFactory
+instanceKlass com/mysql/cj/conf/AbstractRuntimeProperty
+instanceKlass com/mysql/cj/PerConnectionLRUFactory
+instanceKlass com/mysql/cj/util/PerVmServerConfigCacheFactory
+instanceKlass com/mysql/cj/CacheAdapterFactory
+instanceKlass java/text/AttributedCharacterIterator$Attribute
+instanceKlass com/mysql/cj/conf/AbstractPropertyDefinition
+instanceKlass com/mysql/cj/conf/PropertyDefinitions
+instanceKlass com/mysql/cj/conf/RuntimeProperty

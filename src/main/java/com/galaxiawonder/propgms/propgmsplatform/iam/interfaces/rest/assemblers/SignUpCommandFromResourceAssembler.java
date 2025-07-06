@@ -34,7 +34,9 @@ public class SignUpCommandFromResourceAssembler {
                 resource.firstName(),
                 resource.lastName(),
                 resource.email(),
-                resource.phone() != null ? resource.phone() : null
+                resource.phone() != null ? resource.phone() : null,
+                resource.professionalId() != null ? resource.professionalId() : null,
+                resource.specialty() != null ? resource.specialty() : null
         );
     }
 }

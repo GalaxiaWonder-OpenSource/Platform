@@ -30,7 +30,9 @@ public record SignUpResource(
         String firstName,
         String lastName,
         String email,
-        @Nullable String phone
+        @Nullable String phone,
+        @Nullable String professionalId,
+        @Nullable String specialty
 ) {
 }
 

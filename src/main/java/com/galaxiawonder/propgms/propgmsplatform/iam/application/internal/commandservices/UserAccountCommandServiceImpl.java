@@ -12,6 +12,9 @@ import com.galaxiawonder.propgms.propgmsplatform.iam.domain.services.UserAccount
 import com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persistence.jpa.repositories.PersonRepository;
 import com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persistence.jpa.repositories.UserAccountRepository;
 import com.galaxiawonder.propgms.propgmsplatform.iam.infrastructure.persistence.jpa.repositories.UserTypeRepository;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.Specialty;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.valueobjects.Specialties;
+import com.galaxiawonder.propgms.propgmsplatform.projects.infrastructure.persistence.jpa.repositories.SpecialtyRepository;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.EmailAddress;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -60,6 +63,8 @@ public class UserAccountCommandServiceImpl implements UserAccountCommandService 
      */
     private final TokenService tokenService;
 
+    private final SpecialtyRepository specialtyRepository;
+
     /**
      * Constructs the service with all necessary dependencies.
      *
@@ -73,12 +78,14 @@ public class UserAccountCommandServiceImpl implements UserAccountCommandService 
             PersonRepository personRepository,
             UserTypeRepository userTypeRepository,
             HashingService hashingService,
-            TokenService tokenService) {
+            TokenService tokenService,
+            SpecialtyRepository specialtyRepository) {
         this.userAccountRepository = userAccountRepository;
         this.personRepository = personRepository;
         this.userTypeRepository = userTypeRepository;
         this.hashingService = hashingService;
         this.tokenService = tokenService;
+        this.specialtyRepository = specialtyRepository;
     }
 
     /**
@@ -89,6 +96,11 @@ public class UserAccountCommandServiceImpl implements UserAccountCommandService 
         validateUniqueAccountData(command);
 
         Person person = new Person(command);
+        if(command.specialty() != null) {
+            Specialty specialty = getSpecialtyFromDatabase(command)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid specialty"));
+            person.assignSpecialty(specialty);
+        }
         personRepository.save(person);
 
         UserType userType = getUserTypeFromDatabase(command)
@@ -217,6 +229,18 @@ public class UserAccountCommandServiceImpl implements UserAccountCommandService 
      */
     private Optional<UserAccount> getUserAccountFromDatabase(String command) {
         return userAccountRepository.findByUserName(new UserName(command));
+    }
+
+    /**
+     * Retrieves the specialty from the database using the enum projectName provided in the command.
+     *
+     * @param command the sign-up command containing the specialty projectName
+     * @return an {@code Optional<Specialty>} if found
+     * @throws IllegalArgumentException if the specialty does not exist
+     */
+    private Optional<Specialty> getSpecialtyFromDatabase(SignUpCommand command) {
+        Specialties enumValue = Specialties.valueOf(command.specialty());
+        return specialtyRepository.findByName(enumValue);
     }
 
 }

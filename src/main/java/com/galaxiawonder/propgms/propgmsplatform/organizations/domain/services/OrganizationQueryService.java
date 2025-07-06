@@ -106,4 +106,6 @@ public interface OrganizationQueryService {
      * @since 1.0
      */
     List<Triple<Organization, OrganizationInvitation, ProfileDetails>> handle(GetAllInvitationsByPersonIdQuery query);
+
+    Optional<List<Organization>> handle(GetAllOrganizationsQuery query);
 }

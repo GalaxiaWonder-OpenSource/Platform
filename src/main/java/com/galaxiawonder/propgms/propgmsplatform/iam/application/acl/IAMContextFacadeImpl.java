@@ -4,8 +4,10 @@ import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.aggregates.Per
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.queries.GetPersonByEmailQuery;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.queries.GetPersonByIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.queries.GetPersonIdByEmailQuery;
+import com.galaxiawonder.propgms.propgmsplatform.iam.domain.model.queries.GetSpecialtyByPersonIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.iam.domain.services.PersonQueryService;
 import com.galaxiawonder.propgms.propgmsplatform.iam.interfaces.acl.IAMContextFacade;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.entities.Specialty;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.ProfileDetails;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
@@ -65,5 +67,10 @@ public class IAMContextFacadeImpl implements IAMContextFacade {
     @Override
     public Long getPersonIdFromEmail(String email) {
         return this.personQueryService.handle(new GetPersonIdByEmailQuery(email));
+    }
+
+    @Override
+    public Specialty getSpecialtyFromPersonId(Long id) {
+        return this.personQueryService.handle(new GetSpecialtyByPersonIdQuery(id));
     }
 }

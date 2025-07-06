@@ -1,9 +1,11 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.application.internal.eventhandlers;
 
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.SeedProjectStatusCommand;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.SeedProjectTeamMemberTypeCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.SeedSpecialtyCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.model.commands.SeedTaskStatusCommand;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectStatusCommandService;
+import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.ProjectTeamMemberTypeCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.SpecialtyCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.projects.domain.services.TaskStatusCommandService;
 import org.slf4j.Logger;
@@ -44,6 +46,9 @@ public class ApplicationReadyEventHandler {
     /** Service for executing commands related to task statuses. */
     private final TaskStatusCommandService taskStatusCommandService;
 
+    /** Service for executing commands related to project team member types. */
+    private final ProjectTeamMemberTypeCommandService projectTeamMemberTypeCommandService;
+
     /** Logger instance for recording application events. */
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationReadyEventHandler.class);
 
@@ -56,11 +61,13 @@ public class ApplicationReadyEventHandler {
     public ApplicationReadyEventHandler(
             ProjectStatusCommandService projectStatusCommandService,
             SpecialtyCommandService specialtyCommandService,
-            TaskStatusCommandService taskStatusCommandService
+            TaskStatusCommandService taskStatusCommandService,
+            ProjectTeamMemberTypeCommandService projectTeamMemberTypeCommandService
     ) {
         this.projectStatusCommandService = projectStatusCommandService;
         this.specialtyCommandService = specialtyCommandService;
         this.taskStatusCommandService = taskStatusCommandService;
+        this.projectTeamMemberTypeCommandService = projectTeamMemberTypeCommandService;
     }
 
     /**
@@ -76,6 +83,7 @@ public class ApplicationReadyEventHandler {
         projectStatusCommandService.handle(new SeedProjectStatusCommand());
         specialtyCommandService.handle(new SeedSpecialtyCommand());
         taskStatusCommandService.handle(new SeedTaskStatusCommand());
+        projectTeamMemberTypeCommandService.handle(new SeedProjectTeamMemberTypeCommand());
 
         LOGGER.info("Project statuses seeding completed for {} at {}", applicationName, currentTimestamp());
     }

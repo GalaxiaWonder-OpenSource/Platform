@@ -18,7 +18,6 @@ public class CreateProjectCommandFromResourceAssembler {
 
     /**
      * Converts a {@link CreateProjectResource} into a {@link CreateProjectCommand}.
-     *
      * @param resource the incoming resource object from the API layer
      * @return a {@code CreateProjectCommand} populated with data from the resource
      */
