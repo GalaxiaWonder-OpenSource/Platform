@@ -56,7 +56,6 @@ public class ProjectCreatedEventHandler {
                 new CreateProjectTeamMemberCommand(
                         memberId,
                         event.getProjectId().projectId(),
-                        personId,
                         "NON_APPLICABLE",
                         "COORDINATOR"
                 )

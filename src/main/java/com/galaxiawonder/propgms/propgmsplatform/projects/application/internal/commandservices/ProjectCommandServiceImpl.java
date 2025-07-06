@@ -95,7 +95,6 @@ public class ProjectCommandServiceImpl implements ProjectCommandService {
                 new CreateProjectTeamMemberCommand(
                         contractorOrganizationMemberId,
                         createdProject.getId(),
-                        contractorPersonId,
                         specialty.getStringName(),
                         "COORDINATOR"
                 )

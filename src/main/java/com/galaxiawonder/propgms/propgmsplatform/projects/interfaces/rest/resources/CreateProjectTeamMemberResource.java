@@ -1,10 +1,5 @@
 package com.galaxiawonder.propgms.propgmsplatform.projects.interfaces.rest.resources;
 
-public record CreateProjectTeamMemberResource(
-        Long orgMemberId,
-        Long projectId,
-        Long personId,
-        String Specialty,
-        String projectTeamMemberType
+public record CreateProjectTeamMemberResource(Long organizationMemberId, Long projectId, String specialty, String memberType
 ) {
 }

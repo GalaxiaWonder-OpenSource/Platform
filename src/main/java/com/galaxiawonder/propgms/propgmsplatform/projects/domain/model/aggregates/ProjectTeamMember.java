@@ -97,20 +97,16 @@ public class ProjectTeamMember extends AuditableAbstractAggregateRoot<ProjectTea
         this.organizationMemberId = new OrganizationMemberId(organizationMemberId);
     }
 
-    public ProjectTeamMember(
-            ProjectId projectId,
-            PersonId personId,
-            OrganizationMemberId organizationMemberId,
-            ProfileDetails profileDetails,
-            Specialty specialty
-
+    public ProjectTeamMember(CreateProjectTeamMemberCommand command
     ) {
-        this.projectId = projectId;
-        this.specialty = specialty;
-        this.organizationMemberId = organizationMemberId;
+        this.projectId = new ProjectId(command.projectId());
+        this.organizationMemberId = new OrganizationMemberId(command.organizationMemberId());
+    }
+
+    public void setPersonalInformation(PersonId personId, PersonName name, EmailAddress email) {
         this.personId = personId;
-        this.name = profileDetails.name();
-        this.email = profileDetails.email();
+        this.name = name;
+        this.email = email;
     }
 
     public void assignSpecialty(Specialty specialty) {

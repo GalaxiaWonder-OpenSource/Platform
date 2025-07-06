@@ -41,6 +41,8 @@ public class ProjectTeamMemberCommandServiceImpl implements ProjectTeamMemberCom
 
     private final ProjectTeamMemberTypeRepository projectTeamMemberTypeRepository;
 
+    private final OrganizationContextFacade organizationContextFacade;
+
     /**
      * Constructs a {@link ProjectTeamMemberCommandServiceImpl} with required dependencies.
      *
@@ -51,9 +53,11 @@ public class ProjectTeamMemberCommandServiceImpl implements ProjectTeamMemberCom
     public ProjectTeamMemberCommandServiceImpl(ProjectTeamMemberRepository projectTeamMemberRepository,
                                                IAMContextFacade iamContextFacade,
                                                SpecialtyRepository specialtyRepository,
-                                               ProjectTeamMemberTypeRepository projectTeamMemberTypeRepository) {
+                                               ProjectTeamMemberTypeRepository projectTeamMemberTypeRepository,
+                                               OrganizationContextFacade organizationContextFacade) {
         this.projectTeamMemberRepository = projectTeamMemberRepository;
         this.iamContextFacade = iamContextFacade;
+        this.organizationContextFacade = organizationContextFacade;
         this.specialtyRepository = specialtyRepository;
         this.projectTeamMemberTypeRepository = projectTeamMemberTypeRepository;
     }
@@ -63,15 +67,28 @@ public class ProjectTeamMemberCommandServiceImpl implements ProjectTeamMemberCom
      */
     @Override
     public Optional<ProjectTeamMember> handle(CreateProjectTeamMemberCommand command) {
-        var teamMember = new ProjectTeamMember(command.organizationMemberId(), command.projectId());
-        teamMember.assignSpecialty(
-                getSpecialty(Specialties.valueOf(command.specialty()))
-        );
-        teamMember.assignTeamMemberType(
-                getProjectTeamMemberType(ProjectTeamMemberTypes.valueOf(command.memberType()))
-        );
+        var existingProjectTeamMember = projectTeamMemberRepository.findByOrganizationMemberIdAndProjectId(new OrganizationMemberId(command.organizationMemberId()), new ProjectId(command.projectId()));
+        if (existingProjectTeamMember.isPresent()) {
+            throw new IllegalArgumentException("Project team member already exists for organization member " + command.organizationMemberId() + " and project " + command.projectId());
+        }
+        var personId =
+                organizationContextFacade.getPersonIdFromOrganizationMemberId(
+                        command.organizationMemberId()
+                );
+        var projectTeamMember = new ProjectTeamMember(command);
+        var personInformation = iamContextFacade.getProfileDetailsById(personId);
+        if (personInformation == null) {
+            throw new IllegalArgumentException("Person with ID " + personId + " not found");
+        }
+        var specialty = specialtyRepository.findByName(Specialties.valueOf(command.specialty()))
+                .orElseThrow(() -> new IllegalArgumentException("Specialty not found"));
+        projectTeamMember.assignSpecialty(specialty);
+        var type = projectTeamMemberTypeRepository.findByName(ProjectTeamMemberTypes.valueOf(command.memberType()))
+                .orElseThrow(() -> new IllegalArgumentException("Project team member type not found"));
+        projectTeamMember.assignTeamMemberType(type);
+        projectTeamMember.setPersonalInformation(new PersonId(personId), personInformation.name(), personInformation.email());
 
-        var createdTeamMember = projectTeamMemberRepository.save(teamMember);
+        var createdTeamMember = projectTeamMemberRepository.save(projectTeamMember);
         return Optional.of(createdTeamMember);
     }
 

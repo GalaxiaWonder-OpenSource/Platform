@@ -1,12 +1,16 @@
 package com.galaxiawonder.propgms.propgmsplatform.organizations.application.acl;
 
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.aggregates.Organization;
+import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetAllOrganizationsQuery;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.model.queries.GetOrganizationByIdQuery;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationCommandService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.domain.services.OrganizationQueryService;
 import com.galaxiawonder.propgms.propgmsplatform.organizations.interfaces.acl.OrganizationContextFacade;
 import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.entities.AuditableModel;
+import com.galaxiawonder.propgms.propgmsplatform.shared.domain.model.valueobjects.PersonId;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * OrganizationContextFacadeImpl
@@ -30,14 +34,18 @@ public class OrganizationContextFacadeImpl implements OrganizationContextFacade 
 
     /** Service used to query organizations from the domain model. */
     private final OrganizationQueryService organizationQueryService;
+    private final OrganizationCommandService organizationCommandService;
 
     /**
      * Constructs the context facade with its required dependencies.
      *
-     * @param organizationQueryService the service used to retrieve organization aggregates
+     * @param organizationQueryService   the service used to retrieve organization aggregates
+     * @param organizationCommandService the service used to modify organization aggregates
      */
-    public OrganizationContextFacadeImpl(OrganizationQueryService organizationQueryService) {
+    public OrganizationContextFacadeImpl(OrganizationQueryService organizationQueryService,
+                                         OrganizationCommandService organizationCommandService) {
         this.organizationQueryService = organizationQueryService;
+        this.organizationCommandService = organizationCommandService;
     }
 
     /**
@@ -76,5 +84,29 @@ public class OrganizationContextFacadeImpl implements OrganizationContextFacade 
                         "No member found with person ID " + personId + " in organization ID " + organizationId
                 ));
     }
+
+    /**
+     * Retrieves the person ID associated with a given organization member ID.
+     *
+     * @param organizationMemberId the ID of the organization member
+     * @return the person ID linked to the organization member
+     * @throws IllegalArgumentException if no organization member is found with the given ID
+     */
+    public Long getPersonIdFromOrganizationMemberId(Long organizationMemberId) {
+        return this.organizationQueryService
+                .handle(new GetAllOrganizationsQuery())
+                .stream()
+                .flatMap(List::stream)
+                .flatMap(org -> org.getMembers().stream())
+                .filter(member -> member.getId().equals(organizationMemberId))
+                .findFirst()
+                .map(member -> member.getPersonId().personId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No organization member found for the ID: " + organizationMemberId
+                ));
+    }
+
+
+
 }
 

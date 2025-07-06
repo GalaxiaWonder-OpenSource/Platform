@@ -120,4 +120,9 @@ public class OrganizationQueryServiceImpl implements OrganizationQueryService {
                         }))
                 .toList();
     }
+
+    @Override
+    public Optional<List<Organization>> handle(GetAllOrganizationsQuery query){
+        return Optional.of(organizationRepository.findAll());
+    }
 }
